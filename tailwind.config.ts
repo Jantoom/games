@@ -26,30 +26,31 @@ export default {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         game: {
-          highlight: "#f0f7ff",
-          active: "#e5f1ff",
-          conflict: "#fff0f0",
-          pencil: "#666666",
+          highlight: "#E3F2FD", // Lighter blue for related cells
+          active: "#90CAF9",    // Medium blue for selected cell
+          conflict: "#FFE0E0",  // Soft red for conflicts
+          pencil: "#64B5F6",    // Blue for pencil marks
+          gridline: "#1E88E5",  // Darker blue for 3x3 grid lines
         },
         primary: {
-          DEFAULT: "hsl(var(--primary))",
-          foreground: "hsl(var(--primary-foreground))",
+          DEFAULT: "#1976D2",   // Main blue color
+          foreground: "#FFFFFF",
         },
         secondary: {
-          DEFAULT: "hsl(var(--secondary))",
-          foreground: "hsl(var(--secondary-foreground))",
+          DEFAULT: "#BBDEFB",
+          foreground: "#1565C0",
         },
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
           foreground: "hsl(var(--destructive-foreground))",
         },
         muted: {
-          DEFAULT: "hsl(var(--muted))",
-          foreground: "hsl(var(--muted-foreground))",
+          DEFAULT: "#E3F2FD",
+          foreground: "#1565C0",
         },
         accent: {
-          DEFAULT: "hsl(var(--accent))",
-          foreground: "hsl(var(--accent-foreground))",
+          DEFAULT: "#2196F3",
+          foreground: "#FFFFFF",
         },
         popover: {
           DEFAULT: "hsl(var(--popover))",

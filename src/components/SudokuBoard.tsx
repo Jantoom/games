@@ -98,14 +98,14 @@ export const SudokuBoard = () => {
         <Button
           variant="outline"
           onClick={() => setIsPencilMode(!isPencilMode)}
-          className={`transition-all ${isPencilMode ? 'bg-accent' : ''}`}
+          className={`transition-all ${isPencilMode ? 'bg-accent text-white' : 'border-game-gridline text-game-gridline'}`}
         >
           Notes Mode
         </Button>
-        <span className="text-lg font-medium">{formatTime(timer)}</span>
+        <span className="text-lg font-medium text-game-gridline">{formatTime(timer)}</span>
       </div>
 
-      <div className="grid grid-cols-9 gap-[1px] bg-border p-[1px] rounded-lg shadow-lg">
+      <div className="grid grid-cols-9 gap-0 bg-game-gridline p-[2px] rounded-lg shadow-lg overflow-hidden">
         {grid.map((row, rowIndex) =>
           row.map((cell, colIndex) => {
             const isSelected = selectedCell?.row === rowIndex && selectedCell?.col === colIndex;
@@ -120,11 +120,12 @@ export const SudokuBoard = () => {
               <div
                 key={`${rowIndex}-${colIndex}`}
                 className={`
-                  w-12 h-12 flex items-center justify-center
-                  ${isSelected ? 'bg-game-active' : isRelated ? 'bg-game-highlight' : 'bg-background'}
-                  ${rowIndex % 3 === 0 && rowIndex !== 0 ? 'border-t border-border' : ''}
-                  ${colIndex % 3 === 0 && colIndex !== 0 ? 'border-l border-border' : ''}
-                  cursor-pointer transition-colors
+                  w-12 h-12 flex items-center justify-center relative
+                  ${isSelected ? 'bg-game-active' : isRelated ? 'bg-game-highlight' : 'bg-white'}
+                  ${rowIndex % 3 === 0 && rowIndex !== 0 ? 'border-t-[2px] border-game-gridline' : 'border-t border-blue-100'}
+                  ${colIndex % 3 === 0 && colIndex !== 0 ? 'border-l-[2px] border-game-gridline' : 'border-l border-blue-100'}
+                  cursor-pointer transition-colors duration-200
+                  hover:bg-game-highlight
                 `}
                 onClick={() => handleCellClick(rowIndex, colIndex)}
               >
@@ -132,6 +133,7 @@ export const SudokuBoard = () => {
                   <span className={`
                     text-xl font-medium
                     ${originalGrid[rowIndex][colIndex] !== 0 ? 'text-primary' : 'text-accent-foreground'}
+                    ${isSelected ? 'scale-110 transition-transform duration-200' : ''}
                   `}>
                     {cell}
                   </span>
@@ -158,7 +160,7 @@ export const SudokuBoard = () => {
           <Button
             key={number}
             variant="outline"
-            className="w-12 h-12 text-lg font-medium"
+            className="w-12 h-12 text-lg font-medium border-game-gridline text-game-gridline hover:bg-game-highlight"
             onClick={() => handleNumberInput(number)}
           >
             {number}
@@ -167,9 +169,9 @@ export const SudokuBoard = () => {
       </div>
 
       <div className="flex gap-4">
-        <Button onClick={() => newGame('easy')}>Easy</Button>
-        <Button onClick={() => newGame('medium')}>Medium</Button>
-        <Button onClick={() => newGame('hard')}>Hard</Button>
+        <Button onClick={() => newGame('easy')} className="bg-primary hover:bg-primary/90">Easy</Button>
+        <Button onClick={() => newGame('medium')} className="bg-primary hover:bg-primary/90">Medium</Button>
+        <Button onClick={() => newGame('hard')} className="bg-primary hover:bg-primary/90">Hard</Button>
       </div>
     </div>
   );
