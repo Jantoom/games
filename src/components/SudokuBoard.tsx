@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -7,6 +6,7 @@ import { StickyNote } from "lucide-react";
 
 type CellNotes = Set<number>;
 type Notes = { [key: string]: CellNotes };
+type Difficulty = 'easy' | 'medium' | 'hard';
 
 export const SudokuBoard = () => {
   const [grid, setGrid] = useState<number[][]>([]);
@@ -16,6 +16,7 @@ export const SudokuBoard = () => {
   const [notes, setNotes] = useState<Notes>({});
   const [timer, setTimer] = useState(0);
   const [isActive, setIsActive] = useState(false);
+  const [difficulty, setDifficulty] = useState<Difficulty>('easy');
 
   useEffect(() => {
     newGame('easy');
@@ -33,14 +34,15 @@ export const SudokuBoard = () => {
     };
   }, [isActive]);
 
-  const newGame = (difficulty: 'easy' | 'medium' | 'hard') => {
-    const newGrid = generateSudoku(difficulty);
+  const newGame = (newDifficulty: Difficulty) => {
+    const newGrid = generateSudoku(newDifficulty);
     setGrid(newGrid.map(row => [...row]));
     setOriginalGrid(newGrid.map(row => [...row]));
     setSelectedCell(null);
     setNotes({});
     setTimer(0);
     setIsActive(true);
+    setDifficulty(newDifficulty);
   };
 
   const handleCellClick = (row: number, col: number) => {
@@ -80,7 +82,6 @@ export const SudokuBoard = () => {
     newGrid[row][col] = number;
     setGrid(newGrid);
 
-    // Check if game is complete
     if (!newGrid.some(row => row.includes(0))) {
       toast.success("Congratulations! You've completed the puzzle!");
       setIsActive(false);
@@ -98,13 +99,24 @@ export const SudokuBoard = () => {
       <div className="flex justify-between items-center w-[424px]">
         <span className="text-lg font-medium text-game-gridline">{formatTime(timer)}</span>
         <div className="flex gap-2">
-          <Button onClick={() => newGame('easy')} className="bg-primary hover:bg-primary/90">Easy</Button>
-          <Button onClick={() => newGame('medium')} className="bg-primary hover:bg-primary/90">Medium</Button>
-          <Button onClick={() => newGame('hard')} className="bg-primary hover:bg-primary/90">Hard</Button>
+          {(['easy', 'medium', 'hard'] as const).map((diff) => (
+            <Button
+              key={diff}
+              onClick={() => newGame(diff)}
+              variant={difficulty === diff ? 'default' : 'outline'}
+              className={
+                difficulty === diff
+                  ? 'bg-primary hover:bg-primary/90'
+                  : 'border-game-gridline text-game-gridline hover:bg-game-highlight'
+              }
+            >
+              {diff.charAt(0).toUpperCase() + diff.slice(1)}
+            </Button>
+          ))}
         </div>
       </div>
 
-      <div className="grid grid-cols-9 bg-game-gridline p-[2px] rounded-lg shadow-lg overflow-hidden w-[424px]">
+      <div className="grid grid-cols-9 bg-game-gridline gap-[2px] p-[2px] rounded-lg shadow-lg overflow-hidden w-[424px]">
         {grid.map((row, rowIndex) =>
           row.map((cell, colIndex) => {
             const isSelected = selectedCell?.row === rowIndex && selectedCell?.col === colIndex;
@@ -115,16 +127,23 @@ export const SudokuBoard = () => {
                 (Math.floor(selectedCell.row / 3) === Math.floor(rowIndex / 3) &&
                   Math.floor(selectedCell.col / 3) === Math.floor(colIndex / 3)));
 
+            const blockBorder = `
+              ${rowIndex % 3 === 0 ? 'border-t-[2px]' : ''}
+              ${colIndex % 3 === 0 ? 'border-l-[2px]' : ''}
+              ${rowIndex % 3 === 2 ? 'border-b-[2px]' : ''}
+              ${colIndex % 3 === 2 ? 'border-r-[2px]' : ''}
+            `;
+
             return (
               <div
                 key={`${rowIndex}-${colIndex}`}
                 className={`
-                  w-[47px] h-[47px] flex items-center justify-center relative
+                  w-[45px] h-[45px] flex items-center justify-center
                   ${isSelected ? 'bg-game-active hover:bg-game-active' : isRelated ? 'bg-game-highlight hover:bg-game-highlight/90' : 'bg-white hover:bg-game-highlight'}
-                  border-r border-b border-blue-100 relative
+                  border border-blue-100
+                  ${blockBorder}
+                  border-game-gridline
                   cursor-pointer transition-colors duration-200
-                  ${rowIndex % 3 === 2 && rowIndex !== 8 ? 'after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:bg-game-gridline' : ''}
-                  ${colIndex % 3 === 2 && colIndex !== 8 ? 'after:absolute after:right-0 after:top-0 after:bottom-0 after:w-[2px] after:bg-game-gridline' : ''}
                 `}
                 onClick={() => handleCellClick(rowIndex, colIndex)}
               >
@@ -154,12 +173,12 @@ export const SudokuBoard = () => {
         )}
       </div>
 
-      <div className="grid grid-cols-9 gap-2 w-[424px]">
+      <div className="grid grid-cols-9 gap-3 w-[424px]">
         {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((number) => (
           <Button
             key={number}
             variant="outline"
-            className="w-[47px] h-[47px] text-lg font-medium border-game-gridline text-game-gridline hover:bg-game-highlight"
+            className="w-[41px] h-[41px] text-lg font-medium border-game-gridline text-game-gridline hover:bg-game-highlight"
             onClick={() => handleNumberInput(number)}
           >
             {number}
@@ -171,7 +190,7 @@ export const SudokuBoard = () => {
         <Button
           variant="outline"
           onClick={() => setIsPencilMode(!isPencilMode)}
-          className={`transition-all ${isPencilMode ? 'bg-accent text-white' : 'border-game-gridline text-game-gridline'}`}
+          className={`w-[41px] h-[41px] transition-all ${isPencilMode ? 'bg-accent text-white' : 'border-game-gridline text-game-gridline'}`}
         >
           <StickyNote className="h-5 w-5" />
         </Button>
