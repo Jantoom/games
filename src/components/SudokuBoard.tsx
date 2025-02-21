@@ -105,7 +105,7 @@ export const SudokuBoard = () => {
         <span className="text-lg font-medium text-game-gridline">{formatTime(timer)}</span>
       </div>
 
-      <div className="grid grid-cols-9 gap-0 bg-game-gridline p-[2px] rounded-lg shadow-lg overflow-hidden">
+      <div className="grid grid-cols-9 bg-game-gridline p-[2px] rounded-lg shadow-lg overflow-hidden">
         {grid.map((row, rowIndex) =>
           row.map((cell, colIndex) => {
             const isSelected = selectedCell?.row === rowIndex && selectedCell?.col === colIndex;
@@ -122,8 +122,9 @@ export const SudokuBoard = () => {
                 className={`
                   w-12 h-12 flex items-center justify-center relative
                   ${isSelected ? 'bg-game-active' : isRelated ? 'bg-game-highlight' : 'bg-white'}
-                  ${rowIndex % 3 === 0 && rowIndex !== 0 ? 'border-t-[2px] border-game-gridline' : 'border-t border-blue-100'}
-                  ${colIndex % 3 === 0 && colIndex !== 0 ? 'border-l-[2px] border-game-gridline' : 'border-l border-blue-100'}
+                  border-r border-b border-blue-100
+                  ${rowIndex % 3 === 2 && rowIndex !== 8 ? 'border-b-2 border-b-game-gridline' : ''}
+                  ${colIndex % 3 === 2 && colIndex !== 8 ? 'border-r-2 border-r-game-gridline' : ''}
                   cursor-pointer transition-colors duration-200
                   hover:bg-game-highlight
                 `}
@@ -132,7 +133,7 @@ export const SudokuBoard = () => {
                 {cell !== 0 ? (
                   <span className={`
                     text-xl font-medium
-                    ${originalGrid[rowIndex][colIndex] !== 0 ? 'text-primary' : 'text-accent-foreground'}
+                    ${originalGrid[rowIndex][colIndex] !== 0 ? 'text-primary' : 'text-game-gridline'}
                     ${isSelected ? 'scale-110 transition-transform duration-200' : ''}
                   `}>
                     {cell}
