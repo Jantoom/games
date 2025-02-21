@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { generateSudoku, isValidPlacement } from "@/lib/sudoku";
 import { StickyNote } from "lucide-react";
 
+type Mode = 'default' | 'pencil' | 'eraser';
 type CellNotes = Set<number>;
 type Notes = { [key: string]: CellNotes };
 type Difficulty = 'easy' | 'medium' | 'hard';
@@ -12,7 +13,7 @@ export const SudokuBoard = () => {
   const [grid, setGrid] = useState<number[][]>([]);
   const [originalGrid, setOriginalGrid] = useState<number[][]>([]);
   const [selectedCell, setSelectedCell] = useState<{ row: number; col: number } | null>(null);
-  const [isPencilMode, setIsPencilMode] = useState(false);
+  const [mode, setMode] = useState<Mode>('default');
   const [notes, setNotes] = useState<Notes>({});
   const [timer, setTimer] = useState(0);
   const [isActive, setIsActive] = useState(false);
@@ -39,6 +40,7 @@ export const SudokuBoard = () => {
     setGrid(newGrid.map(row => [...row]));
     setOriginalGrid(newGrid.map(row => [...row]));
     setSelectedCell(null);
+    setMode('default');
     setNotes({});
     setTimer(0);
     setIsActive(true);
@@ -47,6 +49,23 @@ export const SudokuBoard = () => {
 
   const handleCellClick = (row: number, col: number) => {
     setSelectedCell({ row, col });
+    
+    if (mode === 'eraser') {
+      if (originalGrid[row][col] !== 0) {
+        toast.error("Can't modify original numbers!");
+        return;
+      }
+      const key = `${row}-${col}`;
+      
+      setNotes(prevNotes => {
+        const newNotes = { ...prevNotes };
+        delete newNotes[key];
+        return newNotes;
+      })
+      const newGrid = grid.map(row => [...row]);      
+      newGrid[row][col] = 0;
+      setGrid(newGrid);
+    }
   };
 
   const handleNumberInput = (number: number) => {
@@ -58,7 +77,7 @@ export const SudokuBoard = () => {
       return;
     }
 
-    if (isPencilMode) {
+    if (mode === 'pencil') {
       const key = `${row}-${col}`;
       const currentNotes = notes[key] || new Set();
       const newNotes = new Set(currentNotes);
@@ -120,12 +139,12 @@ export const SudokuBoard = () => {
         {grid.map((row, rowIndex) =>
           row.map((cell, colIndex) => {
             const isSelected = selectedCell?.row === rowIndex && selectedCell?.col === colIndex;
-            const isRelated =
-              selectedCell &&
-              (selectedCell.row === rowIndex ||
-                selectedCell.col === colIndex ||
-                (Math.floor(selectedCell.row / 3) === Math.floor(rowIndex / 3) &&
-                  Math.floor(selectedCell.col / 3) === Math.floor(colIndex / 3)));
+            const isRelated = true;
+              // selectedCell &&
+              // (selectedCell.row === rowIndex ||
+              //   selectedCell.col === colIndex ||
+              //   (Math.floor(selectedCell.row / 3) === Math.floor(rowIndex / 3) &&
+              //     Math.floor(selectedCell.col / 3) === Math.floor(colIndex / 3)));
 
             const blockBorder = `
               ${rowIndex % 3 === 0 ? 'border-t-[2px]' : ''}
@@ -173,7 +192,7 @@ export const SudokuBoard = () => {
         )}
       </div>
 
-      <div className="grid grid-cols-9 gap-3 w-[424px]">
+      <div className="grid grid-cols-9 justify-items-center w-[424px]">
         {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((number) => (
           <Button
             key={number}
@@ -186,11 +205,18 @@ export const SudokuBoard = () => {
         ))}
       </div>
 
-      <div className="flex justify-center w-full">
+      <div className="grid grid-cols-2 justify-items-center w-full">
         <Button
           variant="outline"
-          onClick={() => setIsPencilMode(!isPencilMode)}
-          className={`w-[41px] h-[41px] transition-all ${isPencilMode ? 'bg-accent text-white' : 'border-game-gridline text-game-gridline'}`}
+          onClick={() => setMode(mode === 'pencil' ? 'default' : 'pencil')}
+          className={`w-[41px] h-[41px] transition-all ${mode === 'pencil' ? 'bg-accent text-white' : 'border-game-gridline text-game-gridline'}`}
+        >
+          <StickyNote className="h-5 w-5" />
+        </Button>
+        <Button
+          variant="outline"
+          onClick={() => setMode(mode === 'eraser' ? 'default' : 'eraser')}
+          className={`w-[41px] h-[41px] transition-all ${mode === 'eraser' ? 'bg-accent text-white' : 'border-game-gridline text-game-gridline'}`}
         >
           <StickyNote className="h-5 w-5" />
         </Button>
