@@ -132,7 +132,14 @@ export const SudokuBoard = () => {
           row.map((cell, colIndex) => {
             const isSelected = selectedCell?.row === rowIndex && selectedCell?.col === colIndex;
             const isHighlighted = selectedNumber !== null && cell === selectedNumber;
-            const isOriginalHighlighted = selectedNumber !== null && cell === selectedNumber && originalGrid[rowIndex][colIndex] !== 0;
+            const randomDelay = `${Math.random() * 0.2}s`;
+
+            const insetBorders = `
+              ${rowIndex === 0 ? '' : 'border-t-[1px] mt-[2px]'}
+              ${colIndex === 0 ? '' : 'border-l-[1px] ml-[2px]'}
+              ${rowIndex === 8 ? '' : 'border-b-[1px] mb-[2px]'}
+              ${colIndex === 8 ? '' : 'border-r-[1px] mr-[2px]'}
+            `;
 
             const blockBorder = `
               ${rowIndex % 3 === 0 ? 'border-t-[1px]' : ''}
@@ -146,24 +153,30 @@ export const SudokuBoard = () => {
                 key={`${rowIndex}-${colIndex}`}
                 className={`
                   w-[45px] h-[45px] flex items-center justify-center
-                  ${isSelected ? 'bg-game-active' : ''}
-                  ${isHighlighted ? 'bg-game-highlight' : 'bg-white'}
-                  ${isOriginalHighlighted ? 'bg-blue-100' : ''}
+                  ${isSelected ? 'bg-game-active' : 'bg-white'}
                   hover:bg-game-highlight
                   cursor-pointer transition-colors duration-200
                   ${blockBorder}
+                  ${insetBorders}
                   border-game-gridline
                   relative
                 `}
                 onClick={() => handleCellClick(rowIndex, colIndex)}
               >
                 {cell !== 0 ? (
-                  <div className={`
-                    w-8 h-8 rounded-full flex items-center justify-center
-                    ${originalGrid[rowIndex][colIndex] !== 0 ? 'bg-neutral-100' : ''}
-                  `}>
+                  <div className="relative w-8 h-8 flex items-center justify-center">
+                    <div className={`
+                      absolute inset-0 rounded-full
+                      ${originalGrid[rowIndex][colIndex] !== 0 ? 'bg-neutral-100' : ''}
+                    `} />
+                    {isHighlighted && (
+                      <div 
+                        className="absolute inset-0 rounded-full bg-blue-100 animate-scale-fade"
+                        style={{ animationDelay: randomDelay }}
+                      />
+                    )}
                     <span className={`
-                      text-xl font-medium
+                      relative z-10 text-xl font-medium
                       ${originalGrid[rowIndex][colIndex] !== 0 ? 'text-primary' : 'text-game-gridline'}
                       ${isSelected ? 'scale-110 transition-transform duration-200' : ''}
                     `}>
@@ -188,13 +201,13 @@ export const SudokuBoard = () => {
         )}
       </div>
 
-      <div className="grid grid-cols-9 gap-3 w-[424px]">
+      <div className="grid grid-rows-2 grid-cols-5 gap-3 w-[260px]">
         {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((number) => (
           <Button
             key={number}
             variant="outline"
             className={`
-              w-[41px] h-[41px] p-0 relative rounded-full
+              w-[45px] h-[45px] p-0 relative rounded-full
               border-game-gridline text-game-gridline 
               hover:bg-game-highlight
               ${selectedNumber === number ? 'bg-blue-100' : 'bg-white'}
@@ -202,27 +215,27 @@ export const SudokuBoard = () => {
             onClick={() => handleNumberInput(number)}
           >
             <div className="flex flex-col items-center justify-between py-1 h-full">
-              <span className="text-lg font-medium">{number}</span>
-              <span className="text-xs">{getRemainingCount(number)}</span>
+              <span className="text-lg font-medium leading-none">{number}</span>
+              <span className="text-xs leading-none">{getRemainingCount(number)}</span>
             </div>
           </Button>
         ))}
-      </div>
-
-      <div className="flex justify-center gap-4 w-full">
-        <Button
-          variant="ghost"
-          onClick={() => setMode(mode === 'pencil' ? 'default' : 'pencil')}
-          className={`w-[41px] h-[41px] p-0 ${mode === 'pencil' ? 'bg-blue-100 rounded-full' : ''}`}
-        >
-          <StickyNote className="h-5 w-5" />
-        </Button>
         <Button
           variant="ghost"
           onClick={() => setMode(mode === 'eraser' ? 'default' : 'eraser')}
-          className={`w-[41px] h-[41px] p-0 ${mode === 'eraser' ? 'bg-blue-100 rounded-full' : ''}`}
+          className={`w-[45px] h-[45px] p-0 ${mode === 'eraser' ? 'bg-blue-100 rounded-full' : 'rounded-full'}`}
         >
           <Eraser className="h-5 w-5" />
+        </Button>
+      </div>
+
+      <div className="flex justify-center w-full">
+        <Button
+          variant="ghost"
+          onClick={() => setMode(mode === 'pencil' ? 'default' : 'pencil')}
+          className={`w-[45px] h-[45px] p-0 ${mode === 'pencil' ? 'bg-blue-100 rounded-full' : 'rounded-full'}`}
+        >
+          <StickyNote className="h-5 w-5" />
         </Button>
       </div>
     </div>

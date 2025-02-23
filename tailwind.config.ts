@@ -26,14 +26,14 @@ export default {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         game: {
-          highlight: "#E3F2FD", // Lighter blue for related cells
-          active: "#90CAF9",    // Medium blue for selected cell
-          conflict: "#FFE0E0",  // Soft red for conflicts
-          pencil: "#64B5F6",    // Blue for pencil marks
-          gridline: "#1E88E5",  // Darker blue for 3x3 grid lines
+          highlight: "#E3F2FD",
+          active: "#90CAF9",
+          conflict: "#FFE0E0",
+          pencil: "#64B5F6",
+          gridline: "#1E88E5",
         },
         primary: {
-          DEFAULT: "#1976D2",   // Main blue color
+          DEFAULT: "#1976D2",
           foreground: "#FFFFFF",
         },
         secondary: {
@@ -62,13 +62,23 @@ export default {
         },
       },
       keyframes: {
-        "number-pop": {
-          "0%": { transform: "scale(0.8)", opacity: "0" },
+        "accordion-down": {
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
+        },
+        "accordion-up": {
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
+        },
+        "scale-fade": {
+          "0%": { transform: "scale(0)", opacity: "0" },
           "100%": { transform: "scale(1)", opacity: "1" },
         },
       },
       animation: {
-        "number-pop": "number-pop 0.2s ease-out forwards",
+        "accordion-down": "accordion-down 0.2s ease-out",
+        "accordion-up": "accordion-up 0.2s ease-out",
+        "scale-fade": "scale-fade 0.2s cubic-bezier(0.4, 0, 0.2, 1) both",
       },
     },
   },
