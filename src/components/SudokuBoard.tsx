@@ -1,23 +1,14 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
 import { generateSudoku, isValidPlacement } from "@/lib/sudoku";
-import { StickyNote, Eraser, Undo, Lightbulb } from "lucide-react";
-
-type Mode = 'default' | 'pencil' | 'eraser';
-type CellNotes = Set<number>;
-type Notes = { [key: string]: CellNotes };
-type Difficulty = 'easy' | 'medium' | 'hard';
-
-interface GridHistory {
-  grid: number[][];
-  notes: Notes;
-}
+import { SudokuCell } from "./sudoku/SudokuCell";
+import { NumberButton } from "./sudoku/NumberButton";
+import { ControlButtons } from "./sudoku/ControlButtons";
+import { Mode, Notes, GridHistory, Difficulty } from "./sudoku/types";
 
 export const SudokuBoard = () => {
   const [grid, setGrid] = useState<number[][]>([]);
   const [originalGrid, setOriginalGrid] = useState<number[][]>([]);
-  const [selectedCell, setSelectedCell] = useState<{ row: number; col: number } | null>(null);
   const [selectedNumber, setSelectedNumber] = useState<number | null>(null);
   const [mode, setMode] = useState<Mode>('default');
   const [notes, setNotes] = useState<Notes>({});
@@ -201,46 +192,46 @@ export const SudokuBoard = () => {
   };
 
   const handleCellClick = (row: number, col: number) => {
-    if (mode === 'eraser') {
-      if (originalGrid[row][col] !== 0) {
-        toast.error("Can't modify original numbers!");
-        return;
-      }
-      const key = `${row}-${col}`;
-      setNotes(prevNotes => {
-        const newNotes = { ...prevNotes };
-        delete newNotes[key];
-        return newNotes;
-      });
-      const newGrid = grid.map(row => [...row]);      
-      newGrid[row][col] = 0;
-      setGrid(newGrid);
-      return;
-    }
+    if (originalGrid[row][col] !== 0) return;
 
-    if (selectedNumber !== null && originalGrid[row][col] === 0) {
-      if (!isValidPlacement(grid, row, col, selectedNumber)) {
-        toast.error("Invalid move!");
-        return;
-      }
+    if (selectedNumber !== null) {
+      saveState();
       const newGrid = grid.map(r => [...r]);
       newGrid[row][col] = selectedNumber;
       setGrid(newGrid);
-
-      if (!newGrid.some(row => row.includes(0))) {
-        toast.success("Congratulations! You've completed the puzzle!");
-        setIsActive(false);
-      }
-    }
-    
-    setSelectedCell({ row, col });
-  };
-
-  const handleNumberInput = (number: number) => {
-    if (selectedNumber === number) {
-      setSelectedNumber(null);
       return;
     }
+
+    if (mode === 'pencil') {
+      saveState();
+      const key = `${row}-${col}`;
+      if (grid[row][col] === 0) {
+        const currentNotes = notes[key] || new Set();
+        const newNotes = { ...notes };
+        if (currentNotes.has(selectedNumber!)) {
+          currentNotes.delete(selectedNumber!);
+        } else {
+          currentNotes.add(selectedNumber!);
+        }
+        if (currentNotes.size > 0) {
+          newNotes[key] = currentNotes;
+        } else {
+          delete newNotes[key];
+        }
+        setNotes(newNotes);
+      }
+    } else if (selectedNumber === null) {
+      const key = `${row}-${col}`;
+      const newGrid = grid.map(r => [...r]);
+      newGrid[row][col] = 0;
+      setGrid(newGrid);
+      const newNotes = { ...notes };
+      delete newNotes[key];
+      setNotes(newNotes);
+    }
+  };
+
+  const handleNumberInput = (number: number | null) => {
     setSelectedNumber(number);
   };
 
@@ -280,188 +271,81 @@ export const SudokuBoard = () => {
 
       <div className="grid grid-cols-9 bg-game-gridline gap-[1px] p-[1px] rounded-lg shadow-lg overflow-hidden w-[424px]">
         {grid.map((row, rowIndex) =>
-          row.map((cell, colIndex) => {
-            const isHighlighted = selectedNumber !== null && cell === selectedNumber;
-            const randomDelay = `${Math.random() * 0.2}s`;
-
-            const insetBorders = `
-              ${rowIndex === 0 ? '' : 'border-t-[1px] mt-[2px]'}
-              ${colIndex === 0 ? '' : 'border-l-[1px] ml-[2px]'}
-              ${rowIndex === 8 ? '' : 'border-b-[1px] mb-[2px]'}
-              ${colIndex === 8 ? '' : 'border-r-[1px] mr-[2px]'}
-            `;
-
-            const blockBorder = `
-              ${rowIndex % 3 === 0 ? 'border-t-[1px]' : ''}
-              ${colIndex % 3 === 0 ? 'border-l-[1px]' : ''}
-              ${rowIndex % 3 === 2 ? 'border-b-[1px]' : ''}
-              ${colIndex % 3 === 2 ? 'border-r-[1px]' : ''}
-            `;
-
-            return (
-              <div
-                key={`${rowIndex}-${colIndex}`}
-                data-pos={`${rowIndex}-${colIndex}`}
-                className={`
-                  w-[45px] h-[45px] flex items-center justify-center
-                  bg-white
-                  hover:bg-game-highlight
-                  cursor-pointer transition-colors duration-200
-                  ${blockBorder}
-                  ${insetBorders}
-                  border-game-gridline
-                  relative
-                `}
-                onClick={() => handleCellClick(rowIndex, colIndex)}
-              >
-                {cell !== 0 ? (
-                  <div className="relative w-8 h-8 flex items-center justify-center">
-                    <div className={`
-                      absolute inset-0 rounded-full
-                      ${originalGrid[rowIndex][colIndex] !== 0 ? 'bg-neutral-100' : ''}
-                    `} />
-                    {isHighlighted && (
-                      <div 
-                        className="absolute inset-0 rounded-full bg-blue-100 animate-scale-fade"
-                        style={{ animationDelay: randomDelay }}
-                      />
-                    )}
-                    <span className={`
-                      relative z-10 text-xl font-medium
-                      ${originalGrid[rowIndex][colIndex] !== 0 ? 'text-primary' : 'text-game-gridline'}
-                    `}>
-                      {cell}
-                    </span>
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-3 gap-[2px] p-1 w-full h-full">
-                    {Array.from({ length: 9 }).map((_, i) => (
-                      <div
-                        key={i}
-                        className="flex items-center justify-center text-[8px] text-game-pencil"
-                      >
-                        {notes[`${rowIndex}-${colIndex}`]?.has(i + 1) ? i + 1 : ''}
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            );
-          })
+          row.map((cell, colIndex) => (
+            <SudokuCell
+              key={`${rowIndex}-${colIndex}`}
+              rowIndex={rowIndex}
+              colIndex={colIndex}
+              cell={cell}
+              isOriginal={originalGrid[rowIndex][colIndex] !== 0}
+              isHighlighted={selectedNumber !== null && cell === selectedNumber}
+              notes={notes[`${rowIndex}-${colIndex}`]}
+              onClick={() => handleCellClick(rowIndex, colIndex)}
+            />
+          ))
         )}
       </div>
 
       <div className="grid grid-rows-2 grid-cols-5 gap-3 w-[280px]">
-        <Button
-          variant="outline"
-          onClick={() => {
-            setMode('eraser');
-            setSelectedNumber(null);
-          }}
-          className={`
-            w-[50px] h-[50px] p-0 relative rounded-full
-            border-game-gridline text-game-gridline 
-            hover:bg-game-highlight
-            ${mode === 'eraser' ? 'bg-blue-100' : 'bg-white'}
-          `}
-        >
-          <div className="absolute inset-0 flex items-center justify-center">
-            <Eraser className="h-6 w-6" />
-          </div>
-        </Button>
-        {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((number) => {
-          const remaining = getRemainingCount(number);
-          return (
-            <Button
-              key={number}
-              variant="outline"
-              className={`
-                w-[50px] h-[50px] p-0 relative rounded-full
-                border-game-gridline text-game-gridline 
-                hover:bg-game-highlight
-                ${selectedNumber === number ? 'bg-blue-100' : 'bg-white'}
-              `}
-              onClick={() => handleNumberInput(number)}
-            >
-              <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="text-2xl font-medium mb-1">{number}</span>
-                {remaining > 0 && (
-                  <span className="text-xs absolute bottom-2">{remaining}</span>
-                )}
-              </div>
-            </Button>
-          );
-        })}
+        <NumberButton
+          number="eraser"
+          isSelected={selectedNumber === null}
+          onClick={() => handleNumberInput(null)}
+        />
+        {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((number) => (
+          <NumberButton
+            key={number}
+            number={number}
+            isSelected={selectedNumber === number}
+            remainingCount={getRemainingCount(number)}
+            onClick={() => handleNumberInput(number)}
+          />
+        ))}
       </div>
 
-      <div className="flex justify-center gap-4 w-full">
-        <Button
-          variant="ghost"
-          onClick={() => setIsRestartOpen(true)}
-          className="w-[45px] h-[45px] p-0 rounded-full"
-        >
-          <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
-            <path d="M3 12a9 9 0 1 1 9 9M3 12h9" />
-          </svg>
-        </Button>
-        <Button
-          variant="ghost"
-          onClick={() => setIsHintsOpen(true)}
-          className="w-[45px] h-[45px] p-0 rounded-full"
-        >
-          <Lightbulb className="h-5 w-5" />
-        </Button>
-        <Button
-          variant="ghost"
-          onClick={() => setMode(mode === 'pencil' ? 'default' : 'pencil')}
-          className={`w-[45px] h-[45px] p-0 ${mode === 'pencil' ? 'bg-blue-100 rounded-full' : 'rounded-full'}`}
-        >
-          <StickyNote className="h-5 w-5" />
-        </Button>
-        <Button
-          variant="ghost"
-          onClick={undo}
-          disabled={history.length === 0}
-          className="w-[45px] h-[45px] p-0 rounded-full"
-        >
-          <Undo className="h-5 w-5" />
-        </Button>
-      </div>
+      <ControlButtons
+        onRestart={() => setIsRestartOpen(true)}
+        onHints={() => setIsHintsOpen(true)}
+        onPencil={() => setMode(mode === 'pencil' ? 'default' : 'pencil')}
+        onUndo={undo}
+        isPencilMode={mode === 'pencil'}
+        canUndo={history.length > 0}
+      />
 
-      {isHintsOpen && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
+      {(isHintsOpen || isRestartOpen) && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg shadow-lg space-y-4">
-            <Button onClick={giveHint} variant="outline" className="w-full">
-              Hint
-            </Button>
-            <Button onClick={showMismatches} variant="outline" className="w-full">
-              Show Mismatches
-            </Button>
-            <Button onClick={validateGrid} variant="outline" className="w-full">
-              Validate Grid
-            </Button>
-            <Button onClick={addAutoNotes} variant="outline" className="w-full">
-              Auto Notes
-            </Button>
-            <Button onClick={() => setIsHintsOpen(false)} variant="outline" className="w-full">
-              Close
-            </Button>
-          </div>
-        </div>
-      )}
-
-      {isRestartOpen && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
-          <div className="bg-white p-6 rounded-lg shadow-lg space-y-4">
-            <p className="text-center">Are you sure you want to restart?</p>
-            <div className="flex gap-4 justify-center">
-              <Button onClick={restart} variant="outline">
-                Yes
-              </Button>
-              <Button onClick={() => setIsRestartOpen(false)} variant="outline">
-                No
-              </Button>
-            </div>
+            {isHintsOpen ? (
+              <>
+                <Button onClick={giveHint} variant="outline" className="w-full">
+                  Hint
+                </Button>
+                <Button onClick={showMismatches} variant="outline" className="w-full">
+                  Show Mismatches
+                </Button>
+                <Button onClick={validateGrid} variant="outline" className="w-full">
+                  Validate Grid
+                </Button>
+                <Button onClick={addAutoNotes} variant="outline" className="w-full">
+                  Auto Notes
+                </Button>
+                <Button onClick={() => setIsHintsOpen(false)} variant="outline" className="w-full">
+                  Close
+                </Button>
+              </>
+            ) : (
+              <>
+                <p className="text-center">Are you sure you want to restart?</p>
+                <div className="flex gap-4 justify-center">
+                  <Button onClick={restart} variant="outline">
+                    Yes
+                  </Button>
+                  <Button onClick={() => setIsRestartOpen(false)} variant="outline">
+                    No
+                  </Button>
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}
