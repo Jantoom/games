@@ -263,11 +263,11 @@ export const SudokuBoard = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-9 bg-game-gridline gap-[1px] p-[1px] rounded-lg shadow-lg overflow-hidden w-[424px]">
+      <div className="grid grid-cols-9 bg-game-gridline gap-[1px] p-[1px] rounded-lg shadow-lg overflow-hidden w-[424px] py-px">
         {grid.map((row, rowIndex) => row.map((cell, colIndex) => <SudokuCell key={`${rowIndex}-${colIndex}`} rowIndex={rowIndex} colIndex={colIndex} cell={cell} isOriginal={originalGrid[rowIndex][colIndex] !== 0} isHighlighted={selectedNumber !== null && cell === selectedNumber} notes={notes[`${rowIndex}-${colIndex}`]} onClick={() => handleCellClick(rowIndex, colIndex)} />))}
       </div>
 
-      <div className="grid grid-rows-2 grid-cols-5 w-[280px]">
+      <div className="grid grid-rows-2 grid-cols-5 gap-3 w-[280px]">
         <NumberButton number="eraser" isSelected={selectedNumber === null} onClick={() => handleNumberInput(null)} />
         {[1, 2, 3, 4, 5, 6, 7, 8, 9].map(number => <NumberButton key={number} number={number} isSelected={selectedNumber === number} remainingCount={getRemainingCount(number)} onClick={() => handleNumberInput(number)} />)}
       </div>

@@ -19,10 +19,10 @@ export const NumberButton: React.FC<NumberButtonProps> = ({
         hover:bg-game-highlight
         ${isSelected ? 'bg-blue-100' : 'bg-white'}
       `}>
-      <div className="absolute inset-0 flex flex-col items-center justify-center py-0">
+      <div className="absolute inset-0 flex flex-col items-center justify-center rounded-none py-0">
         {number === 'eraser' ? <Eraser className="h-6 w-6" /> : <>
-            <span className="text-2xl font-medium py-0">{number}</span>
-            {remainingCount !== undefined && remainingCount > 0 && <span className="text-xs absolute bottom-1 px-0 my-0 mx-0 py-px">{remainingCount}</span>}
+            <span className="text-2xl font-medium px-0 mx-0 my-0 py-0">{number}</span>
+            {remainingCount !== undefined && remainingCount > 0 && <span className="text-xs absolute bottom-0 py-0">{remainingCount}</span>}
           </>}
       </div>
     </Button>;
