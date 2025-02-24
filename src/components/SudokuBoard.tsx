@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { generateSudoku, isValidPlacement } from "@/lib/sudoku";
@@ -164,8 +165,6 @@ export const SudokuBoard = () => {
     }
     if (emptyCells.length > 0) {
       const [row, col] = emptyCells[Math.floor(Math.random() * emptyCells.length)];
-      // Find correct number (you'd need the solution grid for this)
-      // For now, find a valid number
       for (let num = 1; num <= 9; num++) {
         if (isValidPlacement(grid, row, col, num)) {
           saveState();
@@ -183,7 +182,7 @@ export const SudokuBoard = () => {
     const newGrid = generateSudoku(newDifficulty);
     setGrid(newGrid.map(row => [...row]));
     setOriginalGrid(newGrid.map(row => [...row]));
-    setSelectedCell(null);
+    setSelectedNumber(null);
     setMode('default');
     setNotes({});
     setTimer(0);
