@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { generateSudoku, isValidPlacement } from "@/lib/sudoku";
@@ -80,51 +79,66 @@ export const SudokuBoard = () => {
     setIsHintsOpen(false);
   };
 
+  const showErrorAnimation = (cells: string[]) => {
+    cells.forEach(pos => {
+      const errorCircle = document.querySelector(`[data-error="${pos}"]`);
+      if (errorCircle) {
+        errorCircle.classList.remove('hidden');
+        let count = 0;
+        const animate = () => {
+          if (count >= 3) {
+            errorCircle.classList.add('hidden');
+            return;
+          }
+          errorCircle.classList.remove('opacity-0');
+          setTimeout(() => {
+            errorCircle.classList.add('opacity-0');
+            setTimeout(() => {
+              count++;
+              animate();
+            }, 200);
+          }, 200);
+        };
+        animate();
+      }
+    });
+  };
+
   const validateGrid = () => {
-    const incorrectCells: HTMLElement[] = [];
+    const incorrectCells: string[] = [];
     for (let row = 0; row < 9; row++) {
       for (let col = 0; col < 9; col++) {
         if (grid[row][col] !== 0) {
           const temp = grid[row][col];
           grid[row][col] = 0;
           if (!isValidPlacement(grid, row, col, temp)) {
-            const cell = document.querySelector(`[data-pos="${row}-${col}"]`);
-            if (cell) incorrectCells.push(cell as HTMLElement);
+            incorrectCells.push(`${row}-${col}`);
           }
           grid[row][col] = temp;
         }
       }
     }
-    incorrectCells.forEach(cell => {
-      cell.classList.add('animate-[pulse_0.5s_ease-in-out_infinite]', 'bg-red-200');
-      setTimeout(() => {
-        cell.classList.remove('animate-[pulse_0.5s_ease-in-out_infinite]', 'bg-red-200');
-      }, 1500);
-    });
+    showErrorAnimation(incorrectCells);
     setIsHintsOpen(false);
   };
 
   const showMismatches = () => {
-    const mismatchCells: HTMLElement[] = [];
+    const mismatchCells: string[] = [];
     for (let row = 0; row < 9; row++) {
       for (let col = 0; col < 9; col++) {
         if (grid[row][col] !== 0) {
           // Check row
           for (let x = 0; x < 9; x++) {
             if (x !== col && grid[row][x] === grid[row][col]) {
-              const cell1 = document.querySelector(`[data-pos="${row}-${col}"]`);
-              const cell2 = document.querySelector(`[data-pos="${row}-${x}"]`);
-              if (cell1) mismatchCells.push(cell1 as HTMLElement);
-              if (cell2) mismatchCells.push(cell2 as HTMLElement);
+              mismatchCells.push(`${row}-${col}`);
+              mismatchCells.push(`${row}-${x}`);
             }
           }
           // Check column
           for (let y = 0; y < 9; y++) {
             if (y !== row && grid[y][col] === grid[row][col]) {
-              const cell1 = document.querySelector(`[data-pos="${row}-${col}"]`);
-              const cell2 = document.querySelector(`[data-pos="${y}-${col}"]`);
-              if (cell1) mismatchCells.push(cell1 as HTMLElement);
-              if (cell2) mismatchCells.push(cell2 as HTMLElement);
+              mismatchCells.push(`${row}-${col}`);
+              mismatchCells.push(`${y}-${col}`);
             }
           }
           // Check box
@@ -135,42 +149,47 @@ export const SudokuBoard = () => {
               const y = boxRow + i;
               const x = boxCol + j;
               if (y !== row && x !== col && grid[y][x] === grid[row][col]) {
-                const cell1 = document.querySelector(`[data-pos="${row}-${col}"]`);
-                const cell2 = document.querySelector(`[data-pos="${y}-${x}"]`);
-                if (cell1) mismatchCells.push(cell1 as HTMLElement);
-                if (cell2) mismatchCells.push(cell2 as HTMLElement);
+                mismatchCells.push(`${row}-${col}`);
+                mismatchCells.push(`${y}-${x}`);
               }
             }
           }
         }
       }
     }
-    mismatchCells.forEach(cell => {
-      cell.classList.add('animate-[pulse_0.5s_ease-in-out_infinite]', 'bg-red-200');
-      setTimeout(() => {
-        cell.classList.remove('animate-[pulse_0.5s_ease-in-out_infinite]', 'bg-red-200');
-      }, 1500);
-    });
+    showErrorAnimation([...new Set(mismatchCells)]);
     setIsHintsOpen(false);
   };
 
   const giveHint = () => {
     const emptyCells: [number, number][] = [];
+    const noteCells: [number, number][] = [];
+    
     for (let row = 0; row < 9; row++) {
       for (let col = 0; col < 9; col++) {
         if (grid[row][col] === 0) {
-          emptyCells.push([row, col]);
+          if (notes[`${row}-${col}`]) {
+            noteCells.push([row, col]);
+          } else {
+            emptyCells.push([row, col]);
+          }
         }
       }
     }
-    if (emptyCells.length > 0) {
-      const [row, col] = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+
+    const targetCells = emptyCells.length > 0 ? emptyCells : noteCells;
+    
+    if (targetCells.length > 0) {
+      const [row, col] = targetCells[Math.floor(Math.random() * targetCells.length)];
       for (let num = 1; num <= 9; num++) {
         if (isValidPlacement(grid, row, col, num)) {
           saveState();
           const newGrid = grid.map(r => [...r]);
           newGrid[row][col] = num;
           setGrid(newGrid);
+          const newNotes = { ...notes };
+          delete newNotes[`${row}-${col}`];
+          setNotes(newNotes);
           break;
         }
       }
@@ -231,7 +250,7 @@ export const SudokuBoard = () => {
   };
 
   const handleNumberInput = (number: number | null) => {
-    setSelectedNumber(number);
+    setSelectedNumber(prev => prev === number ? null : number);
   };
 
   const formatTime = (seconds: number) => {

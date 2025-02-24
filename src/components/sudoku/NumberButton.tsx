@@ -34,7 +34,7 @@ export const NumberButton: React.FC<NumberButtonProps> = ({
           <>
             <span className="text-2xl font-medium">{number}</span>
             {remainingCount !== undefined && remainingCount > 0 && (
-              <span className="text-xs absolute bottom-1.5">{remainingCount}</span>
+              <span className="text-xs absolute bottom-1">{remainingCount}</span>
             )}
           </>
         )}

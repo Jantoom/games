@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { CellNotes } from './types';
 
 interface SudokuCellProps {
@@ -21,7 +21,17 @@ export const SudokuCell: React.FC<SudokuCellProps> = ({
   notes,
   onClick,
 }) => {
+  const [prevHighlighted, setPrevHighlighted] = useState(isHighlighted);
+  const [showDeselect, setShowDeselect] = useState(false);
   const randomDelay = `${Math.random() * 0.2}s`;
+
+  useEffect(() => {
+    if (prevHighlighted && !isHighlighted) {
+      setShowDeselect(true);
+      setTimeout(() => setShowDeselect(false), 200);
+    }
+    setPrevHighlighted(isHighlighted);
+  }, [isHighlighted, prevHighlighted]);
 
   const insetBorders = `
     ${rowIndex === 0 ? '' : 'border-t-[1px] mt-[2px]'}
@@ -64,6 +74,16 @@ export const SudokuCell: React.FC<SudokuCellProps> = ({
               style={{ animationDelay: randomDelay }}
             />
           )}
+          {showDeselect && (
+            <div 
+              className="absolute inset-0 rounded-full bg-blue-100 animate-scale-out"
+              style={{ animationDelay: randomDelay }}
+            />
+          )}
+          <div 
+            data-error={`${rowIndex}-${colIndex}`}
+            className="absolute inset-0 rounded-full bg-red-200 opacity-0 hidden"
+          />
           <span className={`
             relative z-10 text-xl font-medium
             ${isOriginal ? 'text-primary' : 'text-game-gridline'}
