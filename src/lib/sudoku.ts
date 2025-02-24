@@ -87,11 +87,3 @@ const shuffle = <T>(array: T[]): T[] => {
   }
   return arr;
 };
-
-export const getRemainingCount = (grid: Grid, number: number) => {
-  if (number !== 0) {
-    const totalCount = 9;
-    const usedCount = grid.flat().filter(n => n === number).length;
-    return totalCount - usedCount;
-  }
-};
