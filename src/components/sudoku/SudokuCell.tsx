@@ -52,12 +52,12 @@ export const SudokuCell: React.FC<SudokuCellProps> = ({
       data-pos={`${rowIndex}-${colIndex}`}
       className={`
         w-[45px] h-[45px] flex items-center justify-center
-        bg-white
-        hover:bg-game-highlight
+        bg-color-1
+        hover:bg-color-4
         cursor-pointer transition-colors duration-200
         ${blockBorder}
         ${insetBorders}
-        border-game-gridline
+        border-color-4
         relative
       `}
       onClick={onClick}
@@ -66,27 +66,28 @@ export const SudokuCell: React.FC<SudokuCellProps> = ({
         <div className="relative w-8 h-8 flex items-center justify-center">
           <div className={`
             absolute inset-0 rounded-full
-            ${isOriginal ? 'bg-neutral-100' : ''}
+            ${isOriginal ? 'bg-color-4' : ''}
           `} />
           {isHighlighted && (
             <div 
-              className="absolute inset-0 rounded-full bg-blue-100 animate-scale-fade"
+              className="absolute inset-0 rounded-full bg-color-5 animate-scale-fade"
               style={{ animationDelay: randomDelay }}
             />
           )}
           {showDeselect && (
             <div 
-              className="absolute inset-0 rounded-full bg-blue-100 animate-scale-out"
+              className="absolute inset-0 rounded-full bg-color-5 animate-scale-out"
               style={{ animationDelay: randomDelay }}
             />
           )}
           <div 
             data-error={`${rowIndex}-${colIndex}`}
-            className="absolute inset-0 rounded-full bg-red-200 opacity-0 hidden"
+            className="absolute inset-0 rounded-full bg-color-6 opacity-0 hidden"
           />
           <span className={`
             relative z-10 text-xl font-medium
-            ${isOriginal ? 'text-primary' : 'text-game-gridline'}
+            ${isOriginal ? 'text-color-3' : 'text-color-5'}
+            ${isHighlighted ? 'text-color-1' : ''}
           `}>
             {cell}
           </span>
@@ -96,7 +97,7 @@ export const SudokuCell: React.FC<SudokuCellProps> = ({
           {Array.from({ length: 9 }).map((_, i) => (
             <div
               key={i}
-              className="flex items-center justify-center text-[8px] text-game-pencil"
+              className="flex items-center justify-center text-[8px] text-color-5"
             >
               {notes?.has(i + 1) ? i + 1 : ''}
             </div>

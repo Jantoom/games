@@ -22,9 +22,9 @@ export const NumberButton: React.FC<NumberButtonProps> = ({
       onClick={onClick}
       className={`
         w-[50px] h-[50px] p-0 relative rounded-full
-        border-game-gridline text-game-gridline 
-        hover:bg-game-highlight
-        ${isSelected ? 'bg-game-highlight' : 'bg-white'}
+        border-color-3 text-color-2
+        hover:bg-color-4
+        ${isSelected ? 'bg-color-5 text-color-1' : 'bg-color-1'}
       `}
     >
       <div className="absolute inset-0 flex flex-col items-center justify-center">

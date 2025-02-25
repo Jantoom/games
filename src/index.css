@@ -1,53 +1,16 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 240 10% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 240 10% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 240 5.9% 10%;
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
-    --accent: 240 3.7% 15.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 240 4.9% 83.9%;
-    --game-highlight: 210 100% 98%;
-    --game-pencil: 210 100% 50%;
-    --game-gridline: 210 100% 30%;
-    --radius: 0.75rem;
-  }
-
-  [data-theme="dark-blue"] {
-    --background: 222 47% 11%;
-    --game-highlight: 217 71% 53%;
-    --game-pencil: 202 100% 85%;
-    --game-gridline: 213 94% 68%;
-  }
-
-  [data-theme="light-blue"] {
-    --background: 210 40% 98%;
-    --game-highlight: 210 100% 95%;
-    --game-pencil: 210 100% 50%;
-    --game-gridline: 210 100% 30%;
-  }
-
-  [data-theme="dark-red"] {
-    --background: 0 0% 13%;
-    --game-highlight: 0 100% 97%;
-    --game-pencil: 0 100% 89%;
-    --game-gridline: 0 100% 68%;
+    --color-1: 222 47% 11%;
+    --color-2: 213 94% 68%;
+    --color-3: 220 100% 78%;
+    --color-4: 217 71% 53%;
+    --color-5: 210 100% 50%;
+    --color-6: 0 100% 65%;
   }
 }
 
@@ -57,7 +20,7 @@
   }
 
   body {
-    @apply bg-background text-foreground antialiased;
+    @apply bg-color-1 text-color-2 antialiased;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 }
