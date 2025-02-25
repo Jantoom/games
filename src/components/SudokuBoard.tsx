@@ -4,20 +4,29 @@ import { generateSudoku, isValidPlacement } from "@/lib/sudoku";
 import { SudokuCell } from "./sudoku/SudokuCell";
 import { NumberButton } from "./sudoku/NumberButton";
 import { ControlButtons } from "./sudoku/ControlButtons";
-import { Notes, GridHistory, Difficulty } from "./sudoku/types";
+import { Mode, Notes, GridHistory, Difficulty, Theme, LeaderboardEntry } from "./sudoku/types";
+
 export const SudokuBoard = () => {
-  const [isActive, setIsActive] = useState(false);
-  const [timer, setTimer] = useState(0);
-  const [difficulty, setDifficulty] = useState<Difficulty>('easy');
-  const [originalGrid, setOriginalGrid] = useState<number[][]>([]);
   const [grid, setGrid] = useState<number[][]>([]);
-  const [notes, setNotes] = useState<Notes>({});
+  const [originalGrid, setOriginalGrid] = useState<number[][]>([]);
   const [selectedNumber, setSelectedNumber] = useState<number | null>(null);
+  const [mode, setMode] = useState<Mode>('default');
+  const [notes, setNotes] = useState<Notes>({});
+  const [timer, setTimer] = useState(0);
+  const [isActive, setIsActive] = useState(false);
+  const [difficulty, setDifficulty] = useState<Difficulty>('easy');
+  const [history, setHistory] = useState<GridHistory[]>([]);
   const [isHintsOpen, setIsHintsOpen] = useState(false);
   const [isRestartOpen, setIsRestartOpen] = useState(false);
-  const [isPencilMode, setIsPencilMode] = useState(false);
-  const [history, setHistory] = useState<GridHistory[]>([]);
-  
+  const [isThemeOpen, setIsThemeOpen] = useState(false);
+  const [isLeaderboardOpen, setIsLeaderboardOpen] = useState(false);
+  const [theme, setTheme] = useState<Theme>('light-blue');
+  const [leaderboardEntries, setLeaderboardEntries] = useState<LeaderboardEntry[]>(() => {
+    const saved = localStorage.getItem('sudoku-leaderboard');
+    return saved ? JSON.parse(saved) : [];
+  });
+  const [selectedLeaderboardDifficulty, setSelectedLeaderboardDifficulty] = useState<Difficulty>('easy');
+
   // Start new game
   const newGame = (newDifficulty: Difficulty) => {
     const newGrid = generateSudoku(newDifficulty);
@@ -27,8 +36,9 @@ export const SudokuBoard = () => {
     setOriginalGrid(newGrid.map(row => [...row]));
     setGrid(newGrid.map(row => [...row]));
     setSelectedNumber(null);
-    setIsPencilMode(false);
+    setMode('default');
     setNotes({});
+    setHistory([]);
   };
   useEffect(() => {
     newGame('easy');
@@ -135,17 +145,21 @@ export const SudokuBoard = () => {
   };
   const validateGrid = () => {
     const incorrectCells: string[] = [];
+    let tempGrid = grid.map(row => [...row]);
+
     for (let row = 0; row < 9; row++) {
-      for (let col = 0; col < 9; col++) {
-        if (grid[row][col] !== 0 && originalGrid[row][col] === 0) {
-          const temp = grid[row][col];
-          grid[row][col] = 0;
-          if (!isValidPlacement(grid, row, col, temp)) {
-            incorrectCells.push(`${row}-${col}`);
-          }
-          grid[row][col] = temp;
+        for (let col = 0; col < 9; col++) {
+            if (originalGrid[row][col] === 0 && tempGrid[row][col] !== 0) {
+                let tempValue = tempGrid[row][col];
+                tempGrid[row][col] = 0;
+
+                if (!isValidPlacement(tempGrid, row, col, tempValue)) {
+                    incorrectCells.push(`${row}-${col}`);
+                }
+
+                tempGrid[row][col] = tempValue;
+            }
         }
-      }
     }
     showErrorAnimation(incorrectCells);
     setIsHintsOpen(false);
@@ -218,7 +232,7 @@ export const SudokuBoard = () => {
   // Grid interaction
   const handleCellClick = (row: number, col: number) => {
     if (selectedNumber === null || originalGrid[row][col] !== 0) return;
-    if (isPencilMode) {
+    if (mode === 'pencil') {
       saveState();
       const key = `${row}-${col}`;
       if (grid[row][col] === 0) {
@@ -267,6 +281,30 @@ export const SudokuBoard = () => {
     }
   };
 
+  const isGridComplete = () => {
+    return grid.every(row => row.every(cell => cell !== 0));
+  };
+
+  useEffect(() => {
+    if (isGridComplete()) {
+      setIsActive(false);
+      const newEntry: LeaderboardEntry = {
+        difficulty,
+        time: timer,
+        date: new Date().toISOString(),
+      };
+      const newEntries = [...leaderboardEntries, newEntry]
+        .sort((a, b) => a.time - b.time);
+      setLeaderboardEntries(newEntries);
+      localStorage.setItem('sudoku-leaderboard', JSON.stringify(newEntries));
+      setIsLeaderboardOpen(true);
+    }
+  }, [grid]);
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+  }, [theme]);
+
   return <div className="flex flex-col items-center gap-8 p-4 bg-slate-100">
       <div className="flex justify-between items-center w-[424px]">
         <span className="text-lg font-medium text-game-gridline">{formatTime(timer)}</span>
@@ -285,9 +323,9 @@ export const SudokuBoard = () => {
         {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map(number => <NumberButton key={number} number={number} isSelected={selectedNumber === number} remainingCount={getRemainingCount(number)} onClick={() => handleNumberInput(number)} />)}
       </div>
 
-      <ControlButtons onRestart={() => setIsRestartOpen(true)} onHints={() => setIsHintsOpen(true)} onPencil={() => setIsPencilMode(!isPencilMode)} onUndo={undo} isPencilMode={isPencilMode} canUndo={history.length > 0} />
+      <ControlButtons onRestart={() => setIsRestartOpen(true)} onHints={() => setIsHintsOpen(true)} onPencil={() => setMode(prev => prev === 'default' ? 'pencil' : 'default')} onUndo={undo} onTheme={() => setIsThemeOpen(true)} onLeaderboard={() => setIsLeaderboardOpen(true)} isPencilMode={mode === 'pencil'} canUndo={history.length > 0} />
 
-      {(isHintsOpen || isRestartOpen) && <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+      {(isHintsOpen || isRestartOpen || isThemeOpen || isLeaderboardOpen) && <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg shadow-lg space-y-4">
             {isHintsOpen ? <>
                 <Button onClick={giveHint} variant="outline" className="w-full">
@@ -305,7 +343,7 @@ export const SudokuBoard = () => {
                 <Button onClick={() => setIsHintsOpen(false)} variant="outline" className="w-full">
                   Close
                 </Button>
-              </> : <>
+              </> : isRestartOpen ? <>
                 <p className="text-center">Are you sure you want to restart?</p>
                 <div className="flex gap-4 justify-center">
                   <Button onClick={restart} variant="outline">
@@ -315,6 +353,35 @@ export const SudokuBoard = () => {
                     No
                   </Button>
                 </div>
+              </> : isThemeOpen ? <>
+                <h3 className="text-lg font-semibold text-center mb-4">Select Theme</h3>
+                <div className="space-y-2">
+                  {(['dark-blue', 'light-blue', 'dark-red'] as Theme[]).map(t => <Button key={t} onClick={() => {
+                        setTheme(t);
+                        setIsThemeOpen(false);
+                      }} variant="outline" className={`w-full ${theme === t ? 'bg-blue-100' : ''}`}>
+                      {t.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
+                    </Button>)}
+                </div>
+                <Button onClick={() => setIsThemeOpen(false)} variant="outline" className="w-full">
+                  Close
+                </Button>
+              </> : <>
+                <h3 className="text-lg font-semibold text-center mb-4">Leaderboard</h3>
+                <div className="flex gap-2 mb-4">
+                  {(['easy', 'medium', 'hard'] as const).map(diff => <Button key={diff} onClick={() => setSelectedLeaderboardDifficulty(diff)} variant={selectedLeaderboardDifficulty === diff ? 'default' : 'outline'} className="flex-1">
+                      {diff.charAt(0).toUpperCase() + diff.slice(1)}
+                    </Button>)}
+                </div>
+                <div className="max-h-60 overflow-y-auto space-y-2">
+                  {leaderboardEntries.filter(entry => entry.difficulty === selectedLeaderboardDifficulty).map((entry, index) => <div key={index} className="flex justify-between items-center p-2 bg-gray-50 rounded">
+                        <span>{formatTime(entry.time)}</span>
+                        <span>{new Date(entry.date).toLocaleDateString()}</span>
+                      </div>)}
+                </div>
+                <Button onClick={() => setIsLeaderboardOpen(false)} variant="outline" className="w-full mt-4">
+                  Close
+                </Button>
               </>}
           </div>
         </div>}

@@ -1,13 +1,15 @@
 
 import React from 'react';
 import { Button } from "@/components/ui/button";
-import { StickyNote, Lightbulb, Undo } from "lucide-react";
+import { Pencil, Lightbulb, Undo, Trophy, Palette } from "lucide-react";
 
 interface ControlButtonsProps {
   onRestart: () => void;
   onHints: () => void;
   onPencil: () => void;
   onUndo: () => void;
+  onTheme: () => void;
+  onLeaderboard: () => void;
   isPencilMode: boolean;
   canUndo: boolean;
 }
@@ -17,6 +19,8 @@ export const ControlButtons: React.FC<ControlButtonsProps> = ({
   onHints,
   onPencil,
   onUndo,
+  onTheme,
+  onLeaderboard,
   isPencilMode,
   canUndo,
 }) => {
@@ -43,7 +47,7 @@ export const ControlButtons: React.FC<ControlButtonsProps> = ({
         onClick={onPencil}
         className={`w-[45px] h-[45px] p-0 ${isPencilMode ? 'bg-blue-100 rounded-full' : 'rounded-full'}`}
       >
-        <StickyNote className="h-5 w-5" />
+        <Pencil className="h-5 w-5" />
       </Button>
       <Button
         variant="ghost"
@@ -52,6 +56,20 @@ export const ControlButtons: React.FC<ControlButtonsProps> = ({
         className="w-[45px] h-[45px] p-0 rounded-full"
       >
         <Undo className="h-5 w-5" />
+      </Button>
+      <Button
+        variant="ghost"
+        onClick={onTheme}
+        className="w-[45px] h-[45px] p-0 rounded-full"
+      >
+        <Palette className="h-5 w-5" />
+      </Button>
+      <Button
+        variant="ghost"
+        onClick={onLeaderboard}
+        className="w-[45px] h-[45px] p-0 rounded-full"
+      >
+        <Trophy className="h-5 w-5" />
       </Button>
     </div>
   );
