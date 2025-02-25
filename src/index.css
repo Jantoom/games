@@ -16,11 +16,11 @@
 
 @layer base {
   * {
-    @apply border-border;
+    @apply border-color-3;
   }
 
   body {
-    @apply bg-color-1 text-color-2 antialiased;
+    @apply bg-color-1 text-color-2;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 }

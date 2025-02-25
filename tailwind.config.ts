@@ -20,37 +20,36 @@ export default {
     },
     extend: {
       colors: {
+        'color-1': 'hsl(var(--color-1))',
+        'color-2': 'hsl(var(--color-2))',
+        'color-3': 'hsl(var(--color-3))',
+        'color-4': 'hsl(var(--color-4))',
+        'color-5': 'hsl(var(--color-5))',
+        'color-6': 'hsl(var(--color-6))',
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
-        game: {
-          highlight: "#E3F2FD",
-          active: "#90CAF9",
-          conflict: "#FFE0E0",
-          pencil: "#64B5F6",
-          gridline: "#1E88E5",
-        },
         primary: {
-          DEFAULT: "#1976D2",
-          foreground: "#FFFFFF",
+          DEFAULT: "hsl(var(--primary))",
+          foreground: "hsl(var(--primary-foreground))",
         },
         secondary: {
-          DEFAULT: "#BBDEFB",
-          foreground: "#1565C0",
+          DEFAULT: "hsl(var(--secondary))",
+          foreground: "hsl(var(--secondary-foreground))",
         },
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
           foreground: "hsl(var(--destructive-foreground))",
         },
         muted: {
-          DEFAULT: "#E3F2FD",
-          foreground: "#1565C0",
+          DEFAULT: "hsl(var(--muted))",
+          foreground: "hsl(var(--muted-foreground))",
         },
         accent: {
-          DEFAULT: "#2196F3",
-          foreground: "#FFFFFF",
+          DEFAULT: "hsl(var(--accent))",
+          foreground: "hsl(var(--accent-foreground))",
         },
         popover: {
           DEFAULT: "hsl(var(--popover))",
