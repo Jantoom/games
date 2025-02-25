@@ -87,7 +87,7 @@ export const SudokuCell: React.FC<SudokuCellProps> = ({
           <span className={`
             relative z-10 text-xl font-medium
             ${isOriginal ? 'text-color-3' : 'text-color-5'}
-            ${isHighlighted ? 'text-color-1' : ''}
+            ${isHighlighted || showDeselect ? 'text-color-1' : ''}
           `}>
             {cell}
           </span>

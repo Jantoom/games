@@ -355,63 +355,117 @@ export const SudokuBoard = () => {
 
       {(isHintsOpen || isRestartOpen || isThemeOpen || isLeaderboardOpen) && (
         <div className="fixed inset-0 bg-color-1/50 flex items-center justify-center z-50">
-          <div className="bg-color-1 p-6 rounded-lg shadow-lg space-y-4 border border-color-3">
-            {isHintsOpen ? <>
-                <Button onClick={giveHint} variant="outline" className="w-full">
+          <div className="bg-color-1 p-6 rounded-lg shadow-lg space-y-4 border border-color-3 w-[340px]">
+            {isHintsOpen ? (
+              <>
+                <Button onClick={giveHint} variant="outline" className="w-full border-color-3 text-color-2 hover:bg-color-4">
                   Hint
                 </Button>
-                <Button onClick={showMismatches} variant="outline" className="w-full">
+                <Button onClick={showMismatches} variant="outline" className="w-full border-color-3 text-color-2 hover:bg-color-4">
                   Show Mismatches
                 </Button>
-                <Button onClick={validateGrid} variant="outline" className="w-full">
+                <Button onClick={validateGrid} variant="outline" className="w-full border-color-3 text-color-2 hover:bg-color-4">
                   Validate Grid
                 </Button>
-                <Button onClick={addAutoNotes} variant="outline" className="w-full">
+                <Button onClick={addAutoNotes} variant="outline" className="w-full border-color-3 text-color-2 hover:bg-color-4">
                   Auto Notes
                 </Button>
-                <Button onClick={() => setIsHintsOpen(false)} variant="outline" className="w-full">
+                <Button onClick={() => setIsHintsOpen(false)} variant="outline" className="w-full border-color-3 text-color-2 hover:bg-color-4">
                   Close
                 </Button>
-              </> : isRestartOpen ? <>
-                <p className="text-center">Are you sure you want to restart?</p>
-                <div className="flex gap-4 justify-center">
-                  <Button onClick={restart} variant="outline">
-                    Yes
-                  </Button>
-                  <Button onClick={() => setIsRestartOpen(false)} variant="outline">
-                    No
-                  </Button>
-                </div>
-              </> : isThemeOpen ? <>
-                <h3 className="text-lg font-semibold text-center mb-4">Select Theme</h3>
+              </>
+            ) : isRestartOpen ? (
+              <div className="flex flex-col gap-4">
+                <p className="text-center text-color-2">Are you sure you want to restart?</p>
+                <Button onClick={restart} variant="outline" className="w-full border-color-3 text-color-2 hover:bg-color-4">
+                  Yes
+                </Button>
+                <Button onClick={() => setIsRestartOpen(false)} variant="outline" className="w-full border-color-3 text-color-2 hover:bg-color-4">
+                  No
+                </Button>
+              </div>
+            ) : isThemeOpen ? (
+              <>
+                <h3 className="text-lg font-semibold text-center mb-4 text-color-2">Select Theme</h3>
                 <div className="space-y-2">
-                  {(['dark-blue', 'light-blue', 'dark-red'] as Theme[]).map(t => <Button key={t} onClick={() => {
+                  {(['dark-blue', 'light-blue', 'dark-red'] as Theme[]).map(t => (
+                    <Button
+                      key={t}
+                      onClick={() => {
                         setTheme(t);
                         setIsThemeOpen(false);
-                      }} variant="outline" className={`w-full ${theme === t ? 'bg-blue-100' : ''}`}>
+                      }}
+                      variant="outline"
+                      className={`w-full border-color-3 text-color-2 ${theme === t ? 'bg-color-5 text-color-1' : 'hover:bg-color-4'}`}
+                    >
                       {t.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
-                    </Button>)}
+                    </Button>
+                  ))}
                 </div>
-                <Button onClick={() => setIsThemeOpen(false)} variant="outline" className="w-full">
+                <Button onClick={() => setIsThemeOpen(false)} variant="outline" className="w-full border-color-3 text-color-2 hover:bg-color-4">
                   Close
                 </Button>
-              </> : <>
-                <h3 className="text-lg font-semibold text-center mb-4">Leaderboard</h3>
-                <div className="flex gap-2 mb-4">
-                  {(['easy', 'medium', 'hard'] as const).map(diff => <Button key={diff} onClick={() => setSelectedLeaderboardDifficulty(diff)} variant={selectedLeaderboardDifficulty === diff ? 'default' : 'outline'} className="flex-1">
-                      {diff.charAt(0).toUpperCase() + diff.slice(1)}
-                    </Button>)}
+              </>
+            ) : (
+              <>
+                <h3 className="text-lg font-semibold text-center mb-4 text-color-2">Leaderboard</h3>
+                <div className="flex items-center justify-between mb-4">
+                  <Button
+                    variant="ghost"
+                    onClick={() => setSelectedLeaderboardDifficulty(prev => {
+                      const difficulties: Difficulty[] = ['easy', 'medium', 'hard'];
+                      const currentIndex = difficulties.indexOf(prev);
+                      return difficulties[(currentIndex - 1 + 3) % 3];
+                    })}
+                    className="w-10 h-10 p-0 text-color-2 hover:bg-color-4 rounded-full"
+                  >
+                    <svg className="h-5 w-5 rotate-180" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                      <path d="m9 18 6-6-6-6"/>
+                    </svg>
+                  </Button>
+                  <span className="text-color-2 capitalize">{selectedLeaderboardDifficulty}</span>
+                  <Button
+                    variant="ghost"
+                    onClick={() => setSelectedLeaderboardDifficulty(prev => {
+                      const difficulties: Difficulty[] = ['easy', 'medium', 'hard'];
+                      const currentIndex = difficulties.indexOf(prev);
+                      return difficulties[(currentIndex + 1) % 3];
+                    })}
+                    className="w-10 h-10 p-0 text-color-2 hover:bg-color-4 rounded-full"
+                  >
+                    <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                      <path d="m9 18 6-6-6-6"/>
+                    </svg>
+                  </Button>
                 </div>
-                <div className="max-h-60 overflow-y-auto space-y-2">
-                  {leaderboardEntries.filter(entry => entry.difficulty === selectedLeaderboardDifficulty).map((entry, index) => <div key={index} className="flex justify-between items-center p-2 bg-gray-50 rounded">
-                        <span>{formatTime(entry.time)}</span>
-                        <span>{new Date(entry.date).toLocaleDateString()}</span>
-                      </div>)}
+                <div className="h-60 overflow-y-auto space-y-2 mb-4">
+                  {leaderboardEntries
+                    .filter(entry => entry.difficulty === selectedLeaderboardDifficulty)
+                    .map((entry, index) => (
+                      <div key={index} className="flex justify-between items-center p-2 bg-color-1 border border-color-3 rounded">
+                        <span className="text-color-2">{formatTime(entry.time)}</span>
+                        <span className="text-color-2">{new Date(entry.date).toLocaleDateString()}</span>
+                        <Button
+                          variant="ghost"
+                          onClick={() => {
+                            const newEntries = leaderboardEntries.filter((_, i) => i !== index);
+                            setLeaderboardEntries(newEntries);
+                            localStorage.setItem('sudoku-leaderboard', JSON.stringify(newEntries));
+                          }}
+                          className="w-8 h-8 p-0 text-color-2 hover:bg-color-4 rounded-full"
+                        >
+                          <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                            <path d="M3 6h18M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+                          </svg>
+                        </Button>
+                      </div>
+                    ))}
                 </div>
-                <Button onClick={() => setIsLeaderboardOpen(false)} variant="outline" className="w-full mt-4">
+                <Button onClick={() => setIsLeaderboardOpen(false)} variant="outline" className="w-full border-color-3 text-color-2 hover:bg-color-4">
                   Close
                 </Button>
-              </>}
+              </>
+            )}
           </div>
         </div>
       )}
