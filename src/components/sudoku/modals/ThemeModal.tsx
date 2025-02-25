@@ -12,7 +12,7 @@ export const ThemeModal: React.FC<ThemeModalProps> = ({ onClose, onSelectTheme, 
   <>
     <h3 className="text-lg font-semibold text-center mb-4 text-color-2">Select Theme</h3>
     <div className="space-y-2">
-      {(['dark-blue', 'light-blue', 'dark-red'] as Theme[]).map(t => (
+      {(['dark-blue', 'light-blue', 'dark-red', 'light-red'] as Theme[]).map(t => (
         <Button
           key={t}
           onClick={() => onSelectTheme(t)}

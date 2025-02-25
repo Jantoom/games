@@ -1,11 +1,10 @@
-
 type Grid = number[][];
 type Position = { row: number; col: number };
 
-export const generateSudoku = (difficulty: 'easy' | 'medium' | 'hard'): Grid => {
+export const generateSudoku = (difficulty: 'easy' | 'medium' | 'hard'): { puzzle: number[][], solution: number[][] } => {
   // First, generate a solved grid
-  const solved = Array(9).fill(null).map(() => Array(9).fill(0));
-  fillGrid(solved);
+  const solution = Array(9).fill(null).map(() => Array(9).fill(0));
+  fillGrid(solution);
 
   // Then remove numbers based on difficulty
   const numToRemove = {
@@ -14,7 +13,7 @@ export const generateSudoku = (difficulty: 'easy' | 'medium' | 'hard'): Grid => 
     hard: 55,
   }[difficulty];
 
-  const puzzle = solved.map(row => [...row]);
+  const puzzle = solution.map(row => [...row]);
   let count = 0;
 
   while (count < numToRemove) {
@@ -26,7 +25,7 @@ export const generateSudoku = (difficulty: 'easy' | 'medium' | 'hard'): Grid => 
     }
   }
 
-  return puzzle;
+  return { puzzle, solution };
 };
 
 const fillGrid = (grid: Grid): boolean => {

@@ -13,6 +13,7 @@ import { Mode, Notes, GridHistory, Difficulty, Theme, LeaderboardEntry } from ".
 export const SudokuBoard = () => {
   const [grid, setGrid] = useState<number[][]>([]);
   const [originalGrid, setOriginalGrid] = useState<number[][]>([]);
+  const [solvedGrid, setSolvedGrid] = useState<number[][]>([]);
   const [selectedNumber, setSelectedNumber] = useState<number | null>(null);
   const [mode, setMode] = useState<Mode>('default');
   const [notes, setNotes] = useState<Notes>({});
@@ -32,43 +33,17 @@ export const SudokuBoard = () => {
   const [selectedLeaderboardDifficulty, setSelectedLeaderboardDifficulty] = useState<Difficulty>('easy');
 
   const newGame = (newDifficulty: Difficulty) => {
-    const newGrid = generateSudoku(newDifficulty);
+    const { puzzle, solution } = generateSudoku(newDifficulty);
     setIsActive(true);
     setTimer(0);
     setDifficulty(newDifficulty);
-    setOriginalGrid(newGrid.map(row => [...row]));
-    setGrid(newGrid.map(row => [...row]));
+    setOriginalGrid(puzzle.map(row => [...row]));
+    setGrid(puzzle.map(row => [...row]));
+    setSolvedGrid(solution.map(row => [...row]));
     setSelectedNumber(null);
     setMode('default');
     setNotes({});
     setHistory([]);
-  };
-  useEffect(() => {
-    newGame('easy');
-  }, []);
-
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-  };
-  useEffect(() => {
-    let interval: NodeJS.Timeout | null = null;
-    if (isActive) {
-      interval = setInterval(() => {
-        setTimer(timer => timer + 1);
-      }, 1000);
-    }
-    return () => {
-      if (interval) clearInterval(interval);
-    };
-  }, [isActive]);
-
-  const restart = () => {
-    setGrid(originalGrid.map(row => [...row]));
-    setNotes({});
-    setHistory([]);
-    setIsRestartOpen(false);
   };
 
   const giveHint = () => {
@@ -88,79 +63,60 @@ export const SudokuBoard = () => {
     const targetCells = emptyCells.length > 0 ? emptyCells : noteCells;
     if (targetCells.length > 0) {
       const [row, col] = targetCells[Math.floor(Math.random() * targetCells.length)];
-      for (let num = 1; num <= 9; num++) {
-        if (isValidPlacement(grid, row, col, num)) {
-          saveState();
-          const newGrid = grid.map(r => [...r]);
-          newGrid[row][col] = num;
-          setGrid(newGrid);
-          const newNotes = {
-            ...notes
-          };
-          delete newNotes[`${row}-${col}`];
-          setNotes(newNotes);
-          break;
-        }
-      }
+      const correctNumber = solvedGrid[row][col];
+      saveState();
+      const newGrid = grid.map(r => [...r]);
+      newGrid[row][col] = correctNumber;
+      setGrid(newGrid);
+      const newNotes = { ...notes };
+      delete newNotes[`${row}-${col}`];
+      setNotes(newNotes);
     }
     setIsHintsOpen(false);
   };
-  const showMismatches = () => {
-    const mismatchCells: string[] = [];
-    for (let row = 0; row < 9; row++) {
-      for (let col = 0; col < 9; col++) {
-        if (grid[row][col] !== 0) {
-          for (let x = 0; x < 9; x++) {
-            if (x !== col && grid[row][x] === grid[row][col]) {
-              mismatchCells.push(`${row}-${col}`);
-              mismatchCells.push(`${row}-${x}`);
-            }
-          }
-          for (let y = 0; y < 9; y++) {
-            if (y !== row && grid[y][col] === grid[row][col]) {
-              mismatchCells.push(`${row}-${col}`);
-              mismatchCells.push(`${y}-${col}`);
-            }
-          }
-          const boxRow = Math.floor(row / 3) * 3;
-          const boxCol = Math.floor(col / 3) * 3;
-          for (let i = 0; i < 3; i++) {
-            for (let j = 0; j < 3; j++) {
-              const y = boxRow + i;
-              const x = boxCol + j;
-              if (y !== row && x !== col && grid[y][x] === grid[row][col]) {
-                mismatchCells.push(`${row}-${col}`);
-                mismatchCells.push(`${y}-${x}`);
-              }
-            }
-          }
-        }
-      }
-    }
-    showErrorAnimation([...new Set(mismatchCells)]);
-    setIsHintsOpen(false);
-  };
+
   const validateGrid = () => {
     const incorrectCells: string[] = [];
-    let tempGrid = grid.map(row => [...row]);
-
     for (let row = 0; row < 9; row++) {
-        for (let col = 0; col < 9; col++) {
-            if (originalGrid[row][col] === 0 && tempGrid[row][col] !== 0) {
-                let tempValue = tempGrid[row][col];
-                tempGrid[row][col] = 0;
-
-                if (!isValidPlacement(tempGrid, row, col, tempValue)) {
-                    incorrectCells.push(`${row}-${col}`);
-                }
-
-                tempGrid[row][col] = tempValue;
-            }
+      for (let col = 0; col < 9; col++) {
+        if (grid[row][col] !== 0 && grid[row][col] !== solvedGrid[row][col]) {
+          incorrectCells.push(`${row}-${col}`);
         }
+      }
     }
     showErrorAnimation(incorrectCells);
     setIsHintsOpen(false);
   };
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  useEffect(() => {
+    newGame('easy');
+  }, []);
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout | null = null;
+    if (isActive) {
+      interval = setInterval(() => {
+        setTimer(timer => timer + 1);
+      }, 1000);
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isActive]);
+
+  const restart = () => {
+    setGrid(originalGrid.map(row => [...row]));
+    setNotes({});
+    setHistory([]);
+    setIsRestartOpen(false);
+  };
+
   const addAutoNotes = () => {
     const newNotes: Notes = {};
     for (let row = 0; row < 9; row++) {
@@ -181,6 +137,7 @@ export const SudokuBoard = () => {
     setNotes(newNotes);
     setIsHintsOpen(false);
   };
+
   const showErrorAnimation = (cells: string[]) => {
     cells.forEach(pos => {
       const errorCircle = document.querySelector(`[data-error="${pos}"]`);
@@ -214,6 +171,7 @@ export const SudokuBoard = () => {
       }
     }]);
   };
+
   const undo = () => {
     const prevState = history[history.length - 1];
     if (prevState) {
@@ -267,6 +225,7 @@ export const SudokuBoard = () => {
   const handleNumberInput = (number: number | null) => {
     setSelectedNumber(prev => prev === number ? null : number);
   };
+
   const getRemainingCount = (number: number) => {
     if (number !== 0) {
       const totalCount = 9;
@@ -300,62 +259,65 @@ export const SudokuBoard = () => {
   }, [theme]);
 
   return (
-    <div className="flex flex-col items-center gap-8 p-4">
-      <div className="flex justify-between items-center w-[424px]">
-        <span className="text-lg font-medium text-color-2">{formatTime(timer)}</span>
-        <DifficultyButtons
-          currentDifficulty={difficulty}
-          onSelectDifficulty={(diff) => newGame(diff)}
-        />
-      </div>
-
-      <div className="grid grid-cols-9 bg-color-5 gap-[1px] p-[1px] rounded-lg shadow-lg overflow-hidden w-[424px]">
-        {grid.map((row, rowIndex) =>
-          row.map((cell, colIndex) => (
-            <SudokuCell
-              key={`${rowIndex}-${colIndex}`}
-              rowIndex={rowIndex}
-              colIndex={colIndex}
-              cell={cell}
-              isOriginal={originalGrid[rowIndex][colIndex] !== 0}
-              isHighlighted={selectedNumber !== null && cell === selectedNumber}
-              notes={notes[`${rowIndex}-${colIndex}`]}
-              onClick={() => handleCellClick(rowIndex, colIndex)}
-            />
-          ))
-        )}
-      </div>
-
-      <div className="grid grid-rows-2 grid-cols-5 gap-3 w-[280px]">
-        <NumberButton
-          number="eraser"
-          isSelected={selectedNumber === 0}
-          onClick={() => handleNumberInput(0)}
-        />
-        {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((number) => (
-          <NumberButton
-            key={number}
-            number={number}
-            isSelected={selectedNumber === number}
-            remainingCount={getRemainingCount(number)}
-            onClick={() => handleNumberInput(number)}
+    <div className="flex flex-col items-center justify-between min-h-screen py-8 px-4">
+      <div className="flex flex-col items-center gap-8 w-full max-w-[424px]">
+        <div className="flex justify-between items-center w-full">
+          <span className="text-lg font-medium text-color-2">{formatTime(timer)}</span>
+          <DifficultyButtons
+            currentDifficulty={difficulty}
+            onSelectDifficulty={(diff) => newGame(diff)}
           />
-        ))}
-      </div>
+        </div>
 
-      <ControlButtons
-        onRestart={() => setIsRestartOpen(true)}
-        onHints={() => setIsHintsOpen(true)}
-        onPencil={() => setMode(prev => prev === 'default' ? 'pencil' : 'default')}
-        onUndo={undo}
-        onTheme={() => setIsThemeOpen(true)}
-        onLeaderboard={() => setIsLeaderboardOpen(true)}
-        isPencilMode={mode === 'pencil'}
-        canUndo={history.length > 0}
-        isHintsOpen={isHintsOpen}
-        isThemeOpen={isThemeOpen}
-        isLeaderboardOpen={isLeaderboardOpen}
-      />
+        <div className="grid grid-cols-9 bg-color-5 gap-[1px] p-[1px] rounded-lg shadow-lg overflow-hidden w-full">
+          {grid.map((row, rowIndex) =>
+            row.map((cell, colIndex) => (
+              <SudokuCell
+                key={`${rowIndex}-${colIndex}`}
+                rowIndex={rowIndex}
+                colIndex={colIndex}
+                cell={cell}
+                isOriginal={originalGrid[rowIndex][colIndex] !== 0}
+                isHighlighted={selectedNumber !== null && cell === selectedNumber}
+                notes={notes[`${rowIndex}-${colIndex}`]}
+                onClick={() => handleCellClick(rowIndex, colIndex)}
+              />
+            ))
+          )}
+        </div>
+
+        <div className="grid grid-rows-2 grid-cols-5 gap-3 w-[280px]">
+          <NumberButton
+            number="eraser"
+            isSelected={selectedNumber === 0}
+            onClick={() => handleNumberInput(0)}
+          />
+          {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((number) => (
+            <NumberButton
+              key={number}
+              number={number}
+              isSelected={selectedNumber === number}
+              remainingCount={getRemainingCount(number)}
+              onClick={() => handleNumberInput(number)}
+            />
+          ))}
+        </div>
+
+        <ControlButtons
+          onRestart={() => setIsRestartOpen(true)}
+          onHints={() => setIsHintsOpen(true)}
+          onPencil={() => setMode(prev => prev === 'default' ? 'pencil' : 'default')}
+          onUndo={undo}
+          onTheme={() => setIsThemeOpen(true)}
+          onLeaderboard={() => setIsLeaderboardOpen(true)}
+          isPencilMode={mode === 'pencil'}
+          canUndo={history.length > 0}
+          isHintsOpen={isHintsOpen}
+          isRestartOpen={isRestartOpen}
+          isThemeOpen={isThemeOpen}
+          isLeaderboardOpen={isLeaderboardOpen}
+        />
+      </div>
 
       {(isHintsOpen || isRestartOpen || isThemeOpen || isLeaderboardOpen) && (
         <div className="fixed inset-0 bg-color-1/50 flex items-center justify-center z-50">

@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Difficulty, LeaderboardEntry } from "../types";
 
@@ -42,7 +41,7 @@ export const LeaderboardModal: React.FC<LeaderboardModalProps> = ({
         </svg>
       </Button>
     </div>
-    <div className="h-60 overflow-y-auto space-y-2 mb-4">
+    <div className="h-60 overflow-y-auto scrollbar-none touch-pan-y space-y-2 mb-4">
       {entries
         .filter(entry => entry.difficulty === selectedDifficulty)
         .map((entry, index) => (
