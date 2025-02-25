@@ -1,9 +1,13 @@
 import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
 import { generateSudoku, isValidPlacement } from "@/lib/sudoku";
 import { SudokuCell } from "./sudoku/SudokuCell";
 import { NumberButton } from "./sudoku/NumberButton";
 import { ControlButtons } from "./sudoku/ControlButtons";
+import { DifficultyButtons } from "./sudoku/DifficultyButtons";
+import { HintsModal } from "./sudoku/modals/HintsModal";
+import { RestartModal } from "./sudoku/modals/RestartModal";
+import { ThemeModal } from "./sudoku/modals/ThemeModal";
+import { LeaderboardModal } from "./sudoku/modals/LeaderboardModal";
 import { Mode, Notes, GridHistory, Difficulty, Theme, LeaderboardEntry } from "./sudoku/types";
 
 export const SudokuBoard = () => {
@@ -299,22 +303,10 @@ export const SudokuBoard = () => {
     <div className="flex flex-col items-center gap-8 p-4">
       <div className="flex justify-between items-center w-[424px]">
         <span className="text-lg font-medium text-color-2">{formatTime(timer)}</span>
-        <div className="flex gap-2">
-          {(['easy', 'medium', 'hard'] as const).map((diff) => (
-            <Button
-              key={diff}
-              onClick={() => newGame(diff)}
-              variant={difficulty === diff ? 'default' : 'outline'}
-              className={
-                difficulty === diff
-                  ? 'bg-color-5 text-color-1 hover:bg-color-5/90'
-                  : 'border-color-3 text-color-2 hover:bg-color-4'
-              }
-            >
-              {diff.charAt(0).toUpperCase() + diff.slice(1)}
-            </Button>
-          ))}
-        </div>
+        <DifficultyButtons
+          currentDifficulty={difficulty}
+          onSelectDifficulty={(diff) => newGame(diff)}
+        />
       </div>
 
       <div className="grid grid-cols-9 bg-color-5 gap-[1px] p-[1px] rounded-lg shadow-lg overflow-hidden w-[424px]">
@@ -351,120 +343,68 @@ export const SudokuBoard = () => {
         ))}
       </div>
 
-      <ControlButtons onRestart={() => setIsRestartOpen(true)} onHints={() => setIsHintsOpen(true)} onPencil={() => setMode(prev => prev === 'default' ? 'pencil' : 'default')} onUndo={undo} onTheme={() => setIsThemeOpen(true)} onLeaderboard={() => setIsLeaderboardOpen(true)} isPencilMode={mode === 'pencil'} canUndo={history.length > 0} />
+      <ControlButtons
+        onRestart={() => setIsRestartOpen(true)}
+        onHints={() => setIsHintsOpen(true)}
+        onPencil={() => setMode(prev => prev === 'default' ? 'pencil' : 'default')}
+        onUndo={undo}
+        onTheme={() => setIsThemeOpen(true)}
+        onLeaderboard={() => setIsLeaderboardOpen(true)}
+        isPencilMode={mode === 'pencil'}
+        canUndo={history.length > 0}
+        isHintsOpen={isHintsOpen}
+        isThemeOpen={isThemeOpen}
+        isLeaderboardOpen={isLeaderboardOpen}
+      />
 
       {(isHintsOpen || isRestartOpen || isThemeOpen || isLeaderboardOpen) && (
         <div className="fixed inset-0 bg-color-1/50 flex items-center justify-center z-50">
           <div className="bg-color-1 p-6 rounded-lg shadow-lg space-y-4 border border-color-3 w-[340px]">
-            {isHintsOpen ? (
-              <>
-                <Button onClick={giveHint} variant="outline" className="w-full border-color-3 text-color-2 hover:bg-color-4">
-                  Hint
-                </Button>
-                <Button onClick={showMismatches} variant="outline" className="w-full border-color-3 text-color-2 hover:bg-color-4">
-                  Show Mismatches
-                </Button>
-                <Button onClick={validateGrid} variant="outline" className="w-full border-color-3 text-color-2 hover:bg-color-4">
-                  Validate Grid
-                </Button>
-                <Button onClick={addAutoNotes} variant="outline" className="w-full border-color-3 text-color-2 hover:bg-color-4">
-                  Auto Notes
-                </Button>
-                <Button onClick={() => setIsHintsOpen(false)} variant="outline" className="w-full border-color-3 text-color-2 hover:bg-color-4">
-                  Close
-                </Button>
-              </>
-            ) : isRestartOpen ? (
-              <div className="flex flex-col gap-4">
-                <p className="text-center text-color-2">Are you sure you want to restart?</p>
-                <Button onClick={restart} variant="outline" className="w-full border-color-3 text-color-2 hover:bg-color-4">
-                  Yes
-                </Button>
-                <Button onClick={() => setIsRestartOpen(false)} variant="outline" className="w-full border-color-3 text-color-2 hover:bg-color-4">
-                  No
-                </Button>
-              </div>
-            ) : isThemeOpen ? (
-              <>
-                <h3 className="text-lg font-semibold text-center mb-4 text-color-2">Select Theme</h3>
-                <div className="space-y-2">
-                  {(['dark-blue', 'light-blue', 'dark-red'] as Theme[]).map(t => (
-                    <Button
-                      key={t}
-                      onClick={() => {
-                        setTheme(t);
-                        setIsThemeOpen(false);
-                      }}
-                      variant="outline"
-                      className={`w-full border-color-3 text-color-2 ${theme === t ? 'bg-color-5 text-color-1' : 'hover:bg-color-4'}`}
-                    >
-                      {t.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
-                    </Button>
-                  ))}
-                </div>
-                <Button onClick={() => setIsThemeOpen(false)} variant="outline" className="w-full border-color-3 text-color-2 hover:bg-color-4">
-                  Close
-                </Button>
-              </>
-            ) : (
-              <>
-                <h3 className="text-lg font-semibold text-center mb-4 text-color-2">Leaderboard</h3>
-                <div className="flex items-center justify-between mb-4">
-                  <Button
-                    variant="ghost"
-                    onClick={() => setSelectedLeaderboardDifficulty(prev => {
-                      const difficulties: Difficulty[] = ['easy', 'medium', 'hard'];
-                      const currentIndex = difficulties.indexOf(prev);
-                      return difficulties[(currentIndex - 1 + 3) % 3];
-                    })}
-                    className="w-10 h-10 p-0 text-color-2 hover:bg-color-4 rounded-full"
-                  >
-                    <svg className="h-5 w-5 rotate-180" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
-                      <path d="m9 18 6-6-6-6"/>
-                    </svg>
-                  </Button>
-                  <span className="text-color-2 capitalize">{selectedLeaderboardDifficulty}</span>
-                  <Button
-                    variant="ghost"
-                    onClick={() => setSelectedLeaderboardDifficulty(prev => {
-                      const difficulties: Difficulty[] = ['easy', 'medium', 'hard'];
-                      const currentIndex = difficulties.indexOf(prev);
-                      return difficulties[(currentIndex + 1) % 3];
-                    })}
-                    className="w-10 h-10 p-0 text-color-2 hover:bg-color-4 rounded-full"
-                  >
-                    <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
-                      <path d="m9 18 6-6-6-6"/>
-                    </svg>
-                  </Button>
-                </div>
-                <div className="h-60 overflow-y-auto space-y-2 mb-4">
-                  {leaderboardEntries
-                    .filter(entry => entry.difficulty === selectedLeaderboardDifficulty)
-                    .map((entry, index) => (
-                      <div key={index} className="flex justify-between items-center p-2 bg-color-1 border border-color-3 rounded">
-                        <span className="text-color-2">{formatTime(entry.time)}</span>
-                        <span className="text-color-2">{new Date(entry.date).toLocaleDateString()}</span>
-                        <Button
-                          variant="ghost"
-                          onClick={() => {
-                            const newEntries = leaderboardEntries.filter((_, i) => i !== index);
-                            setLeaderboardEntries(newEntries);
-                            localStorage.setItem('sudoku-leaderboard', JSON.stringify(newEntries));
-                          }}
-                          className="w-8 h-8 p-0 text-color-2 hover:bg-color-4 rounded-full"
-                        >
-                          <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
-                            <path d="M3 6h18M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
-                          </svg>
-                        </Button>
-                      </div>
-                    ))}
-                </div>
-                <Button onClick={() => setIsLeaderboardOpen(false)} variant="outline" className="w-full border-color-3 text-color-2 hover:bg-color-4">
-                  Close
-                </Button>
-              </>
+            {isHintsOpen && (
+              <HintsModal
+                onClose={() => setIsHintsOpen(false)}
+                onGiveHint={giveHint}
+                onShowMismatches={showMismatches}
+                onValidateGrid={validateGrid}
+                onAddAutoNotes={addAutoNotes}
+              />
+            )}
+            {isRestartOpen && (
+              <RestartModal
+                onClose={() => setIsRestartOpen(false)}
+                onRestart={restart}
+              />
+            )}
+            {isThemeOpen && (
+              <ThemeModal
+                onClose={() => setIsThemeOpen(false)}
+                onSelectTheme={(t) => {
+                  setTheme(t);
+                  setIsThemeOpen(false);
+                }}
+                currentTheme={theme}
+              />
+            )}
+            {isLeaderboardOpen && (
+              <LeaderboardModal
+                onClose={() => setIsLeaderboardOpen(false)}
+                entries={leaderboardEntries}
+                selectedDifficulty={selectedLeaderboardDifficulty}
+                onChangeDifficulty={(direction) => {
+                  const difficulties: Difficulty[] = ['easy', 'medium', 'hard'];
+                  const currentIndex = difficulties.indexOf(selectedLeaderboardDifficulty);
+                  const newIndex = direction === 'prev'
+                    ? (currentIndex - 1 + 3) % 3
+                    : (currentIndex + 1) % 3;
+                  setSelectedLeaderboardDifficulty(difficulties[newIndex]);
+                }}
+                onDeleteEntry={(index) => {
+                  const newEntries = leaderboardEntries.filter((_, i) => i !== index);
+                  setLeaderboardEntries(newEntries);
+                  localStorage.setItem('sudoku-leaderboard', JSON.stringify(newEntries));
+                }}
+                formatTime={formatTime}
+              />
             )}
           </div>
         </div>
