@@ -1,26 +1,14 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
-  :root {
-    --color-1: 222 47% 11%;
-    --color-2: 213 94% 68%;
-    --color-3: 220 100% 78%;
-    --color-4: 217 71% 53%;
-    --color-5: 210 100% 50%;
-    --color-6: 0 100% 65%;
-  }
-}
-
-@layer base {
   * {
-    @apply border-color-3;
+    @apply border-border;
   }
 
   body {
-    @apply bg-color-1 text-color-2;
+    @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 }

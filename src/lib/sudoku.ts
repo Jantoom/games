@@ -1,9 +1,13 @@
 type Grid = number[][];
 type Position = { row: number; col: number };
 
-export const generateSudoku = (difficulty: 'easy' | 'medium' | 'hard'): { puzzle: number[][], solution: number[][] } => {
+export const generateSudoku = (
+  difficulty: "easy" | "medium" | "hard"
+): { puzzle: number[][]; solution: number[][] } => {
   // First, generate a solved grid
-  const solution = Array(9).fill(null).map(() => Array(9).fill(0));
+  const solution = Array(9)
+    .fill(null)
+    .map(() => Array(9).fill(0));
   fillGrid(solution);
 
   // Then remove numbers based on difficulty
@@ -13,7 +17,7 @@ export const generateSudoku = (difficulty: 'easy' | 'medium' | 'hard'): { puzzle
     hard: 55,
   }[difficulty];
 
-  const puzzle = solution.map(row => [...row]);
+  const puzzle = solution.map((row) => [...row]);
   let count = 0;
 
   while (count < numToRemove) {
@@ -55,7 +59,12 @@ const findEmptyCell = (grid: Grid): Position | null => {
   return null;
 };
 
-export const isValidPlacement = (grid: Grid, row: number, col: number, num: number): boolean => {
+export const isValidPlacement = (
+  grid: Grid,
+  row: number,
+  col: number,
+  num: number
+): boolean => {
   // Check row
   for (let x = 0; x < 9; x++) {
     if (grid[row][x] === num) return false;
@@ -85,4 +94,29 @@ const shuffle = <T>(array: T[]): T[] => {
     [arr[i], arr[j]] = [arr[j], arr[i]];
   }
   return arr;
+};
+
+export const toBlocks = (grid: Grid): number[][][] => {
+  // Ensure grid is 9x9
+  if (grid.length !== 9 || grid.some(row => row.length !== 9)) {
+    return [];
+  }
+
+  const blocks: number[][][] = [];
+
+  // Loop over the 3x3 blocks
+  for (let blockRow = 0; blockRow < 3; blockRow++) {
+    for (let blockCol = 0; blockCol < 3; blockCol++) {
+      const block: number[][] = [];
+      // For each block, loop over the 3 rows inside the block.
+      for (let i = 0; i < 3; i++) {
+        const rowIndex = blockRow * 3 + i;
+        // Slice out the 3 columns that belong to this block.
+        const blockRowData = grid[rowIndex].slice(blockCol * 3, blockCol * 3 + 3);
+        block.push(blockRowData);
+      }
+      blocks.push(block);
+    }
+  }
+  return blocks;
 };

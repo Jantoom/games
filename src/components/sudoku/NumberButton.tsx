@@ -22,9 +22,9 @@ export const NumberButton: React.FC<NumberButtonProps> = ({
       onClick={onClick}
       className={`
         w-[50px] h-[50px] p-0 relative rounded-full
-        border-color-3 text-color-2
-        hover:bg-color-4
-        ${isSelected ? 'bg-color-5 text-color-1' : 'bg-color-1'}
+        border-border text-foreground
+        hover:bg-secondary
+        ${isSelected ? 'bg-primary text-background' : 'bg-background'}
       `}
     >
       <div className="absolute inset-0 flex flex-col items-center justify-center">
@@ -34,7 +34,7 @@ export const NumberButton: React.FC<NumberButtonProps> = ({
           <>
             <span className="text-2xl font-medium">{number}</span>
             {remainingCount !== undefined && remainingCount > 0 && (
-              <span className="text-xs absolute bottom-1">{remainingCount}</span>
+              <span className="text-xs absolute bottom-0">{remainingCount}</span>
             )}
           </>
         )}

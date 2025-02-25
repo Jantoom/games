@@ -17,19 +17,19 @@ export const HintsModal: React.FC<HintsModalProps> = ({
   onAddAutoNotes,
 }) => (
   <>
-    <Button onClick={onGiveHint} variant="outline" className="w-full border-color-3 text-color-2 hover:bg-color-4">
+    <Button onClick={onGiveHint} variant="outline" className="w-full border-border text-foreground hover:bg-secondary">
       Hint
     </Button>
-    <Button onClick={onShowMismatches} variant="outline" className="w-full border-color-3 text-color-2 hover:bg-color-4">
+    <Button onClick={onShowMismatches} variant="outline" className="w-full border-border text-foreground hover:bg-secondary">
       Show Mismatches
     </Button>
-    <Button onClick={onValidateGrid} variant="outline" className="w-full border-color-3 text-color-2 hover:bg-color-4">
+    <Button onClick={onValidateGrid} variant="outline" className="w-full border-border text-foreground hover:bg-secondary">
       Validate Grid
     </Button>
-    <Button onClick={onAddAutoNotes} variant="outline" className="w-full border-color-3 text-color-2 hover:bg-color-4">
+    <Button onClick={onAddAutoNotes} variant="outline" className="w-full border-border text-foreground hover:bg-secondary">
       Auto Notes
     </Button>
-    <Button onClick={onClose} variant="outline" className="w-full border-color-3 text-color-2 hover:bg-color-4">
+    <Button onClick={onClose} variant="outline" className="w-full border-border text-foreground hover:bg-secondary">
       Close
     </Button>
   </>

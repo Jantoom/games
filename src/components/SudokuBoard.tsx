@@ -8,9 +8,10 @@ import { HintsModal } from "./sudoku/modals/HintsModal";
 import { RestartModal } from "./sudoku/modals/RestartModal";
 import { ThemeModal } from "./sudoku/modals/ThemeModal";
 import { LeaderboardModal } from "./sudoku/modals/LeaderboardModal";
-import { Mode, Notes, GridHistory, Difficulty, Theme, LeaderboardEntry } from "./sudoku/types";
+import { Mode, Notes, GridHistory, Difficulty, Theme, LeaderboardEntry, themeColors } from "./sudoku/types";
 
 export const SudokuBoard = () => {
+  const [seed, setSeed] = useState(0);
   const [grid, setGrid] = useState<number[][]>([]);
   const [originalGrid, setOriginalGrid] = useState<number[][]>([]);
   const [solvedGrid, setSolvedGrid] = useState<number[][]>([]);
@@ -25,6 +26,7 @@ export const SudokuBoard = () => {
   const [isRestartOpen, setIsRestartOpen] = useState(false);
   const [isThemeOpen, setIsThemeOpen] = useState(false);
   const [isLeaderboardOpen, setIsLeaderboardOpen] = useState(false);
+  const [errors, setErrors] = useState<string[]>([]);
   const [theme, setTheme] = useState<Theme>('light-blue');
   const [leaderboardEntries, setLeaderboardEntries] = useState<LeaderboardEntry[]>(() => {
     const saved = localStorage.getItem('sudoku-leaderboard');
@@ -34,6 +36,7 @@ export const SudokuBoard = () => {
 
   const newGame = (newDifficulty: Difficulty) => {
     const { puzzle, solution } = generateSudoku(newDifficulty);
+    setSeed(Math.random());
     setIsActive(true);
     setTimer(0);
     setDifficulty(newDifficulty);
@@ -75,6 +78,45 @@ export const SudokuBoard = () => {
     setIsHintsOpen(false);
   };
 
+  const showMismatches = () => {
+    const mismatchCells: string[] = [];
+    for (let row = 0; row < 9; row++) {
+      for (let col = 0; col < 9; col++) {
+        if (grid[row][col] !== 0) {
+          // Check row
+          for (let x = 0; x < 9; x++) {
+            if (x !== col && grid[row][x] === grid[row][col]) {
+              mismatchCells.push(`${row}-${col}`);
+              mismatchCells.push(`${row}-${x}`);
+            }
+          }
+          // Check column
+          for (let y = 0; y < 9; y++) {
+            if (y !== row && grid[y][col] === grid[row][col]) {
+              mismatchCells.push(`${row}-${col}`);
+              mismatchCells.push(`${y}-${col}`);
+            }
+          }
+          // Check box
+          const boxRow = Math.floor(row / 3) * 3;
+          const boxCol = Math.floor(col / 3) * 3;
+          for (let i = 0; i < 3; i++) {
+            for (let j = 0; j < 3; j++) {
+              const y = boxRow + i;
+              const x = boxCol + j;
+              if (y !== row && x !== col && grid[y][x] === grid[row][col]) {
+                mismatchCells.push(`${row}-${col}`);
+                mismatchCells.push(`${y}-${x}`);
+              }
+            }
+          }
+        }
+      }
+    }
+    showErrorAnimation([...new Set(mismatchCells)]);
+    setIsHintsOpen(false);
+  };
+
   const validateGrid = () => {
     const incorrectCells: string[] = [];
     for (let row = 0; row < 9; row++) {
@@ -95,6 +137,10 @@ export const SudokuBoard = () => {
   };
 
   useEffect(() => {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+      setTheme(savedTheme as Theme);
+    }
     newGame('easy');
   }, []);
 
@@ -139,28 +185,22 @@ export const SudokuBoard = () => {
   };
 
   const showErrorAnimation = (cells: string[]) => {
-    cells.forEach(pos => {
-      const errorCircle = document.querySelector(`[data-error="${pos}"]`);
-      if (errorCircle) {
-        errorCircle.classList.remove('hidden');
-        let count = 0;
-        const animate = () => {
-          if (count >= 3) {
-            errorCircle.classList.add('hidden');
-            return;
-          }
-          errorCircle.classList.remove('opacity-0');
-          setTimeout(() => {
-            errorCircle.classList.add('opacity-0');
-            setTimeout(() => {
-              count++;
-              animate();
-            }, 200);
-          }, 200);
-        };
-        animate();
+    let count = 0;
+    const animate = () => {
+      if (count >= 3) {
+        setErrors([]);
+        return;
       }
-    });
+      setErrors(cells);
+      setTimeout(() => {
+        setErrors([]);
+        setTimeout(() => {
+          count++;
+          animate();
+        }, 700);
+      }, 700);
+    };
+    animate();
   };
 
   const saveState = () => {
@@ -208,7 +248,7 @@ export const SudokuBoard = () => {
     } else {
       saveState();
       const newGrid = grid.map(r => [...r]);
-      newGrid[row][col] = selectedNumber;
+      newGrid[row][col] = grid[row][col] !== selectedNumber ? selectedNumber : 0;
       setGrid(newGrid);
       if (selectedNumber === 0) {
         const key = `${row}-${col}`;
@@ -234,12 +274,8 @@ export const SudokuBoard = () => {
     }
   };
 
-  const isGridComplete = () => {
-    return grid.every(row => row.every(cell => cell !== 0));
-  };
-
   useEffect(() => {
-    if (isGridComplete()) {
+    if (grid.every(row => row.every(cell => cell !== 0))) {
       setIsActive(false);
       const newEntry: LeaderboardEntry = {
         difficulty,
@@ -252,24 +288,28 @@ export const SudokuBoard = () => {
       localStorage.setItem('sudoku-leaderboard', JSON.stringify(newEntries));
       setIsLeaderboardOpen(true);
     }
-  }, [grid]);
+  }, [grid, difficulty, leaderboardEntries, timer]);
 
   useEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem("theme", theme);
+    for (const [key, value] of Object.entries(themeColors[theme])) {
+      document.documentElement.style.setProperty(`--${key}`, value);
+    }
   }, [theme]);
 
+
   return (
-    <div className="flex flex-col items-center justify-between min-h-screen py-8 px-4">
-      <div className="flex flex-col items-center gap-8 w-full max-w-[424px]">
+    <div key={seed} className="flex flex-col h-screen py-8">
+      <div className="flex flex-col items-center justify-between h-full w-full ">
         <div className="flex justify-between items-center w-full">
-          <span className="text-lg font-medium text-color-2">{formatTime(timer)}</span>
+          <span className="text-lg font-medium text-foreground">{formatTime(timer)}</span>
           <DifficultyButtons
             currentDifficulty={difficulty}
             onSelectDifficulty={(diff) => newGame(diff)}
           />
         </div>
 
-        <div className="grid grid-cols-9 bg-color-5 gap-[1px] p-[1px] rounded-lg shadow-lg overflow-hidden w-full">
+        <div className="grid grid-cols-9 aspect-square bg-primary">
           {grid.map((row, rowIndex) =>
             row.map((cell, colIndex) => (
               <SudokuCell
@@ -278,7 +318,8 @@ export const SudokuBoard = () => {
                 colIndex={colIndex}
                 cell={cell}
                 isOriginal={originalGrid[rowIndex][colIndex] !== 0}
-                isHighlighted={selectedNumber !== null && cell === selectedNumber}
+                isHighlighted={selectedNumber !== null && selectedNumber !== 0 && (cell === selectedNumber || notes[`${rowIndex}-${colIndex}`]?.has(selectedNumber))}
+                isFlagged={errors.includes(`${rowIndex}-${colIndex}`)}
                 notes={notes[`${rowIndex}-${colIndex}`]}
                 onClick={() => handleCellClick(rowIndex, colIndex)}
               />
@@ -286,7 +327,7 @@ export const SudokuBoard = () => {
           )}
         </div>
 
-        <div className="grid grid-rows-2 grid-cols-5 gap-3 w-[280px]">
+        <div className="grid grid-rows-2 grid-cols-5 gap-3 justify-items-center w-2/3">
           <NumberButton
             number="eraser"
             isSelected={selectedNumber === 0}
@@ -320,8 +361,8 @@ export const SudokuBoard = () => {
       </div>
 
       {(isHintsOpen || isRestartOpen || isThemeOpen || isLeaderboardOpen) && (
-        <div className="fixed inset-0 bg-color-1/50 flex items-center justify-center z-50">
-          <div className="bg-color-1 p-6 rounded-lg shadow-lg space-y-4 border border-color-3 w-[340px]">
+        <div className="fixed inset-0 bg-background/50 flex items-center justify-center z-50">
+          <div className="bg-background p-6 rounded-lg shadow-lg space-y-4 border w-[340px]">
             {isHintsOpen && (
               <HintsModal
                 onClose={() => setIsHintsOpen(false)}

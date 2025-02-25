@@ -8,6 +8,7 @@ interface SudokuCellProps {
   cell: number;
   isOriginal: boolean;
   isHighlighted: boolean;
+  isFlagged: boolean;
   notes: CellNotes | undefined;
   onClick: () => void;
 }
@@ -18,92 +19,52 @@ export const SudokuCell: React.FC<SudokuCellProps> = ({
   cell,
   isOriginal,
   isHighlighted,
+  isFlagged,
   notes,
   onClick,
 }) => {
-  const [prevHighlighted, setPrevHighlighted] = useState(isHighlighted);
-  const [showDeselect, setShowDeselect] = useState(false);
-  const randomDelay = `${Math.random() * 0.2}s`;
-
+  const [isMounted, setIsMounted] = useState(false);
+  const randomDelay = `${Math.random() * 0.1}s`;
+  
   useEffect(() => {
-    if (prevHighlighted && !isHighlighted) {
-      setShowDeselect(true);
-      setTimeout(() => setShowDeselect(false), 200);
-    }
-    setPrevHighlighted(isHighlighted);
-  }, [isHighlighted, prevHighlighted]);
-
-  const insetBorders = `
-    ${rowIndex === 0 ? '' : 'border-t-[1px] mt-[2px]'}
-    ${colIndex === 0 ? '' : 'border-l-[1px] ml-[2px]'}
-    ${rowIndex === 8 ? '' : 'border-b-[1px] mb-[2px]'}
-    ${colIndex === 8 ? '' : 'border-r-[1px] mr-[2px]'}
-  `;
-
-  const blockBorder = `
-    ${rowIndex % 3 === 0 ? 'border-t-[1px]' : ''}
-    ${colIndex % 3 === 0 ? 'border-l-[1px]' : ''}
-    ${rowIndex % 3 === 2 ? 'border-b-[1px]' : ''}
-    ${colIndex % 3 === 2 ? 'border-r-[1px]' : ''}
-  `;
+    setIsMounted(true);
+  }, []);
 
   return (
-    <div
-      data-pos={`${rowIndex}-${colIndex}`}
-      className={`
-        w-[45px] h-[45px] flex items-center justify-center
-        bg-color-1
-        hover:bg-color-4
-        cursor-pointer transition-colors duration-200
-        ${blockBorder}
-        ${insetBorders}
-        border-color-4
-        relative
-      `}
-      onClick={onClick}
-    >
-      {cell !== 0 ? (
-        <div className="relative w-8 h-8 flex items-center justify-center">
-          <div className={`
-            absolute inset-0 rounded-full
-            ${isOriginal ? 'bg-color-4' : ''}
-          `} />
-          {isHighlighted && (
-            <div 
-              className="absolute inset-0 rounded-full bg-color-5 animate-scale-fade"
-              style={{ animationDelay: randomDelay }}
-            />
-          )}
-          {showDeselect && (
-            <div 
-              className="absolute inset-0 rounded-full bg-color-5 animate-scale-out"
-              style={{ animationDelay: randomDelay }}
-            />
-          )}
-          <div 
-            data-error={`${rowIndex}-${colIndex}`}
-            className="absolute inset-0 rounded-full bg-color-6 opacity-0 hidden"
-          />
-          <span className={`
-            relative z-10 text-xl font-medium
-            ${isOriginal ? 'text-color-3' : 'text-color-5'}
-            ${isHighlighted || showDeselect ? 'text-color-1' : ''}
-          `}>
+    <div className="relative w-full h-full">
+      <div
+      className={`flex items-center justify-center p-1.5 bg-background relative ${!isOriginal ? 'cursor-pointer' : ''}`}
+      onClick={onClick}>
+        <div 
+          className={`relative w-11 h-11 flex items-center justify-center transition duration-300 ease-in-out ${isMounted ? 'scale-100' : 'scale-0'}`} 
+          style={{transitionDelay: randomDelay}}>
+        <div className={`absolute inset-0 rounded-full ${isOriginal ? 'bg-secondary' : ''}`} />
+        <div 
+          className={`absolute inset-0 rounded-full transition duration-300 ease-in-out ${isHighlighted ? 'scale-100 opacity-100' : 'scale-0 opacity-0'} bg-primary`} 
+          style={{transitionDelay: randomDelay}}/>
+        <div className={`absolute inset-0 rounded-full transition duration-700 ease-in-out ${isFlagged ? 'bg-destructive' : ''}`} />
+        {cell !== 0 ? 
+          <span 
+            className={`absolute z-10 text-xl font-medium select-none transition duration-300 ease-in-out ${isHighlighted || isFlagged ? 'text-background' : isOriginal ? 'text-border' : 'text-primary'}`} 
+            style={{transitionDelay: randomDelay}}>
             {cell}
-          </span>
+          </span> :
+          <div className="absolute grid grid-cols-3 p-2 w-full">
+            {Array.from({ length: 9 }).map((_, i) => (
+              <span
+                key={i}
+                className={`flex items-center justify-center text-[10px] select-none transition duration-300 ease-in-out ${notes?.has(i + 1) ? 'opacity-100' : 'opacity-0'} ${isHighlighted ? 'text-background' : 'text-primary'}`} 
+                style={{transitionDelay: randomDelay}}>
+                {i + 1}
+              </span>
+            ))}
+          </div>}
         </div>
-      ) : (
-        <div className="grid grid-cols-3 gap-[2px] p-1 w-full h-full">
-          {Array.from({ length: 9 }).map((_, i) => (
-            <div
-              key={i}
-              className="flex items-center justify-center text-[8px] text-color-5"
-            >
-              {notes?.has(i + 1) ? i + 1 : ''}
-            </div>
-          ))}
-        </div>
-      )}
+      </div>
+      { rowIndex % 3 !== 0 ? <div className="absolute top-0 left-2 right-2 h-[1px] bg-secondary transform -translate-y-[0.5px]"/> :
+        rowIndex === 3 || rowIndex === 6 ? <div className="absolute top-0 left-0 right-0 h-[2px] bg-primary transform -translate-y-[1px]"/> : <></> }
+      { colIndex % 3 !== 0 ? <div className="absolute left-0 top-2 bottom-2 w-[1px] bg-secondary transform -translate-x-[0.5px]"/> :
+        colIndex === 3 || colIndex === 6 ? <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-primary transform -translate-x-[1px]"/> : <></> }
     </div>
   );
 };

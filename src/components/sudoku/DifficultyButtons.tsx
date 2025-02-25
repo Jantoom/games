@@ -19,8 +19,8 @@ export const DifficultyButtons: React.FC<DifficultyButtonsProps> = ({
         variant={currentDifficulty === diff ? 'default' : 'outline'}
         className={
           currentDifficulty === diff
-            ? 'bg-color-5 text-color-1 hover:bg-color-5/90'
-            : 'border-color-3 text-color-2 hover:bg-color-4'
+            ? 'bg-primary text-background hover:bg-primary/90'
+            : 'border-border text-foreground hover:bg-secondary'
         }
       >
         {diff.charAt(0).toUpperCase() + diff.slice(1)}
