@@ -78,6 +78,9 @@ export default {
         "scale-fade": "scale-fade 0.2s cubic-bezier(0.4, 0, 0.2, 1) both",
         "scale-out": "scale-out 0.2s cubic-bezier(0.4, 0, 0.2, 1) both",
       },
+      fontSize: {
+        "2xs": "0.625rem",
+      },
     },
   },
   // eslint-disable-next-line @typescript-eslint/no-require-imports

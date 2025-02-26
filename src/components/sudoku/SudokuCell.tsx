@@ -33,7 +33,7 @@ export const SudokuCell: React.FC<SudokuCellProps> = ({
   return (
     <div className="relative w-full h-full">
       <div
-      className={`flex items-center justify-center p-1.5 bg-background relative ${!isOriginal ? 'cursor-pointer' : ''}`}
+      className={`flex items-center justify-center p-1.5 relative ${!isOriginal ? 'cursor-pointer' : ''}`}
       onClick={onClick}>
         <div 
           className={`relative w-11 h-11 flex items-center justify-center transition duration-300 ease-in-out ${isMounted ? 'scale-100' : 'scale-0'}`} 
@@ -42,23 +42,25 @@ export const SudokuCell: React.FC<SudokuCellProps> = ({
         <div 
           className={`absolute inset-0 rounded-full transition duration-300 ease-in-out ${isHighlighted ? 'scale-100 opacity-100' : 'scale-0 opacity-0'} bg-primary`} 
           style={{transitionDelay: randomDelay}}/>
-        <div className={`absolute inset-0 rounded-full transition duration-700 ease-in-out ${isFlagged ? 'bg-destructive' : ''}`} />
-        {cell !== 0 ? 
-          <span 
-            className={`absolute z-10 text-xl font-medium select-none transition duration-300 ease-in-out ${isHighlighted || isFlagged ? 'text-background' : isOriginal ? 'text-border' : 'text-primary'}`} 
-            style={{transitionDelay: randomDelay}}>
-            {cell}
-          </span> :
-          <div className="absolute grid grid-cols-3 p-2 w-full">
+        <div className={`absolute inset-0 rounded-full transition duration-500 ease-in-out ${isFlagged ? 'bg-destructive' : ''}`} />
+          {Array.from({ length: 9 }).map((_, i) => (
+            <span
+              key={i}
+              className={`absolute text-xl font-medium select-none transition duration-300 ease-in-out ${cell === i + 1 ? 'opacity-100' : 'opacity-0'} ${isHighlighted || isFlagged ? 'text-background' : isOriginal ? 'text-border' : 'text-primary'}`} 
+              style={{transitionDelay: randomDelay}}>
+              {i + 1}
+            </span>
+          ))}
+          <div className="absolute grid grid-cols-3 gap-x-1 gap-y-0.5 justify-items-center">
             {Array.from({ length: 9 }).map((_, i) => (
               <span
                 key={i}
-                className={`flex items-center justify-center text-[10px] select-none transition duration-300 ease-in-out ${notes?.has(i + 1) ? 'opacity-100' : 'opacity-0'} ${isHighlighted ? 'text-background' : 'text-primary'}`} 
+                className={`text-2xs font-medium leading-none select-none transition duration-300 ease-in-out ${notes?.has(i + 1) ? 'opacity-100' : 'opacity-0'} ${isHighlighted ? 'text-background' : 'text-primary'}`} 
                 style={{transitionDelay: randomDelay}}>
                 {i + 1}
               </span>
             ))}
-          </div>}
+          </div>
         </div>
       </div>
       { rowIndex % 3 !== 0 ? <div className="absolute top-0 left-2 right-2 h-[1px] bg-secondary transform -translate-y-[0.5px]"/> :

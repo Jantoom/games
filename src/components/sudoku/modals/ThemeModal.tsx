@@ -17,13 +17,13 @@ export const ThemeModal: React.FC<ThemeModalProps> = ({ onClose, onSelectTheme, 
           key={t}
           onClick={() => onSelectTheme(t)}
           variant="outline"
-          className={`w-full border-border text-foreground ${currentTheme === t ? 'bg-primary text-background' : 'hover:bg-secondary'}`}
+          className={`w-full border-border ${currentTheme === t ? 'bg-primary text-background' : ''} hover:bg-secondary`}
         >
           {t.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
         </Button>
       ))}
     </div>
-    <Button onClick={onClose} variant="outline" className="w-full border-border text-foreground hover:bg-secondary">
+    <Button onClick={onClose} variant="outline" className="w-full hover:bg-secondary">
       Close
     </Button>
   </>

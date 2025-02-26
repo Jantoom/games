@@ -96,27 +96,35 @@ const shuffle = <T>(array: T[]): T[] => {
   return arr;
 };
 
-export const toBlocks = (grid: Grid): number[][][] => {
-  // Ensure grid is 9x9
-  if (grid.length !== 9 || grid.some(row => row.length !== 9)) {
-    return [];
-  }
+export const getRelated = (
+  row: number,
+  col: number
+): string[] => {
+  const relatedCells = new Set<string>();
 
-  const blocks: number[][][] = [];
-
-  // Loop over the 3x3 blocks
-  for (let blockRow = 0; blockRow < 3; blockRow++) {
-    for (let blockCol = 0; blockCol < 3; blockCol++) {
-      const block: number[][] = [];
-      // For each block, loop over the 3 rows inside the block.
-      for (let i = 0; i < 3; i++) {
-        const rowIndex = blockRow * 3 + i;
-        // Slice out the 3 columns that belong to this block.
-        const blockRowData = grid[rowIndex].slice(blockCol * 3, blockCol * 3 + 3);
-        block.push(blockRowData);
-      }
-      blocks.push(block);
+  // Add all cells in the same row
+  for (let c = 0; c < 9; c++) {
+    if (c !== col) {
+      relatedCells.add(`${row}-${c}`);
     }
   }
-  return blocks;
-};
+
+  // Add all cells in the same column
+  for (let r = 0; r < 9; r++) {
+    if (r !== row) {
+      relatedCells.add(`${r}-${col}`);
+    }
+  }
+
+  // Add all cells in the same 3x3 box
+  const boxStartRow = Math.floor(row / 3) * 3;
+  const boxStartCol = Math.floor(col / 3) * 3;
+  for (let r = boxStartRow; r < boxStartRow + 3; r++) {
+    for (let c = boxStartCol; c < boxStartCol + 3; c++) {
+      relatedCells.add(`${r}-${c}`);
+    }
+  }
+
+  delete relatedCells[`${row}-${col}`];
+  return Array.from(relatedCells);
+}

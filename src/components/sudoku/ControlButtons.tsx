@@ -10,9 +10,9 @@ interface ControlButtonsProps {
   onTheme: () => void;
   onLeaderboard: () => void;
   isPencilMode: boolean;
-  canUndo: boolean;
   isHintsOpen: boolean;
   isRestartOpen: boolean;
+  canUndo: boolean;
   isThemeOpen: boolean;
   isLeaderboardOpen: boolean;
 }
@@ -25,33 +25,33 @@ export const ControlButtons: React.FC<ControlButtonsProps> = ({
   onTheme,
   onLeaderboard,
   isPencilMode,
-  canUndo,
   isHintsOpen,
   isRestartOpen,
+  canUndo,
   isThemeOpen,
   isLeaderboardOpen,
 }) => (
-  <div className="flex justify-evenly gap-4 w-full">
+  <>
     <Button
-      variant="ghost"
+      variant={isRestartOpen ? 'default' : 'ghost'}
       onClick={onRestart}
-      className={`w-[45px] h-[45px] p-0 rounded-full text-foreground hover:bg-secondary ${isRestartOpen ? 'bg-primary text-background' : ''}`}
+      className={`w-10 h-10 rounded-full hover:bg-secondary ${isRestartOpen ? 'text-background' : ''}`}
     >
       <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
         <path d="M3 12a9 9 0 1 1 9 9M3 12h9" />
       </svg>
     </Button>
     <Button
-      variant="ghost"
+      variant={isHintsOpen ? 'default' : 'ghost'}
       onClick={onHints}
-      className={`w-[45px] h-[45px] p-0 rounded-full text-foreground hover:bg-secondary ${isHintsOpen ? 'bg-primary text-background' : ''}`}
+      className={`w-10 h-10 rounded-full hover:bg-secondary ${isHintsOpen ? 'text-background' : ''}`}
     >
       <Lightbulb className="h-5 w-5" />
     </Button>
     <Button
-      variant="ghost"
+      variant={isPencilMode ? 'default' : 'ghost'}
       onClick={onPencil}
-      className={`w-[45px] h-[45px] p-0 rounded-full text-foreground hover:bg-secondary ${isPencilMode ? 'bg-primary text-background' : ''}`}
+      className={`w-10 h-10 rounded-full hover:bg-secondary ${isPencilMode ? 'text-background' : ''}`}
     >
       <Pencil className="h-5 w-5" />
     </Button>
@@ -59,23 +59,23 @@ export const ControlButtons: React.FC<ControlButtonsProps> = ({
       variant="ghost"
       onClick={onUndo}
       disabled={!canUndo}
-      className="w-[45px] h-[45px] p-0 rounded-full text-foreground hover:bg-secondary active:bg-primary active:text-background transition-colors duration-200"
+      className="w-10 h-10 rounded-full hover:bg-secondary active:bg-primary active:text-background transition-colors duration-200"
     >
       <Undo className="h-5 w-5" />
     </Button>
     <Button
-      variant="ghost"
+      variant={isThemeOpen ? 'default' : 'ghost'}
       onClick={onTheme}
-      className={`w-[45px] h-[45px] p-0 rounded-full text-foreground hover:bg-secondary ${isThemeOpen ? 'bg-primary text-background' : ''}`}
+      className={`w-10 h-10 rounded-full hover:bg-secondary ${isThemeOpen ? 'text-background' : ''}`}
     >
       <Palette className="h-5 w-5" />
     </Button>
     <Button
-      variant="ghost"
+      variant={isLeaderboardOpen ? 'default' : 'ghost'}
       onClick={onLeaderboard}
-      className={`w-[45px] h-[45px] p-0 rounded-full text-foreground hover:bg-secondary ${isLeaderboardOpen ? 'bg-primary text-background' : ''}`}
+      className={`w-10 h-10 rounded-full hover:bg-secondary ${isLeaderboardOpen ? 'text-background' : ''}`}
     >
       <Trophy className="h-5 w-5" />
     </Button>
-  </div>
+  </>
 );

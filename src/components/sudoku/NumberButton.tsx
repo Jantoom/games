@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Eraser } from "lucide-react";
 
 interface NumberButtonProps {
-  number: number | 'eraser';
+  number: number;
   isSelected: boolean;
   remainingCount?: number;
   onClick: () => void;
@@ -22,13 +22,12 @@ export const NumberButton: React.FC<NumberButtonProps> = ({
       onClick={onClick}
       className={`
         w-[50px] h-[50px] p-0 relative rounded-full
-        border-border text-foreground
         hover:bg-secondary
         ${isSelected ? 'bg-primary text-background' : 'bg-background'}
       `}
     >
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        {number === 'eraser' ? (
+        {number === 0 ? (
           <Eraser className="h-6 w-6" />
         ) : (
           <>

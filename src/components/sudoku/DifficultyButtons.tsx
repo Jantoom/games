@@ -11,17 +11,13 @@ export const DifficultyButtons: React.FC<DifficultyButtonsProps> = ({
   currentDifficulty,
   onSelectDifficulty,
 }) => (
-  <div className="flex gap-2">
+  <div className="flex justify-between w-1/2">
     {(['easy', 'medium', 'hard'] as const).map((diff) => (
       <Button
         key={diff}
         onClick={() => onSelectDifficulty(diff)}
-        variant={currentDifficulty === diff ? 'default' : 'outline'}
-        className={
-          currentDifficulty === diff
-            ? 'bg-primary text-background hover:bg-primary/90'
-            : 'border-border text-foreground hover:bg-secondary'
-        }
+        variant='outline'
+        className={`w-20 border border-border hover:bg-secondary ${currentDifficulty === diff ? 'bg-primary text-background' : ''}`}
       >
         {diff.charAt(0).toUpperCase() + diff.slice(1)}
       </Button>
