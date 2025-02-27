@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Difficulty, LeaderboardEntry } from "../types";
+import { Difficulty, LeaderboardEntry } from "../../../lib/types";
 import { formatTime } from "@/lib/utils";
 
 interface LeaderboardModalProps {

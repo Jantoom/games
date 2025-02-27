@@ -1,6 +1,6 @@
 
 import { Button } from "@/components/ui/button";
-import { Difficulty } from "./types";
+import { Difficulty } from "../../lib/types";
 
 interface DifficultyButtonsProps {
   currentDifficulty: Difficulty;

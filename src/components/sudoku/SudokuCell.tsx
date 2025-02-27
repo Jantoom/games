@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { CellNotes } from './types';
+import { CellNotes } from '../../lib/types';
 
 interface SudokuCellProps {
   rowIndex: number;
