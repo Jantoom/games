@@ -20,69 +20,57 @@ export default {
     },
     extend: {
       colors: {
-        border: "var(--border)",
-        input: "var(--input)",
-        ring: "var(--ring)",
-        background: "var(--background)",
-        foreground: "var(--foreground)",
+        border: "hsl(var(--border))",
+        input: "hsl(var(--input))",
+        ring: "hsl(var(--ring))",
+        background: "hsl(var(--background))",
+        foreground: "hsl(var(--foreground))",
+        game: {
+          highlight: "#E3F2FD", // Lighter blue for related cells
+          active: "#90CAF9",    // Medium blue for selected cell
+          conflict: "#FFE0E0",  // Soft red for conflicts
+          pencil: "#64B5F6",    // Blue for pencil marks
+          gridline: "#1E88E5",  // Darker blue for 3x3 grid lines
+        },
         primary: {
-          DEFAULT: "var(--primary)",
-          foreground: "var(--primary-foreground)",
+          DEFAULT: "#1976D2",   // Main blue color
+          foreground: "#FFFFFF",
         },
         secondary: {
-          DEFAULT: "var(--secondary)",
-          foreground: "var(--secondary-foreground)",
+          DEFAULT: "#BBDEFB",
+          foreground: "#1565C0",
         },
         destructive: {
-          DEFAULT: "var(--destructive)",
-          foreground: "var(--destructive-foreground)",
+          DEFAULT: "hsl(var(--destructive))",
+          foreground: "hsl(var(--destructive-foreground))",
         },
         muted: {
-          DEFAULT: "var(--muted)",
-          foreground: "var(--muted-foreground)",
+          DEFAULT: "#E3F2FD",
+          foreground: "#1565C0",
         },
         accent: {
-          DEFAULT: "var(--accent)",
-          foreground: "var(--accent-foreground)",
+          DEFAULT: "#2196F3",
+          foreground: "#FFFFFF",
         },
         popover: {
-          DEFAULT: "var(--popover)",
-          foreground: "var(--popover-foreground)",
+          DEFAULT: "hsl(var(--popover))",
+          foreground: "hsl(var(--popover-foreground))",
         },
         card: {
-          DEFAULT: "var(--card)",
-          foreground: "var(--card-foreground)",
+          DEFAULT: "hsl(var(--card))",
+          foreground: "hsl(var(--card-foreground))",
         },
       },
       keyframes: {
-        "accordion-down": {
-          from: { height: "0" },
-          to: { height: "var(--radix-accordion-content-height)" },
-        },
-        "accordion-up": {
-          from: { height: "var(--radix-accordion-content-height)" },
-          to: { height: "0" },
-        },
-        "scale-fade": {
-          "0%": { transform: "scale(0)", opacity: "0" },
+        "number-pop": {
+          "0%": { transform: "scale(0.8)", opacity: "0" },
           "100%": { transform: "scale(1)", opacity: "1" },
-        },
-        "scale-out": {
-          "0%": { transform: "scale(1)", opacity: "1" },
-          "100%": { transform: "scale(0)", opacity: "0" },
         },
       },
       animation: {
-        "accordion-down": "accordion-down 0.2s ease-out",
-        "accordion-up": "accordion-up 0.2s ease-out",
-        "scale-fade": "scale-fade 0.2s cubic-bezier(0.4, 0, 0.2, 1) both",
-        "scale-out": "scale-out 0.2s cubic-bezier(0.4, 0, 0.2, 1) both",
-      },
-      fontSize: {
-        "2xs": "0.625rem",
+        "number-pop": "number-pop 0.2s ease-out forwards",
       },
     },
   },
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
   plugins: [require("tailwindcss-animate")],
 } satisfies Config;

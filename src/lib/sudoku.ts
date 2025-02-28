@@ -1,13 +1,11 @@
-import { Difficulty, Grid, Notes } from "./types";
-import { shuffle } from "./utils";
 
-const cellCoords: {row: number, col: number}[] = 
-  [...Array(9)].flatMap((_, row) => [...Array(9)].map((_, col) => ({ row, col })));
+type Grid = number[][];
+type Position = { row: number; col: number };
 
-export const generateSudoku = (difficulty: Difficulty): { puzzle: Grid; solution: Grid } => {
+export const generateSudoku = (difficulty: 'easy' | 'medium' | 'hard'): Grid => {
   // First, generate a solved grid
-  const solution = Array(9).fill(null).map(() => Array(9).fill(0));
-  fillGrid(solution);
+  const solved = Array(9).fill(null).map(() => Array(9).fill(0));
+  fillGrid(solved);
 
   // Then remove numbers based on difficulty
   const numToRemove = {
@@ -16,8 +14,9 @@ export const generateSudoku = (difficulty: Difficulty): { puzzle: Grid; solution
     hard: 55,
   }[difficulty];
 
-  const puzzle = solution.map((row) => [...row]);
+  const puzzle = solved.map(row => [...row]);
   let count = 0;
+
   while (count < numToRemove) {
     const row = Math.floor(Math.random() * 9);
     const col = Math.floor(Math.random() * 9);
@@ -27,53 +26,18 @@ export const generateSudoku = (difficulty: Difficulty): { puzzle: Grid; solution
     }
   }
 
-  return { puzzle, solution };
+  return puzzle;
 };
 
-export const isSolved = (grid: Grid): boolean => 
-  getMatchingCells(grid, 0).length === 0 && getConflictCells(grid).length === 0;
-
-export const getMatchingCells = (grid: Grid, num: number): {row: number, col: number}[] => 
-  cellCoords.filter(({row, col}) => grid[row][col] === num);
-
-export const getRelatedCells = (row: number, col: number): {row: number, col: number}[] => 
-  cellCoords.filter(({row: y, col: x}) => y === row || x === col || (Math.abs(y - row) < 3 && Math.abs(x - col) < 3));
-
-export const getHintCells = (grid: Grid, notes: Notes, solvedGrid: Grid): {row: number, col: number}[] => 
-  cellCoords.filter(({row, col}) => notes[`${row}-${col}`].size === 0 && grid[row][col] === 0).falsyIfEmpty() || 
-  cellCoords.filter(({row, col}) => notes[`${row}-${col}`].size > 0).falsyIfEmpty() ||
-  getMismatchCells(grid, solvedGrid);
-
-export const getConflictCells = (grid: Grid): {row: number, col: number}[] => 
-  toUniqueCells(
-    cellCoords.flatMap(({row, col}) => getRelatedCells(row, col).filter(({row: y, col: x}) => grid[row][col] === grid[y][x])));
-
-export const getMismatchCells = (grid: Grid, solvedGrid: Grid): {row: number, col: number}[] => 
-  cellCoords.filter(({row, col}) => grid[row][col] !== 0 && grid[row][col] !== solvedGrid[row][col]);
-
-export const getAutoNotes = (grid: Grid): Notes => 
-  Object.fromEntries(
-    cellCoords.filter(({row, col}) => grid[row][col] === 0).map(({row, col}) => 
-      [`${row}-${col}`, new Set([1, 2, 3, 4, 5, 6, 7, 8, 9].filter((num) => isValidCell(grid, row, col, num)))]));
-
-export const toCellKeys = (cells: {row: number, col: number}[]): string[] => 
-  cells.map(({row, col}) => `${row}-${col}`);
-
-export const toCellCoords = (cells: string[]): {row: number, col: number}[] => 
-  cells.map(cell => {
-    const [row, col] = cell.split('-').map(Number);
-    return { row, col };
-  });
-
 const fillGrid = (grid: Grid): boolean => {
-  const emptyCell = cellCoords.find(({row, col}) => grid[row][col] === 0) || null;
+  const emptyCell = findEmptyCell(grid);
   if (!emptyCell) return true;
 
   const { row, col } = emptyCell;
   const nums = shuffle([1, 2, 3, 4, 5, 6, 7, 8, 9]);
 
   for (const num of nums) {
-    if (isValidCell(grid, row, col, num)) {
+    if (isValidPlacement(grid, row, col, num)) {
       grid[row][col] = num;
       if (fillGrid(grid)) return true;
       grid[row][col] = 0;
@@ -83,8 +47,43 @@ const fillGrid = (grid: Grid): boolean => {
   return false;
 };
 
-const isValidCell = (grid: Grid, row: number, col: number, num: number): boolean =>
-  [{row, col}, ...getRelatedCells(row, col)].every(({row, col}) => grid[row][col] !== num);
+const findEmptyCell = (grid: Grid): Position | null => {
+  for (let row = 0; row < 9; row++) {
+    for (let col = 0; col < 9; col++) {
+      if (grid[row][col] === 0) return { row, col };
+    }
+  }
+  return null;
+};
 
-const toUniqueCells = (cells: {row: number, col: number}[]): {row: number, col: number}[] =>
-  toCellCoords([...new Set(toCellKeys(cells))]);
+export const isValidPlacement = (grid: Grid, row: number, col: number, num: number): boolean => {
+  // Check row
+  for (let x = 0; x < 9; x++) {
+    if (grid[row][x] === num) return false;
+  }
+
+  // Check column
+  for (let x = 0; x < 9; x++) {
+    if (grid[x][col] === num) return false;
+  }
+
+  // Check 3x3 box
+  const boxRow = Math.floor(row / 3) * 3;
+  const boxCol = Math.floor(col / 3) * 3;
+  for (let i = 0; i < 3; i++) {
+    for (let j = 0; j < 3; j++) {
+      if (grid[boxRow + i][boxCol + j] === num) return false;
+    }
+  }
+
+  return true;
+};
+
+const shuffle = <T>(array: T[]): T[] => {
+  const arr = [...array];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+};
