@@ -2,18 +2,25 @@
 import { Button } from "@/components/ui/button";
 
 interface RestartModalProps {
-  onClose: () => void;
+  isRestartOpen: boolean;
   onRestart: () => void;
+  onClose: () => void;
 }
 
-export const RestartModal: React.FC<RestartModalProps> = ({ onClose, onRestart }) => (
-  <div className="flex flex-col gap-4">
-    <p className="text-center">Are you sure you want to restart?</p>
-    <Button onClick={onRestart} variant="outline" className="w-full border-border hover:bg-secondary">
-      Yes
-    </Button>
-    <Button onClick={onClose} variant="outline" className="w-full border-border hover:bg-secondary">
-      No
-    </Button>
+export const RestartModal: React.FC<RestartModalProps> = ({ 
+  isRestartOpen,
+  onRestart,
+  onClose, 
+}) => (
+  <div className={`absolute w-full bg-background p-6 rounded-lg space-y-4 transition-opacity duration-300 ease-in-out ${isRestartOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+    <div className="flex flex-col gap-4">
+      <p className="text-center">Are you sure you want to restart?</p>
+      <Button onClick={() => { onRestart(); onClose(); }} variant="outline" className="w-full border-border hover:bg-secondary">
+        Yes
+      </Button>
+      <Button onClick={onClose} variant="outline" className="w-full border-border hover:bg-secondary">
+        No
+      </Button>
+    </div>
   </div>
 );

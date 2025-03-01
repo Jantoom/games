@@ -17,7 +17,7 @@ export const DifficultyButtons: React.FC<DifficultyButtonsProps> = ({
         key={diff}
         onClick={() => onSelectDifficulty(diff)}
         variant='outline'
-        className={`w-20 border border-border hover:bg-secondary ${currentDifficulty === diff ? 'bg-primary text-background' : ''}`}
+        className={`w-20 border border-border hover:bg-secondary transition-colors duration-300 ease-in-out ${currentDifficulty === diff ? 'bg-primary text-background' : ''}`}
       >
         {diff.charAt(0).toUpperCase() + diff.slice(1)}
       </Button>

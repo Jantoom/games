@@ -3,21 +3,23 @@ import { Difficulty, LeaderboardEntry } from "../../../lib/types";
 import { formatTime } from "@/lib/utils";
 
 interface LeaderboardModalProps {
-  onClose: () => void;
   entries: LeaderboardEntry[];
   selectedDifficulty: Difficulty;
+  isLeaderboardOpen: boolean;
   onChangeDifficulty: (direction: 'prev' | 'next') => void;
   onDeleteEntry: (index: number) => void;
+  onClose: () => void;
 }
 
 export const LeaderboardModal: React.FC<LeaderboardModalProps> = ({
-  onClose,
   entries,
   selectedDifficulty,
+  isLeaderboardOpen,
   onChangeDifficulty,
   onDeleteEntry,
+  onClose,
 }) => (
-  <>
+  <div className={`absolute w-full bg-background p-6 rounded-lg space-y-4 transition-opacity duration-300 ease-in-out ${isLeaderboardOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
     <h3 className="text-lg font-semibold text-center mb-4">Leaderboard</h3>
     <div className="flex items-center justify-between mb-4">
       <Button
@@ -62,5 +64,5 @@ export const LeaderboardModal: React.FC<LeaderboardModalProps> = ({
     <Button onClick={onClose} variant="outline" className="w-full border-border hover:bg-secondary">
       Close
     </Button>
-  </>
+  </div>
 );

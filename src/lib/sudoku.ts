@@ -37,7 +37,7 @@ export const getMatchingCells = (grid: Grid, num: number): {row: number, col: nu
   cellCoords.filter(({row, col}) => grid[row][col] === num);
 
 export const getRelatedCells = (row: number, col: number): {row: number, col: number}[] => 
-  cellCoords.filter(({row: y, col: x}) => y === row || x === col || (Math.abs(y - row) < 3 && Math.abs(x - col) < 3));
+  cellCoords.filter(({row: y, col: x}) => (y !== row || x !== col) && (y === row || x === col || (Math.floor(y / 3) === Math.floor(row / 3) && Math.floor(x / 3) === Math.floor(col / 3))));
 
 export const getHintCells = (grid: Grid, notes: Notes, solvedGrid: Grid): {row: number, col: number}[] => 
   cellCoords.filter(({row, col}) => notes[`${row}-${col}`].size === 0 && grid[row][col] === 0).falsyIfEmpty() || 
@@ -46,7 +46,7 @@ export const getHintCells = (grid: Grid, notes: Notes, solvedGrid: Grid): {row: 
 
 export const getConflictCells = (grid: Grid): {row: number, col: number}[] => 
   toUniqueCells(
-    cellCoords.flatMap(({row, col}) => getRelatedCells(row, col).filter(({row: y, col: x}) => grid[row][col] === grid[y][x])));
+    cellCoords.flatMap(({row, col}) => getRelatedCells(row, col).filter(({row: y, col: x}) => grid[row][col] !== 0 && grid[row][col] === grid[y][x])));
 
 export const getMismatchCells = (grid: Grid, solvedGrid: Grid): {row: number, col: number}[] => 
   cellCoords.filter(({row, col}) => grid[row][col] !== 0 && grid[row][col] !== solvedGrid[row][col]);

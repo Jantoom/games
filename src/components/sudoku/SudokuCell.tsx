@@ -1,11 +1,9 @@
 
 import React, { useState, useEffect } from 'react';
-import { CellNotes } from '../../lib/types';
+import { CellNotes } from '@/lib/types';
 
 interface SudokuCellProps {
-  rowIndex: number;
-  colIndex: number;
-  cell: number;
+  num: number;
   isOriginal: boolean;
   isHighlighted: boolean;
   isFlagged: boolean;
@@ -14,9 +12,7 @@ interface SudokuCellProps {
 }
 
 export const SudokuCell: React.FC<SudokuCellProps> = ({
-  rowIndex,
-  colIndex,
-  cell,
+  num,
   isOriginal,
   isHighlighted,
   isFlagged,
@@ -24,49 +20,70 @@ export const SudokuCell: React.FC<SudokuCellProps> = ({
   onClick,
 }) => {
   const [isMounted, setIsMounted] = useState(false);
+  const [prevNum, setPrevNum] = useState<number>(null);
+  const [currNum, setCurrNum] = useState<number>(null);
+  const [activeCell, setActiveCell] = useState(false);
   const randomDelay = `${Math.random() * 0.1}s`;
   
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
+  useEffect(() => {
+    setCurrNum((prev) => {
+      setPrevNum(prev ? prev : null);
+      return num;
+    });
+    setActiveCell((prev) => !prev);
+  }, [num]);
+
   return (
-    <div className="relative w-full h-full">
-      <div
-      className={`flex items-center justify-center p-1.5 relative ${!isOriginal ? 'cursor-pointer' : ''}`}
-      onClick={onClick}>
-        <div 
-          className={`relative w-11 h-11 flex items-center justify-center transition duration-300 ease-in-out ${isMounted ? 'scale-100' : 'scale-0'}`} 
-          style={{transitionDelay: randomDelay}}>
-        <div className={`absolute inset-0 rounded-full ${isOriginal ? 'bg-secondary' : ''}`} />
-        <div 
+    <div 
+    className={`w-14 h-14 flex p-1.5 ${!isOriginal ? 'cursor-pointer' : ''}`} 
+    onClick={onClick}>
+      <div 
+      className={`relative flex w-full h-full items-center justify-center transition duration-300 ease-in-out ${isMounted ? 'scale-100' : 'scale-0'}`} 
+      style={{transitionDelay: randomDelay}}>
+        <div>
+          {(isOriginal && <div 
+          className={'absolute inset-0 rounded-full transition duration-300 ease-in-out bg-secondary'}
+          />)}
+          <div 
           className={`absolute inset-0 rounded-full transition duration-300 ease-in-out ${isHighlighted ? 'scale-100 opacity-100' : 'scale-0 opacity-0'} bg-primary`} 
-          style={{transitionDelay: randomDelay}}/>
-        <div className={`absolute inset-0 rounded-full transition duration-500 ease-in-out ${isFlagged ? 'bg-destructive' : ''}`} />
+          style={{transitionDelay: randomDelay}}
+          />
+          <div 
+          className={`absolute inset-0 rounded-full transition duration-500 ease-in-out ${isFlagged ? 'bg-destructive' : ''}`}
+          />
+        </div>
+        <span 
+          key={'flip'} 
+          className={`absolute text-xl font-medium select-none transition duration-300 ease-in-out ${ activeCell ? 'opacity-100' : 'opacity-0'} ${isHighlighted || isFlagged ? 'text-background' : isOriginal ? 'text-border' : 'text-primary'}`} 
+          style={{transitionDelay: randomDelay}}
+        >
+          {activeCell ? currNum || '' : prevNum || ''}
+        </span>
+        <span 
+          key={'flop'}
+          className={`absolute text-xl font-medium select-none transition duration-300 ease-in-out ${ !activeCell ? 'opacity-100' : 'opacity-0'} ${isHighlighted || isFlagged ? 'text-background' : isOriginal ? 'text-border' : 'text-primary'}`} 
+          style={{transitionDelay: randomDelay}}
+        >
+          {activeCell ? prevNum || '' : currNum || ''}
+        </span>
+        <div 
+          className="absolute grid grid-cols-3 gap-x-1 gap-y-0.5 justify-items-center"
+        >
           {Array.from({ length: 9 }).map((_, i) => (
-            <span
-              key={i}
-              className={`absolute text-xl font-medium select-none transition duration-300 ease-in-out ${cell === i + 1 ? 'opacity-100' : 'opacity-0'} ${isHighlighted || isFlagged ? 'text-background' : isOriginal ? 'text-border' : 'text-primary'}`} 
-              style={{transitionDelay: randomDelay}}>
+            <span 
+              key={i} 
+              className={`text-2xs font-medium leading-none select-none transition duration-300 ease-in-out ${notes?.has(i + 1) ? 'opacity-100' : 'opacity-0'} ${isHighlighted ? 'text-background' : 'text-primary'}`} 
+              style={{transitionDelay: randomDelay}}
+            >
               {i + 1}
             </span>
           ))}
-          <div className="absolute grid grid-cols-3 gap-x-1 gap-y-0.5 justify-items-center">
-            {Array.from({ length: 9 }).map((_, i) => (
-              <span
-                key={i}
-                className={`text-2xs font-medium leading-none select-none transition duration-300 ease-in-out ${notes?.has(i + 1) ? 'opacity-100' : 'opacity-0'} ${isHighlighted ? 'text-background' : 'text-primary'}`} 
-                style={{transitionDelay: randomDelay}}>
-                {i + 1}
-              </span>
-            ))}
-          </div>
         </div>
       </div>
-      { rowIndex % 3 !== 0 ? <div className="absolute top-0 left-2 right-2 h-[1px] bg-secondary transform -translate-y-[0.5px]"/> :
-        rowIndex === 3 || rowIndex === 6 ? <div className="absolute top-0 left-0 right-0 h-[2px] bg-primary transform -translate-y-[1px]"/> : <></> }
-      { colIndex % 3 !== 0 ? <div className="absolute left-0 top-2 bottom-2 w-[1px] bg-secondary transform -translate-x-[0.5px]"/> :
-        colIndex === 3 || colIndex === 6 ? <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-primary transform -translate-x-[1px]"/> : <></> }
     </div>
   );
 };
