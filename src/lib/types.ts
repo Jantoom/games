@@ -11,5 +11,6 @@ export type Difficulty = 'easy' | 'medium' | 'hard';
 export type LeaderboardEntry = {
   difficulty: Difficulty;
   time: number;
+  seed: number;
   date: string;
 }

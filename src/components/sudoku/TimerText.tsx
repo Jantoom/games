@@ -38,5 +38,5 @@ export const TimerText = forwardRef<TimerTextHandles, TimerTextProps>(({ isActiv
     };
   }, [isActive]);
 
-  return <span className="text-2xl font-medium transition-colors duration-300 ease-in-out">{formatTime(time)}</span>
+  return <span className="pl-1 text-2xl font-medium transition-colors duration-300 ease-in-out">{formatTime(time)}</span>
 })

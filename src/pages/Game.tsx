@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { generateSudoku, getRelatedCells, isSolved, toCellKeys } from "../lib/sudoku";
 import { TimerText, TimerTextHandles } from "../components/sudoku/TimerText";
-import { DifficultyButtons, DifficultyButtonsHandles } from "../components/sudoku/DifficultyButtons";
+import { DifficultyButtons } from "../components/sudoku/DifficultyButtons";
 import { SudokuGrid } from "@/components/sudoku/SudokuGrid";
 import { NumberButtons } from "../components/sudoku/NumberButtons";
 import { ControlButtons } from "../components/sudoku/ControlButtons";
@@ -10,6 +10,8 @@ import seedrandom from "seedrandom";
 
 export const Game = () => {
   const [seed, setSeed] = useState(0);
+  const [difficulty, setDifficulty] = useState<Difficulty>('easy');
+  const timerRef = useRef<TimerTextHandles>(null);
   const [isActive, setIsActive] = useState(false);
   const [solvedGrid, setSolvedGrid] = useState<Grid>([]);
   const [originalGrid, setOriginalGrid] = useState<Grid>([]);
@@ -19,8 +21,6 @@ export const Game = () => {
   const [errors, setErrors] = useState<string[]>([]);
   const [selectedNumber, setSelectedNumber] = useState<number | null>(null);
   const [isPencilMode, setIsPencilMode] = useState(false);
-  const difficultyRef = useRef<DifficultyButtonsHandles>(null);
-  const timerRef = useRef<TimerTextHandles>(null);
 
   const restart = useCallback((originalGrid: Grid) => {
     setGrid(originalGrid.map(row => [...row]));
@@ -42,6 +42,7 @@ export const Game = () => {
       return seed;
     });
     const { puzzle, solution } = generateSudoku(difficulty);
+    setDifficulty(difficulty);
     setOriginalGrid(puzzle.map(row => [...row]));
     setSolvedGrid(solution.map(row => [...row]));
     setIsActive(true);
@@ -53,6 +54,7 @@ export const Game = () => {
       const newEntry: LeaderboardEntry = {
         difficulty,
         time: time,
+        seed: seed,
         date: new Date().toISOString(),
       };
       const newLeaderboard = [...prevLeaderboard, newEntry]
@@ -60,7 +62,7 @@ export const Game = () => {
       localStorage.setItem('sudoku-leaderboard', JSON.stringify(newLeaderboard));
       return false;
     });
-  }, []);
+  }, [seed]);
 
   const update = useCallback((row: number, col: number, num: number, isPencilMode: boolean) => {
     setGrid(prevGrid => {
@@ -87,11 +89,11 @@ export const Game = () => {
       newGrid[row][col] = isPencilMode || prevGrid[row][col] === num ? 0 : num;
 
       // If solved, stop timer
-      if (isSolved(newGrid)) stop(timerRef.current?.getTime() || 0, difficultyRef.current?.getDifficulty());
+      if (isSolved(newGrid)) stop(timerRef.current?.getTime() || 0, difficulty);
   
       return newGrid;
     });
-  }, [stop]);
+  }, [difficulty, stop]);
 
   const undo = useCallback(() => {
     setHistory(prev => {
@@ -118,7 +120,7 @@ export const Game = () => {
       <div className="flex flex-col items-center justify-between h-screen py-8">
         <div className="flex justify-between items-center w-full">
           <TimerText ref={timerRef} isActive={isActive} />
-          <DifficultyButtons ref={difficultyRef} reset={reset} />
+          <DifficultyButtons difficulty={difficulty} reset={reset} />
         </div>
 
         <SudokuGrid 
@@ -139,7 +141,7 @@ export const Game = () => {
         />
 
         <ControlButtons
-          isActive={isActive}
+          seed={seed} isActive={isActive}
           solvedGrid={solvedGrid} originalGrid={originalGrid} grid={grid} notes={notes}
           setNotes={setNotes} setErrors={setErrors} restart={restart} update={update}
           canUndo={history.length > 0} onUndo={undo}

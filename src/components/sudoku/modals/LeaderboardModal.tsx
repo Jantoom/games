@@ -3,6 +3,7 @@ import { Difficulty, LeaderboardEntry } from "../../../lib/types";
 import { formatTime } from "@/lib/utils";
 
 interface LeaderboardModalProps {
+  seed: number;
   entries: LeaderboardEntry[];
   selectedDifficulty: Difficulty;
   isLeaderboardOpen: boolean;
@@ -12,6 +13,7 @@ interface LeaderboardModalProps {
 }
 
 export const LeaderboardModal: React.FC<LeaderboardModalProps> = ({
+  seed,
   entries,
   selectedDifficulty,
   isLeaderboardOpen,
@@ -27,7 +29,7 @@ export const LeaderboardModal: React.FC<LeaderboardModalProps> = ({
         onClick={() => onChangeDifficulty('prev')}
         className="w-10 h-10 p-0 hover:bg-secondary rounded-full"
       >
-        <svg className="h-5 w-5 rotate-180" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+        <svg className="h-5 w-5 rotate-180 fill-none stroke-foreground stroke-2" viewBox="0 0 24 24">
           <path d="m9 18 6-6-6-6"/>
         </svg>
       </Button>
@@ -37,7 +39,7 @@ export const LeaderboardModal: React.FC<LeaderboardModalProps> = ({
         onClick={() => onChangeDifficulty('next')}
         className="w-10 h-10 p-0 hover:bg-secondary rounded-full"
       >
-        <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+        <svg className="h-5 w-5 fill-none stroke-foreground stroke-2" viewBox="0 0 24 24">
           <path d="m9 18 6-6-6-6"/>
         </svg>
       </Button>
@@ -46,7 +48,7 @@ export const LeaderboardModal: React.FC<LeaderboardModalProps> = ({
       {entries
         .filter(entry => entry.difficulty === selectedDifficulty)
         .map((entry, index) => (
-          <div key={index} className="flex justify-between items-center p-2 bg-background border border-border rounded">
+          <div key={index} className={`flex justify-between items-center p-2 bg-background border ${entry.seed === seed ? 'border-primary' : 'border-border'} rounded`}>
             <span>{formatTime(entry.time)}</span>
             <span>{new Date(entry.date).toLocaleDateString()}</span>
             <Button
@@ -54,7 +56,7 @@ export const LeaderboardModal: React.FC<LeaderboardModalProps> = ({
               onClick={() => onDeleteEntry(index)}
               className="w-8 h-8 p-0 hover:bg-secondary rounded-full"
             >
-              <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+              <svg className="h-4 w-4 fill-none stroke-foreground stroke-2" viewBox="0 0 24 24">
                 <path d="M3 6h18M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
               </svg>
             </Button>

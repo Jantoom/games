@@ -6,9 +6,10 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export const formatTime = (seconds: number) => {
-  const mins = Math.floor(seconds / 60);
+  const hrs = Math.floor(seconds / 60 / 60);
+  const mins = Math.floor(seconds / 60) % 60;
   const secs = seconds % 60;
-  return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  return `${hrs ? `${hrs}:` : ''}${mins.toString().padStart(hrs ? 2 : 1, '0')}:${secs.toString().padStart(2, '0')}`;
 };
 
 export const shuffle = <T>(array: T[]): T[] => {

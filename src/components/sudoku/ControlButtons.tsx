@@ -11,6 +11,7 @@ import { Difficulty, Grid, LeaderboardEntry, Notes } from '@/lib/types';
 import { Themes } from '@/lib/styles';
 
 interface ControlButtonsProps {
+  seed: number;
   isActive: boolean;
   solvedGrid: Grid;
   originalGrid: Grid;
@@ -42,7 +43,7 @@ const ControlButton: React.FC<ControlButtonProps> = ({ isSelected, Icon, ...prop
 );
 
 export const ControlButtons: React.FC<ControlButtonsProps> = ({
-  isActive, solvedGrid, originalGrid, grid, notes,
+  seed, isActive, solvedGrid, originalGrid, grid, notes,
   setNotes, setErrors, restart, update,
   canUndo, onUndo,
   isPencilMode, setIsPencilMode,
@@ -135,6 +136,7 @@ export const ControlButtons: React.FC<ControlButtonsProps> = ({
             onClose={() => setIsThemeOpen(false)}
           />
           <LeaderboardModal
+            seed={seed}
             entries={leaderboard}
             selectedDifficulty={selectedLeaderboardDifficulty}
             isLeaderboardOpen={isLeaderboardOpen}
