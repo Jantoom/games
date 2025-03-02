@@ -1,13 +1,13 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { generateSudoku, getMatchingCells, getRelatedCells, isSolved, toCellKeys } from "../lib/sudoku";
-import { SudokuCell } from "./sudoku/SudokuCell";
-import { NumberButton } from "./sudoku/NumberButton";
-import { ControlButtons } from "./sudoku/ControlButtons";
-import { DifficultyButtons } from "./sudoku/DifficultyButtons";
-import { TimerText, TimerTextHandles } from "./sudoku/TimerText";
+import { SudokuCell } from "../components/sudoku/SudokuCell";
+import { NumberButton } from "../components/sudoku/NumberButton";
+import { ControlButtons } from "../components/sudoku/ControlButtons";
+import { DifficultyButtons } from "../components/sudoku/DifficultyButtons";
+import { TimerText, TimerTextHandles } from "../components/sudoku/TimerText";
 import { Grid, Notes, HistoryEntry, Difficulty, LeaderboardEntry } from "../lib/types";
 
-export const SudokuBoard = () => {
+export const Game = () => {
   const [seed, setSeed] = useState(0);
   const [isActive, setIsActive] = useState(false);
   const [difficulty, setDifficulty] = useState<Difficulty>('easy');
@@ -115,13 +115,14 @@ export const SudokuBoard = () => {
   }, [originalGrid, restart]);
 
   return grid.length > 0 && (
+    <div className="flex flex-col items-center bg-background transition-colors duration-300">
     <div key={seed} className="flex flex-col items-center justify-between h-screen py-8">
       <div className="flex justify-between items-center w-full">
         <TimerText ref={timerRef} isActive={isActive} />
         <DifficultyButtons currentDifficulty={difficulty} onSelectDifficulty={(diff) => reset(diff)} />
       </div>
 
-      <div className="relative grid grid-cols-9 aspect-square">
+      <div className="grid grid-cols-9 relative aspect-square w-[min(95vw,50vh)]">
         {grid.map((array, row) =>
           array.map((num, col) => (
             <SudokuCell
@@ -172,7 +173,7 @@ export const SudokuBoard = () => {
         </svg>
       </div>
 
-      <div className="grid grid-rows-2 grid-cols-5 gap-3 justify-items-center w-2/3">
+      <div className="grid grid-rows-2 grid-cols-5 gap-[min(2vh,2vw)] justify-items-center w-2/3">
         {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((number) => (
           <NumberButton
             key={number}
@@ -193,6 +194,7 @@ export const SudokuBoard = () => {
           isPencilMode={isPencilMode} setIsPencilMode={setIsPencilMode}
         />
       </div>
+    </div>
     </div>
   );
 };

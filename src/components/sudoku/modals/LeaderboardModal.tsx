@@ -19,7 +19,7 @@ export const LeaderboardModal: React.FC<LeaderboardModalProps> = ({
   onDeleteEntry,
   onClose,
 }) => (
-  <div className={`absolute w-full bg-background p-6 rounded-lg space-y-4 transition-opacity duration-300 ease-in-out ${isLeaderboardOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+  <div onClick={(e) => e.stopPropagation()} className={`absolute w-full border bg-background p-6 rounded-lg space-y-4 transition-opacity duration-300 ease-in-out ${isLeaderboardOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
     <h3 className="text-lg font-semibold text-center mb-4">Leaderboard</h3>
     <div className="flex items-center justify-between mb-4">
       <Button

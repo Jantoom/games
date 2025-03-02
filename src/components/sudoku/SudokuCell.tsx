@@ -39,7 +39,7 @@ export const SudokuCell: React.FC<SudokuCellProps> = ({
 
   return (
     <div 
-    className={`w-14 h-14 flex p-1.5 ${!isOriginal ? 'cursor-pointer' : ''}`} 
+    className={`w-full aspect-square flex p-[10%] ${!isOriginal ? 'cursor-pointer' : ''}`} 
     onClick={onClick}>
       <div 
       className={`relative flex w-full h-full items-center justify-center transition duration-300 ease-in-out ${isMounted ? 'scale-100' : 'scale-0'}`} 
@@ -58,25 +58,25 @@ export const SudokuCell: React.FC<SudokuCellProps> = ({
         </div>
         <span 
           key={'flip'} 
-          className={`absolute text-xl font-medium select-none transition duration-300 ease-in-out ${ activeCell ? 'opacity-100' : 'opacity-0'} ${isHighlighted || isFlagged ? 'text-background' : isOriginal ? 'text-border' : 'text-primary'}`} 
+          className={`absolute text-[min(4vw,2vh)] font-medium select-none transition duration-300 ease-in-out ${ activeCell ? 'opacity-100' : 'opacity-0'} ${isHighlighted || isFlagged ? 'text-background' : isOriginal ? 'text-border' : 'text-primary'}`} 
           style={{transitionDelay: randomDelay}}
         >
           {activeCell ? currNum || '' : prevNum || ''}
         </span>
         <span 
           key={'flop'}
-          className={`absolute text-xl font-medium select-none transition duration-300 ease-in-out ${ !activeCell ? 'opacity-100' : 'opacity-0'} ${isHighlighted || isFlagged ? 'text-background' : isOriginal ? 'text-border' : 'text-primary'}`} 
+          className={`absolute text-[min(4vw,2vh)] font-medium select-none transition duration-300 ease-in-out ${ !activeCell ? 'opacity-100' : 'opacity-0'} ${isHighlighted || isFlagged ? 'text-background' : isOriginal ? 'text-border' : 'text-primary'}`} 
           style={{transitionDelay: randomDelay}}
         >
           {activeCell ? prevNum || '' : currNum || ''}
         </span>
         <div 
-          className="absolute grid grid-cols-3 gap-x-1 gap-y-0.5 justify-items-center"
+          className="absolute grid grid-cols-3 w-[70%]"
         >
           {Array.from({ length: 9 }).map((_, i) => (
             <span 
               key={i} 
-              className={`text-2xs font-medium leading-none select-none transition duration-300 ease-in-out ${notes?.has(i + 1) ? 'opacity-100' : 'opacity-0'} ${isHighlighted ? 'text-background' : 'text-primary'}`} 
+              className={`text-[min(2.25vw,1.125vh)] font-medium leading-none text-center select-none transition duration-300 ease-in-out ${notes?.has(i + 1) ? 'opacity-100' : 'opacity-0'} ${isHighlighted ? 'text-background' : 'text-primary'}`} 
               style={{transitionDelay: randomDelay}}
             >
               {i + 1}

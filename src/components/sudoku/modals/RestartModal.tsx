@@ -12,7 +12,7 @@ export const RestartModal: React.FC<RestartModalProps> = ({
   onRestart,
   onClose, 
 }) => (
-  <div className={`absolute w-full bg-background p-6 rounded-lg space-y-4 transition-opacity duration-300 ease-in-out ${isRestartOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+  <div onClick={(e) => e.stopPropagation()} className={`absolute w-full border bg-background p-6 rounded-lg space-y-4 transition-opacity duration-300 ease-in-out ${isRestartOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
     <div className="flex flex-col gap-4">
       <p className="text-center">Are you sure you want to restart?</p>
       <Button onClick={() => { onRestart(); onClose(); }} variant="outline" className="w-full border-border hover:bg-secondary">

@@ -20,15 +20,15 @@ export const NumberButton: React.FC<NumberButtonProps> = ({
     <Button
       variant="outline"
       onClick={onClick}
-      className={`w-14 h-14 relative rounded-full transition-colors duration-300 ease-in-out hover:bg-secondary ${isSelected ? 'bg-primary text-background' : ''}`}
+      className={`w-full min-h-[w-full] h-full aspect-square relative rounded-full transition-colors duration-300 ease-in-out hover:bg-secondary ${isSelected ? 'bg-primary text-background' : ''}`}
     >
       {number ? (
         <>
-          <span className="text-2xl font-medium">{number}</span>
-          <span className="text-xs font-medium absolute pt-9">{remainingCount ? remainingCount : ''}</span>
+          <span className="text-[min(5vw,2.5vh)] font-medium">{number}</span>
+          <span className="text-[min(2.5vw,1.25vh)] font-medium absolute pt-[65%]">{remainingCount ? remainingCount : ''}</span>
         </>
       ) : (
-        <Eraser className="h-6 w-6" />
+        <Eraser className="h-full w-full" />
       )}
     </Button>
   );

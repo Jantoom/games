@@ -18,7 +18,7 @@ export const HintsModal: React.FC<HintsModalProps> = ({
   onValidateGrid,
   onAddAutoNotes,
 }) => (
-  <div className={`absolute w-full bg-background p-6 rounded-lg space-y-4 transition-opacity duration-300 ease-in-out ${isHintsOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+  <div onClick={(e) => e.stopPropagation()} className={`absolute w-full border bg-background p-6 rounded-lg space-y-4 transition-opacity duration-300 ease-in-out ${isHintsOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
     <div className='space-y-2'>
       <Button onClick={() => { onGiveHint(); onClose(); }} variant="outline" className="w-full hover:bg-secondary">
         Hint

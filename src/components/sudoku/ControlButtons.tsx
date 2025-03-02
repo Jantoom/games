@@ -34,7 +34,7 @@ interface ControlButtonProps extends ButtonProps {
 const ControlButton: React.FC<ControlButtonProps> = ({ isSelected, Icon, ...props}) => (
   <Button
     variant={isSelected ? 'default' : 'ghost'}
-    className={`w-10 h-10 rounded-full hover:bg-secondary transition-colors duration-300 ease-in-out ${isSelected ? 'text-background' : ''}`}
+    className={`w-[10%] h-auto aspect-square rounded-full hover:bg-secondary transition-colors duration-300 ease-in-out ${isSelected ? 'text-background' : ''}`}
     {...props}
   >
     {Icon !== null ? <Icon className="h-5 w-5" /> : <></>}
@@ -98,11 +98,17 @@ export const ControlButtons: React.FC<ControlButtonsProps> = ({
       <ControlButton isSelected={isRestartOpen} Icon={RotateCcw} onClick={() => setIsRestartOpen(true)}/>
       <ControlButton isSelected={isHintsOpen} Icon={Lightbulb} onClick={() => setIsHintsOpen(true)}/>
       <ControlButton isSelected={isPencilMode} Icon={Pencil} onClick={() => setIsPencilMode(prev => !prev)}/>
-      <ControlButton isSelected={false} Icon={Undo} onClick={onUndo} disabled={!canUndo} className="w-10 h-10 rounded-full active:bg-primary active:text-background transition-colors duration-300 ease-in-out"/>
+      <ControlButton isSelected={false} Icon={Undo} onClick={onUndo} disabled={!canUndo} className="w-[10%] h-auto aspect-square rounded-full active:bg-primary active:text-background transition-colors duration-300 ease-in-out"/>
       <ControlButton isSelected={isThemeOpen} Icon={Palette} onClick={() => setIsThemeOpen(true)}/>
       <ControlButton isSelected={isLeaderboardOpen} Icon={Trophy} onClick={() => setIsLeaderboardOpen(true)}/>
 
-      <div className={`fixed inset-0 bg-black/50 flex justify-center transition-opacity duration-300 ease-in-out ${isHintsOpen || isRestartOpen || isThemeOpen || isLeaderboardOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+      <div className={`fixed inset-0 bg-black/50 flex justify-center transition-opacity duration-300 ease-in-out ${isHintsOpen || isRestartOpen || isThemeOpen || isLeaderboardOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+        onClick={() => {
+          setIsRestartOpen(false);
+          setIsHintsOpen(false);
+          setIsThemeOpen(false);
+          setIsLeaderboardOpen(false);
+        }}>
         <div className='relative flex flex-col w-2/3 items-center justify-center'>
           <HintsModal
             isHintsOpen={isHintsOpen}
