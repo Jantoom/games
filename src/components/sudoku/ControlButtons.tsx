@@ -12,10 +12,10 @@ import { Themes } from '@/lib/styles';
 
 interface ControlButtonsProps {
   isActive: boolean;
-  grid: Grid;
-  notes: Notes;
   solvedGrid: Grid;
   originalGrid: Grid;
+  grid: Grid;
+  notes: Notes;
   setNotes: React.Dispatch<React.SetStateAction<Notes>>;
   setErrors: React.Dispatch<React.SetStateAction<string[]>>;
   restart: (originalGrid: Grid) => void;
@@ -42,7 +42,7 @@ const ControlButton: React.FC<ControlButtonProps> = ({ isSelected, Icon, ...prop
 );
 
 export const ControlButtons: React.FC<ControlButtonsProps> = ({
-  isActive, grid, notes, solvedGrid, originalGrid,
+  isActive, solvedGrid, originalGrid, grid, notes,
   setNotes, setErrors, restart, update,
   canUndo, onUndo,
   isPencilMode, setIsPencilMode,
@@ -53,10 +53,7 @@ export const ControlButtons: React.FC<ControlButtonsProps> = ({
   const [isLeaderboardOpen, setIsLeaderboardOpen] = useState(false);
   const errorBlinkerRef = useRef<NodeJS.Timeout | null>(null);
   const [selectedLeaderboardDifficulty, setSelectedLeaderboardDifficulty] = useState<Difficulty>('easy');
-  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>(() => {
-    const saved = localStorage.getItem('sudoku-leaderboard');
-    return saved ? JSON.parse(saved) : [];
-  });
+  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>(JSON.parse(localStorage.getItem('sudoku-leaderboard')) || []);
   const [theme, setTheme] = useState<string>(() => {
     const savedTheme = localStorage.getItem('theme') || 'light-blue';
     for (const [colorAlias, hexCode] of Object.entries(Themes[savedTheme])) {
@@ -67,6 +64,7 @@ export const ControlButtons: React.FC<ControlButtonsProps> = ({
 
   useEffect(() => {
     if (!isActive) {
+      setLeaderboard(JSON.parse(localStorage.getItem('sudoku-leaderboard')));
       setIsLeaderboardOpen(true);
     }
   }, [isActive]);
@@ -94,7 +92,7 @@ export const ControlButtons: React.FC<ControlButtonsProps> = ({
   };
 
   return (
-    <>
+    <div className="flex justify-evenly w-full">
       <ControlButton isSelected={isRestartOpen} Icon={RotateCcw} onClick={() => setIsRestartOpen(true)}/>
       <ControlButton isSelected={isHintsOpen} Icon={Lightbulb} onClick={() => setIsHintsOpen(true)}/>
       <ControlButton isSelected={isPencilMode} Icon={Pencil} onClick={() => setIsPencilMode(prev => !prev)}/>
@@ -157,6 +155,6 @@ export const ControlButtons: React.FC<ControlButtonsProps> = ({
           />
         </div>
       </div>
-    </>
+    </div>
   );
 };

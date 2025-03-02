@@ -2,13 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  * {
-    @apply border-border;
-  }
+html {
+  color-scheme: light !important;
+}
 
+@layer base {
   body {
-    @apply bg-background text-foreground;
+    @apply border-border bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 }

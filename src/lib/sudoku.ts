@@ -4,7 +4,7 @@ import { shuffle } from "./utils";
 const cellCoords: {row: number, col: number}[] = 
   [...Array(9)].flatMap((_, row) => [...Array(9)].map((_, col) => ({ row, col })));
 
-export const generateSudoku = (difficulty: Difficulty): { puzzle: Grid; solution: Grid } => {
+export const generateSudoku = (difficulty: Difficulty): { puzzle: Grid, solution: Grid } => {
   // First, generate a solved grid
   const solution = Array(9).fill(null).map(() => Array(9).fill(0));
   fillGrid(solution);
