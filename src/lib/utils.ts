@@ -24,9 +24,14 @@ export const shuffle = <T>(array: T[]): T[] => {
 declare global {
   interface Array<T> {
     falsyIfEmpty(): this | false;
+    toObject<K extends PropertyKey, V>(this: [K, V][]): Record<K, V>;
   }
 }
 
 Array.prototype.falsyIfEmpty = function () {
   return this.length > 0 ? this : false;
+};
+
+Array.prototype.toObject = function <K extends PropertyKey, V>(this: [K, V][]) {
+  return Object.fromEntries(this) as Record<K, V>;
 };

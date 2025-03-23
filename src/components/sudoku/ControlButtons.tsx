@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Pencil, Lightbulb, Undo, Trophy, Palette, RotateCcw } from "lucide-react";
 import { ButtonProps } from 'react-day-picker';
@@ -38,7 +38,7 @@ const ControlButton: React.FC<ControlButtonProps> = ({ isSelected, Icon, ...prop
     className={`w-[10%] h-auto aspect-square rounded-full hover:bg-secondary transition-colors duration-300 ease-in-out ${isSelected ? 'text-background' : ''}`}
     {...props}
   >
-    {Icon !== null ? <Icon className="h-5 w-5" /> : <></>}
+    {Icon !== null ? <Icon/> : <></>}
   </Button>
 );
 
@@ -53,24 +53,10 @@ export const ControlButtons: React.FC<ControlButtonsProps> = ({
   const [isThemeOpen, setIsThemeOpen] = useState(false);
   const [isLeaderboardOpen, setIsLeaderboardOpen] = useState(false);
   const errorBlinkerRef = useRef<NodeJS.Timeout | null>(null);
-  const [selectedLeaderboardDifficulty, setSelectedLeaderboardDifficulty] = useState<Difficulty>('easy');
+  const [theme, setTheme] = useState<string>(localStorage.getItem('theme') || 'light-blue');
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>(JSON.parse(localStorage.getItem('sudoku-leaderboard')) || []);
-  const [theme, setTheme] = useState<string>(() => {
-    const savedTheme = localStorage.getItem('theme') || 'light-blue';
-    for (const [colorAlias, hexCode] of Object.entries(Themes[savedTheme])) {
-      document.documentElement.style.setProperty(`--${colorAlias}`, hexCode);
-    }
-    return savedTheme;
-  });
 
-  useEffect(() => {
-    if (!isActive) {
-      setLeaderboard(JSON.parse(localStorage.getItem('sudoku-leaderboard')));
-      setIsLeaderboardOpen(true);
-    }
-  }, [isActive]);
-
-  useEffect(() => {
+  const updateThemeColors = useCallback(() => {
     if (theme in Themes) {
       for (const [colorAlias, hexCode] of Object.entries(Themes[theme])) {
         document.documentElement.style.setProperty(`--${colorAlias}`, hexCode);
@@ -79,7 +65,7 @@ export const ControlButtons: React.FC<ControlButtonsProps> = ({
     }
   }, [theme]);
 
-  const showErrorAnimation = (cells: string[]) => {
+  const showErrorAnimation = useCallback((cells: string[]) => {
     if (errorBlinkerRef.current) {
       setErrors([]);
       clearInterval(errorBlinkerRef.current);
@@ -90,7 +76,22 @@ export const ControlButtons: React.FC<ControlButtonsProps> = ({
       count++;
       if (count >= 6) clearInterval(errorBlinkerRef.current);
     }, 500);
-  };
+  }, [setErrors]);
+
+  useEffect(() => {
+    updateThemeColors();
+  }, [updateThemeColors]);
+
+  useEffect(() => {
+    updateThemeColors();
+  }, [theme, updateThemeColors]);
+
+  useEffect(() => {
+    if (!isActive) {
+      setLeaderboard(JSON.parse(localStorage.getItem('sudoku-leaderboard')));
+      setIsLeaderboardOpen(true);
+    }
+  }, [isActive]);
 
   return (
     <div className="flex justify-evenly w-full">
@@ -138,16 +139,7 @@ export const ControlButtons: React.FC<ControlButtonsProps> = ({
           <LeaderboardModal
             seed={seed}
             entries={leaderboard}
-            selectedDifficulty={selectedLeaderboardDifficulty}
             isLeaderboardOpen={isLeaderboardOpen}
-            onChangeDifficulty={(direction) => {
-              const difficulties: Difficulty[] = ['easy', 'medium', 'hard'];
-              const currentIndex = difficulties.indexOf(selectedLeaderboardDifficulty);
-              const newIndex = direction === 'prev'
-              ? (currentIndex - 1 + 3) % 3
-              : (currentIndex + 1) % 3;
-              setSelectedLeaderboardDifficulty(difficulties[newIndex]);
-            }}
             onDeleteEntry={(index) => setLeaderboard((prev) => {
               const newLeaderboard = prev.filter((_, i) => i !== index);
               localStorage.setItem('sudoku-leaderboard', JSON.stringify(newLeaderboard));
