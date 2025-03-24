@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { motion, AnimatePresence } from "framer-motion";
 import { CellNotes } from '@/lib/types';
 
@@ -57,17 +57,17 @@ export const SudokuCell: React.FC<SudokuCellProps> = ({
 
           {num != 0 ? 
           <motion.span
-            key={`${num}${isHighlighted}${isFlagged}`} 
+            key={num} 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3, ease: "easeInOut" }}
-            className={`absolute text-[min(4vw,2vh)] font-medium select-none ${isHighlighted || isFlagged ? 'text-background' : isOriginal ? 'text-border' : 'text-primary'}`} 
+            className={`absolute text-[min(4vw,2vh)] font-medium select-none transition-colors ${isHighlighted || isFlagged ? 'text-background' : isOriginal ? 'text-border' : 'text-primary'}`} 
           >
             {num ? num : ''}
           </motion.span> : notes.size > 0 && 
           <motion.div
-            key={`${JSON.stringify([...notes])}${isHighlighted}`}
+            key={JSON.stringify([...notes])}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -77,7 +77,7 @@ export const SudokuCell: React.FC<SudokuCellProps> = ({
           {Array.from({ length: 9 }).map((_, i) => notes?.has(i + 1) && (
             <span 
               key={i}
-              className={`text-[min(2.25vw,1.125vh)] w-1/3 font-medium leading-none text-center select-none ${isHighlighted ? 'text-background' : 'text-primary'}`} 
+              className={`text-[min(2.25vw,1.125vh)] w-1/3 font-medium leading-none text-center select-none transition-colors ${isHighlighted ? 'text-background' : 'text-primary'}`} 
             >
               {i + 1}
             </span>
