@@ -1,5 +1,6 @@
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
+import { motion, AnimatePresence } from "framer-motion";
 import { CellNotes } from '@/lib/types';
 
 interface SudokuCellProps {
@@ -19,71 +20,71 @@ export const SudokuCell: React.FC<SudokuCellProps> = ({
   notes,
   onClick,
 }) => {
-  const [isMounted, setIsMounted] = useState(false);
-  const [prevNum, setPrevNum] = useState<number>(null);
-  const [currNum, setCurrNum] = useState<number>(null);
-  const [activeCell, setActiveCell] = useState(false);
-  const randomDelay = `${Math.random() * 0.1}s`;
-  
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  useEffect(() => {
-    setCurrNum((prev) => {
-      setPrevNum(prev ? prev : null);
-      return num;
-    });
-    setActiveCell((prev) => !prev);
-  }, [num]);
-
+  const randomDelay = Math.random() * 0.1;
   return (
     <div 
-    className={`w-full aspect-square flex p-[10%] ${!isOriginal ? 'cursor-pointer' : ''}`} 
-    onClick={onClick}>
-      <div 
-      className={`relative flex w-full h-full items-center justify-center transition duration-300 ease-in-out ${isMounted ? 'scale-100' : 'scale-0'}`} 
-      style={{transitionDelay: randomDelay}}>
-        <div>
-          {(isOriginal && <div 
-          className={'absolute inset-0 rounded-full transition duration-300 ease-in-out bg-secondary'}
-          />)}
-          <div 
-          className={`absolute inset-0 rounded-full transition duration-300 ease-in-out ${isHighlighted ? 'scale-100 opacity-100' : 'scale-0 opacity-0'} bg-primary`} 
-          style={{transitionDelay: randomDelay}}
-          />
-          <div 
-          className={`absolute inset-0 rounded-full transition duration-500 ease-in-out ${isFlagged ? 'bg-destructive' : ''}`}
-          />
-        </div>
-        <span 
-          key={'flip'} 
-          className={`absolute text-[min(4vw,2vh)] font-medium select-none transition duration-300 ease-in-out ${ activeCell ? 'opacity-100' : 'opacity-0'} ${isHighlighted || isFlagged ? 'text-background' : isOriginal ? 'text-border' : 'text-primary'}`} 
-          style={{transitionDelay: randomDelay}}
-        >
-          {activeCell ? currNum || '' : prevNum || ''}
-        </span>
-        <span 
-          key={'flop'}
-          className={`absolute text-[min(4vw,2vh)] font-medium select-none transition duration-300 ease-in-out ${ !activeCell ? 'opacity-100' : 'opacity-0'} ${isHighlighted || isFlagged ? 'text-background' : isOriginal ? 'text-border' : 'text-primary'}`} 
-          style={{transitionDelay: randomDelay}}
-        >
-          {activeCell ? prevNum || '' : currNum || ''}
-        </span>
-        <div 
-          className="absolute grid grid-cols-3 w-[70%]"
-        >
-          {Array.from({ length: 9 }).map((_, i) => (
+      className={`w-full aspect-square flex p-[10%] ${!isOriginal ? 'cursor-pointer' : ''}`} 
+      onClick={onClick}
+    >
+      <motion.div
+        key='cell'
+        initial={{ scale: 0 }}
+        animate={{ scale: 1 }}
+        transition={{ duration: 0.3, ease: "easeInOut", delay: randomDelay }}
+        className={`relative flex w-full h-full items-center justify-center`}
+      >
+        <AnimatePresence mode="sync">
+          {isOriginal && <div
+            key='original'
+            className={`absolute inset-0 rounded-full bg-secondary`}
+          />}
+          {isHighlighted && <motion.div
+            key='highlight'
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            exit={{ scale: 0 }}
+            transition={{ duration: 0.3, ease: "easeInOut", delay: randomDelay }}
+            className={`absolute inset-0 rounded-full bg-primary`} 
+          />}
+          {isFlagged && <motion.div
+            key='flag'
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5, ease: "easeInOut" }}
+            className={`absolute inset-0 rounded-full bg-destructive`}
+          />}
+
+          {num != 0 ? 
+          <motion.span
+            key={`${num}${isHighlighted}${isFlagged}`} 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            className={`absolute text-[min(4vw,2vh)] font-medium select-none ${isHighlighted || isFlagged ? 'text-background' : isOriginal ? 'text-border' : 'text-primary'}`} 
+          >
+            {num ? num : ''}
+          </motion.span> : notes.size > 0 && 
+          <motion.div
+            key={`${JSON.stringify([...notes])}${isHighlighted}`}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            className="absolute flex flex-wrap justify-center gap-y-[0.1vh] w-[70%]"
+          >
+          {Array.from({ length: 9 }).map((_, i) => notes?.has(i + 1) && (
             <span 
-              key={i} 
-              className={`text-[min(2.25vw,1.125vh)] font-medium leading-none text-center select-none transition duration-300 ease-in-out ${notes?.has(i + 1) ? 'opacity-100' : 'opacity-0'} ${isHighlighted ? 'text-background' : 'text-primary'}`} 
-              style={{transitionDelay: randomDelay}}
+              key={i}
+              className={`text-[min(2.25vw,1.125vh)] w-1/3 font-medium leading-none text-center select-none ${isHighlighted ? 'text-background' : 'text-primary'}`} 
             >
               {i + 1}
             </span>
           ))}
-        </div>
-      </div>
+        </motion.div>}
+        </AnimatePresence>
+      </motion.div>
     </div>
   );
 };

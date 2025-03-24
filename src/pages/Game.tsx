@@ -109,7 +109,7 @@ export const Game = () => {
   }, [reset]);
 
   useEffect(() => {
-    if (isSolved(grid)) stop();
+    if (grid.length > 0 && isSolved(grid)) stop();
   }, [grid, stop]);
 
   return grid.length > 0 && (
