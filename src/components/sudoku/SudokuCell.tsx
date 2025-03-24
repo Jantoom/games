@@ -23,7 +23,7 @@ export const SudokuCell: React.FC<SudokuCellProps> = ({
   const randomDelay = Math.random() * 0.1;
   return (
     <div 
-      className={`w-full aspect-square flex p-[10%] ${!isOriginal ? 'cursor-pointer' : ''}`} 
+      className={`w-full aspect-square p-[10%] ${!isOriginal ? 'cursor-pointer' : ''}`} 
       onClick={onClick}
     >
       <motion.div

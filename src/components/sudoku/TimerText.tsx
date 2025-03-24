@@ -27,5 +27,5 @@ export const TimerText: React.FC = () => {
     };
   }, [isActive, setState]);
 
-  return <span className="pl-1 text-2xl font-medium transition-colors duration-300 ease-in-out">{formatTime(time)}</span>
+  return <span className="pl-1 text-2xl font-medium">{formatTime(time)}</span>
 };

@@ -113,7 +113,7 @@ export const Game = () => {
   }, [grid, stop]);
 
   return grid.length > 0 && (
-    <div key={seed} className="flex flex-col h-svh items-center bg-background transition-colors duration-300">
+    <div key={seed} className="flex flex-col h-svh items-center bg-background">
       <div className="flex flex-col items-center justify-between h-screen py-8">
         <div className="flex justify-between items-center w-full">
           <TimerText />

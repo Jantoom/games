@@ -25,7 +25,7 @@ interface ControlButtonProps extends ButtonProps {
 const ControlButton: React.FC<ControlButtonProps> = ({ isSelected, Icon, ...props}) => (
   <Button
     variant={isSelected ? 'default' : 'ghost'}
-    className={`w-[10%] h-auto aspect-square rounded-full hover:bg-secondary transition-colors duration-300 ease-in-out ${isSelected ? 'text-background' : ''}`}
+    className={`w-[10%] h-auto aspect-square rounded-full hover:bg-secondary ${isSelected ? 'text-background' : ''}`}
     {...props}
   >
     {Icon !== null ? <Icon/> : <></>}
@@ -86,7 +86,7 @@ export const ControlButtons: React.FC<ControlButtonsProps> = ({
       <ControlButton isSelected={isRestartOpen} Icon={RotateCcw} onClick={() => setIsRestartOpen(true)}/>
       <ControlButton isSelected={isHintsOpen} Icon={Lightbulb} onClick={() => setIsHintsOpen(true)}/>
       <ControlButton isSelected={isPencilMode} Icon={Pencil} onClick={() => setState(prevState => ({ isPencilMode: !prevState.isPencilMode }))}/>
-      <ControlButton isSelected={false} Icon={Undo} onClick={undo} disabled={history.length === 0} className="w-[10%] h-auto aspect-square rounded-full active:bg-primary active:text-background transition-colors duration-300 ease-in-out"/>
+      <ControlButton isSelected={false} Icon={Undo} onClick={undo} disabled={history.length === 0} className="w-[10%] h-auto aspect-square rounded-full active:bg-primary active:text-background"/>
       <ControlButton isSelected={isThemeOpen} Icon={Palette} onClick={() => setIsThemeOpen(true)}/>
       <ControlButton isSelected={isLeaderboardOpen} Icon={Trophy} onClick={() => setIsLeaderboardOpen(true)}/>
 

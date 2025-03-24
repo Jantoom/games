@@ -18,7 +18,7 @@ export const NumberButtons: React.FC = () => {
           key={num}
           variant="outline"
           onClick={() => setState(prevState => ({ selectedNumber: prevState.selectedNumber !== num ? num : null }))}
-          className={`w-full min-h-[w-full] h-full aspect-square relative rounded-full transition-colors duration-300 ease-in-out hover:bg-secondary ${isSelected ? 'bg-primary text-background' : ''}`}
+          className={`w-full min-h-[w-full] h-full aspect-square relative rounded-full hover:bg-secondary ${isSelected ? 'bg-primary text-background' : ''}`}
         >
           {num ? (
             <>
