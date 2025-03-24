@@ -35,14 +35,10 @@ export const ThemeButton: React.FC = () => {
     updateThemeColors();
   }, [theme, updateThemeColors]);
 
-  const onClose = () => setIsThemeOpen(false);
-  const onSetTheme = (theme) => {
-    setTheme(theme);
-    onClose();
-  };
+  const close = () => setIsThemeOpen(false);
 
   return (
-    <Dialog>
+    <Dialog onOpenChange={isOpen => isOpen ? null : close() }>
       <DialogTrigger asChild>
         <ControlButton isSelected={isThemeOpen} Icon={Palette} onClick={() => setIsThemeOpen(true)} />
       </DialogTrigger>
@@ -53,7 +49,7 @@ export const ThemeButton: React.FC = () => {
         {(Object.keys(Themes)).map(t => (
           <DialogClose asChild key={t}>
             <Button
-              onClick={() => onSetTheme(t)}
+              onClick={() => setTheme(t)}
               variant="outline"
               className={`w-full border border-border ${theme === t ? 'bg-primary text-background' : ''} hover:bg-secondary`}
             >
@@ -63,7 +59,7 @@ export const ThemeButton: React.FC = () => {
       ))}
         <DialogFooter>
           <DialogClose asChild>
-            <Button onClick={onClose} variant="outline" className="w-full border border-border hover:bg-secondary">
+            <Button variant="outline" className="w-full border border-border hover:bg-secondary">
               Close
             </Button>
           </DialogClose>

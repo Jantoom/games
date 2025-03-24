@@ -21,13 +21,10 @@ export const RestartButton: React.FC<RestartButtonProps> = ({
 }) => {
   const [isRestartOpen, setIsRestartOpen] = useState(false);
   
-  const onClose = () => setIsRestartOpen(false);
-  const onRestart = () => {
-    restart();
-    onClose();
-  };
+  const close = () => setIsRestartOpen(false);
 
-  return (<Dialog>
+  return (
+  <Dialog onOpenChange={isOpen => isOpen ? null : close() }>
     <DialogTrigger asChild>
       <ControlButton isSelected={isRestartOpen} Icon={RotateCcw} onClick={() => setIsRestartOpen(true)} />
     </DialogTrigger>
@@ -36,12 +33,12 @@ export const RestartButton: React.FC<RestartButtonProps> = ({
         <DialogTitle className="text-center">Are you sure you want to restart?</DialogTitle>
       </DialogHeader>
       <DialogClose asChild>
-        <Button onClick={onRestart} variant="outline" className="w-full border border-border hover:bg-secondary">
+        <Button onClick={restart} variant="outline" className="w-full border border-border hover:bg-secondary">
           Yes
         </Button>
       </DialogClose>
       <DialogClose asChild>
-        <Button onClick={onClose} variant="outline" className="w-full border border-border hover:bg-secondary">
+        <Button variant="outline" className="w-full border border-border hover:bg-secondary">
           No
         </Button>
       </DialogClose>

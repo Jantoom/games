@@ -28,8 +28,8 @@ export const LeaderboardButton: React.FC = () => {
     }
   }, [isActive]);
 
-  const onClose = () => setIsLeaderboardOpen(false);
-  const onChangeDifficulty = (direction: 'prev' | 'next') => {
+  const close = () => setIsLeaderboardOpen(false);
+  const changeDifficulty = (direction: 'prev' | 'next') => {
     const difficulties: Difficulty[] = ['easy', 'medium', 'hard'];
     const currentIndex = difficulties.indexOf(selectedDifficulty);
     const newIndex = direction === 'prev'
@@ -37,14 +37,14 @@ export const LeaderboardButton: React.FC = () => {
     : (currentIndex + 1) % 3;
     setSelectedDifficulty(difficulties[newIndex]);
   };
-  const onDeleteEntry = (index) => setLeaderboard((prev) => {
+  const deleteEntry = (index) => setLeaderboard((prev) => {
     const newLeaderboard = prev.filter((_, i) => i !== index);
     localStorage.setItem('sudoku-leaderboard', JSON.stringify(newLeaderboard));
     return newLeaderboard;
   });
 
   return (
-    <Dialog>
+    <Dialog onOpenChange={isOpen => isOpen ? null : close() }>
       <DialogTrigger asChild>
         <ControlButton isSelected={isLeaderboardOpen} Icon={Trophy} onClick={() => setIsLeaderboardOpen(true)} />
       </DialogTrigger>
@@ -56,7 +56,7 @@ export const LeaderboardButton: React.FC = () => {
         <div className="flex items-center justify-between mb-4">
         <Button
           variant="ghost"
-          onClick={() => onChangeDifficulty('prev')}
+          onClick={() => changeDifficulty('prev')}
           className="w-10 h-10 p-0 hover:bg-secondary rounded-full"
         >
           <svg className="h-5 w-5 rotate-180 fill-none stroke-foreground stroke-2" viewBox="0 0 24 24">
@@ -66,7 +66,7 @@ export const LeaderboardButton: React.FC = () => {
         <span className="flex capitalize text-center">{selectedDifficulty}</span>
         <Button
           variant="ghost"
-          onClick={() => onChangeDifficulty('next')}
+          onClick={() => changeDifficulty('next')}
           className="w-10 h-10 p-0 hover:bg-secondary rounded-full"
         >
           <svg className="h-5 w-5 fill-none stroke-foreground stroke-2" viewBox="0 0 24 24">
@@ -83,7 +83,7 @@ export const LeaderboardButton: React.FC = () => {
               <span>{new Date(entry.date).toLocaleDateString()}</span>
               <Button
                 variant="ghost"
-                onClick={() => onDeleteEntry(index)}
+                onClick={() => deleteEntry(index)}
                 className="w-8 h-8 p-0 hover:bg-secondary rounded-full"
               >
                 <svg className="h-4 w-4 fill-none stroke-foreground stroke-2" viewBox="0 0 24 24">
@@ -96,7 +96,7 @@ export const LeaderboardButton: React.FC = () => {
       </div>
         <DialogFooter>
           <DialogClose asChild>
-            <Button onClick={onClose} variant="outline" className="w-full border border-border hover:bg-secondary">
+            <Button variant="outline" className="w-full border border-border hover:bg-secondary">
               Close
             </Button>
           </DialogClose>
