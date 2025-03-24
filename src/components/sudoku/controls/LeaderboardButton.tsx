@@ -44,7 +44,7 @@ export const LeaderboardButton: React.FC = () => {
   });
 
   return (
-    <Dialog onOpenChange={isOpen => isOpen ? null : close() }>
+    <Dialog open={isLeaderboardOpen} onOpenChange={isOpen => isOpen ? null : close() }>
       <DialogTrigger asChild>
         <ControlButton isSelected={isLeaderboardOpen} Icon={Trophy} onClick={() => setIsLeaderboardOpen(true)} />
       </DialogTrigger>
