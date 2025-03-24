@@ -1,27 +1,15 @@
-import { Grid, Notes } from "@/lib/types";
 import { SudokuCell } from "./SudokuCell";
+import { useSudokuState } from "@/states/sudokuState";
 
 interface SudokuGridProps {
-  originalGrid: Grid;
-  grid: Grid;
-  notes: Notes;
-  errors: string[];
-  selectedNumber: number;
-  isActive: boolean;
-  isPencilMode: boolean;
   update: (row: number, col: number, num: number, isPencilMode: boolean) => void;
 }
 
 export const SudokuGrid: React.FC<SudokuGridProps> = ({
-  originalGrid,
-  grid,
-  notes,
-  errors,
-  selectedNumber,
-  isActive,
-  isPencilMode,
   update,
 }) => {
+  const { isActive, originalGrid, grid, notes, errors, selectedNumber, isPencilMode } = useSudokuState();
+  
   return (
     <div className="grid grid-cols-9 relative aspect-square w-[min(95vw,50vh)]">
       {grid.map((array, row) =>

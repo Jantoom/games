@@ -1,27 +1,16 @@
 import { formatTime } from "@/lib/utils"
-import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react"
+import { useSudokuState } from "@/states/sudokuState";
+import React, { useEffect, useRef } from "react"
 
-export interface TimerTextHandles {
-  getTime: () => number;
-}
-
-interface TimerTextProps {
-  isActive: boolean;
-};
-
-export const TimerText = forwardRef<TimerTextHandles, TimerTextProps>(({ isActive }, ref) => {
-  const [time, setTime] = useState(0);
+export const TimerText: React.FC = () => {
+  const { isActive, time, setState } = useSudokuState();
   const timerRef = useRef<NodeJS.Timeout | null>(null);
-
-  useImperativeHandle(ref, () => ({
-    getTime: () => time,
-  }));
 
   useEffect(() => {
     if (isActive) {
       if (timerRef.current) clearInterval(timerRef.current); // Ensure only one interval runs
       timerRef.current = setInterval(() => {
-        setTime((t) => t + 1);
+        setState(prevState => ({ time: prevState.time + 1 }));
       }, 1000);
     } else {
       if (timerRef.current) {
@@ -36,7 +25,7 @@ export const TimerText = forwardRef<TimerTextHandles, TimerTextProps>(({ isActiv
         timerRef.current = null;
       }
     };
-  }, [isActive]);
+  }, [isActive, setState]);
 
   return <span className="pl-1 text-2xl font-medium transition-colors duration-300 ease-in-out">{formatTime(time)}</span>
-})
+};

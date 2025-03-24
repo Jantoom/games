@@ -7,24 +7,14 @@ import { HintsModal } from './modals/HintsModal';
 import { RestartModal } from './modals/RestartModal';
 import { ThemeModal } from './modals/ThemeModal';
 import { LeaderboardModal } from './modals/LeaderboardModal';
-import { Difficulty, Grid, LeaderboardEntry, Notes } from '@/lib/types';
+import { LeaderboardEntry } from '@/lib/types';
 import { Themes } from '@/lib/styles';
+import { useSudokuState } from '@/states/sudokuState';
 
 interface ControlButtonsProps {
-  seed: number;
-  isActive: boolean;
-  solvedGrid: Grid;
-  originalGrid: Grid;
-  grid: Grid;
-  notes: Notes;
-  setNotes: React.Dispatch<React.SetStateAction<Notes>>;
-  setErrors: React.Dispatch<React.SetStateAction<string[]>>;
-  restart: (originalGrid: Grid) => void;
+  restart: () => void;
   update: (row: number, col: number, num: number, isPencilMode: boolean) => void;
-  canUndo: boolean;
-  onUndo: () => void;
-  isPencilMode: boolean;
-  setIsPencilMode: React.Dispatch<React.SetStateAction<boolean>>;
+  undo: () => void;
 }
 
 interface ControlButtonProps extends ButtonProps {
@@ -43,18 +33,16 @@ const ControlButton: React.FC<ControlButtonProps> = ({ isSelected, Icon, ...prop
 );
 
 export const ControlButtons: React.FC<ControlButtonsProps> = ({
-  seed, isActive, solvedGrid, originalGrid, grid, notes,
-  setNotes, setErrors, restart, update,
-  canUndo, onUndo,
-  isPencilMode, setIsPencilMode,
+  restart, update, undo,
 }) => {
+  const { seed, isActive, solvedGrid, grid, notes, history, isPencilMode, setState } = useSudokuState();
   const [isRestartOpen, setIsRestartOpen] = useState(false);
   const [isHintsOpen, setIsHintsOpen] = useState(false);
   const [isThemeOpen, setIsThemeOpen] = useState(false);
   const [isLeaderboardOpen, setIsLeaderboardOpen] = useState(false);
-  const errorBlinkerRef = useRef<NodeJS.Timeout | null>(null);
   const [theme, setTheme] = useState<string>(localStorage.getItem('theme') || 'light-blue');
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>(JSON.parse(localStorage.getItem('sudoku-leaderboard')) || []);
+  const errorBlinkerRef = useRef<NodeJS.Timeout | null>(null);
 
   const updateThemeColors = useCallback(() => {
     if (theme in Themes) {
@@ -67,16 +55,16 @@ export const ControlButtons: React.FC<ControlButtonsProps> = ({
 
   const showErrorAnimation = useCallback((cells: string[]) => {
     if (errorBlinkerRef.current) {
-      setErrors([]);
+      setState({ errors: [] });
       clearInterval(errorBlinkerRef.current);
     }
     let count = 0;
     errorBlinkerRef.current = setInterval(() => {
-      setErrors(prev => (prev.length ? [] : cells));
+      setState(prevState => ({ errors: prevState.errors.length ? [] : cells }));
       count++;
       if (count >= 6) clearInterval(errorBlinkerRef.current);
     }, 500);
-  }, [setErrors]);
+  }, [setState]);
 
   useEffect(() => {
     updateThemeColors();
@@ -97,8 +85,8 @@ export const ControlButtons: React.FC<ControlButtonsProps> = ({
     <div className="flex justify-evenly w-full">
       <ControlButton isSelected={isRestartOpen} Icon={RotateCcw} onClick={() => setIsRestartOpen(true)}/>
       <ControlButton isSelected={isHintsOpen} Icon={Lightbulb} onClick={() => setIsHintsOpen(true)}/>
-      <ControlButton isSelected={isPencilMode} Icon={Pencil} onClick={() => setIsPencilMode(prev => !prev)}/>
-      <ControlButton isSelected={false} Icon={Undo} onClick={onUndo} disabled={!canUndo} className="w-[10%] h-auto aspect-square rounded-full active:bg-primary active:text-background transition-colors duration-300 ease-in-out"/>
+      <ControlButton isSelected={isPencilMode} Icon={Pencil} onClick={() => setState(prevState => ({ isPencilMode: !prevState.isPencilMode }))}/>
+      <ControlButton isSelected={false} Icon={Undo} onClick={undo} disabled={history.length === 0} className="w-[10%] h-auto aspect-square rounded-full active:bg-primary active:text-background transition-colors duration-300 ease-in-out"/>
       <ControlButton isSelected={isThemeOpen} Icon={Palette} onClick={() => setIsThemeOpen(true)}/>
       <ControlButton isSelected={isLeaderboardOpen} Icon={Trophy} onClick={() => setIsLeaderboardOpen(true)}/>
 
@@ -122,12 +110,12 @@ export const ControlButtons: React.FC<ControlButtonsProps> = ({
             }}
             onShowMismatches={() => showErrorAnimation(toCellKeys(getConflictCells(grid)))}
             onValidateGrid={() => showErrorAnimation(toCellKeys(getMismatchCells(grid, solvedGrid)))}
-            onAddAutoNotes={() => setNotes({...notes, ...getAutoNotes(grid)})}
+            onAddAutoNotes={() => setState(prevState => ({ notes: {...prevState.notes, ...getAutoNotes(prevState.grid)}}))}
             onClose={() => setIsHintsOpen(false)}
           />
           <RestartModal
             isRestartOpen={isRestartOpen}
-            onRestart={() => restart(originalGrid)}
+            onRestart={() => restart()}
             onClose={() => setIsRestartOpen(false)}
           />
           <ThemeModal
