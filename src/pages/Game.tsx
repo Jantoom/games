@@ -1,13 +1,18 @@
+import seedrandom from "seedrandom";
 import { useEffect, useCallback } from "react";
 import { generateSudoku, getRelatedCells, isSolved, toCellKeys } from "@/lib/sudoku";
+import { Difficulty, LeaderboardEntry } from "@/lib/types";
 import { TimerText } from "@/components/sudoku/TimerText";
 import { DifficultyButtons } from "@/components/sudoku/DifficultyButtons";
 import { SudokuGrid } from "@/components/sudoku/SudokuGrid";
 import { NumberButtons } from "@/components/sudoku/NumberButtons";
-import { ControlButtons } from "@/components/sudoku/ControlButtons";
-import { Difficulty, LeaderboardEntry } from "@/lib/types";
+import { RestartButton } from "@/components/sudoku/controls/RestartButton";
+import { HintsButton } from "@/components/sudoku/controls/HintsButton";
+import { PencilButton } from "@/components/sudoku/controls/PencilButton";
+import { UndoButton } from "@/components/sudoku/controls/UndoButton";
+import { ThemeButton } from "@/components/sudoku/controls/ThemeButton";
+import { LeaderboardButton } from "@/components/sudoku/controls/LeaderboardButton";
 import { useSudokuState } from "@/states/sudokuState";
-import seedrandom from "seedrandom";
 
 export const Game = () => {
   const { seed, grid, setState } = useSudokuState();
@@ -124,7 +129,14 @@ export const Game = () => {
 
         <NumberButtons />
 
-        <ControlButtons restart={restart} update={update} undo={undo} />
+        <div className="flex justify-evenly w-full">
+          <RestartButton restart={restart}/>
+          <HintsButton update={update}/>
+          <PencilButton/>
+          <UndoButton undo={undo}/>
+          <ThemeButton/>
+          <LeaderboardButton/>
+        </div>
       </div>
     </div>
   );

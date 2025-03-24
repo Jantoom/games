@@ -1,25 +1,34 @@
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { ControlButton } from "./ControlButton";
 import { Difficulty, LeaderboardEntry } from "../../../lib/types";
 import { formatTime } from "@/lib/utils";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useSudokuState } from "@/states/sudokuState";
+import { Trophy } from "lucide-react";
 
-interface LeaderboardModalProps {
-  seed: number;
-  entries: LeaderboardEntry[];
-  isLeaderboardOpen: boolean;
-  onDeleteEntry: (index: number) => void;
-  onClose: () => void;
-}
-
-export const LeaderboardModal: React.FC<LeaderboardModalProps> = ({
-  seed,
-  entries,
-  isLeaderboardOpen,
-  onDeleteEntry,
-  onClose,
-}) => {
+export const LeaderboardButton: React.FC = () => {
+  const { seed, isActive } = useSudokuState();
+  const [isLeaderboardOpen, setIsLeaderboardOpen] = useState(false);  
+  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>(JSON.parse(localStorage.getItem('sudoku-leaderboard')) || []);
   const [selectedDifficulty, setSelectedDifficulty] = useState<Difficulty>('easy');
 
+  useEffect(() => {
+    if (!isActive) {
+      setLeaderboard(JSON.parse(localStorage.getItem('sudoku-leaderboard')));
+      setIsLeaderboardOpen(true);
+    }
+  }, [isActive]);
+
+  const onClose = () => setIsLeaderboardOpen(false);
   const onChangeDifficulty = (direction: 'prev' | 'next') => {
     const difficulties: Difficulty[] = ['easy', 'medium', 'hard'];
     const currentIndex = difficulties.indexOf(selectedDifficulty);
@@ -28,11 +37,23 @@ export const LeaderboardModal: React.FC<LeaderboardModalProps> = ({
     : (currentIndex + 1) % 3;
     setSelectedDifficulty(difficulties[newIndex]);
   };
+  const onDeleteEntry = (index) => setLeaderboard((prev) => {
+    const newLeaderboard = prev.filter((_, i) => i !== index);
+    localStorage.setItem('sudoku-leaderboard', JSON.stringify(newLeaderboard));
+    return newLeaderboard;
+  });
 
   return (
-    <div onClick={(e) => e.stopPropagation()} className={`absolute w-full border border-border bg-background p-6 rounded-lg space-y-4 transition-opacity duration-300 ease-in-out ${isLeaderboardOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
-      <h3 className="text-lg font-semibold text-center mb-4">Leaderboard</h3>
-      <div className="flex items-center justify-between mb-4">
+    <Dialog>
+      <DialogTrigger asChild>
+        <ControlButton isSelected={isLeaderboardOpen} Icon={Trophy} onClick={() => setIsLeaderboardOpen(true)} />
+      </DialogTrigger>
+      <DialogContent className="border-border [&>button:last-child]:hidden">
+        <DialogHeader>
+          <DialogTitle className="text-center">Leaderboard</DialogTitle>
+        </DialogHeader>
+        <div>
+        <div className="flex items-center justify-between mb-4">
         <Button
           variant="ghost"
           onClick={() => onChangeDifficulty('prev')}
@@ -54,7 +75,7 @@ export const LeaderboardModal: React.FC<LeaderboardModalProps> = ({
         </Button>
       </div>
       <div className="h-60 overflow-y-auto scrollbar-none touch-pan-y space-y-2 mb-4" style={{msOverflowStyle: 'none', scrollbarWidth: 'none'}}>
-        {entries
+        {leaderboard
           .filter(entry => entry.difficulty === selectedDifficulty)
           .map((entry, index) => (
             <div key={index} className={`flex justify-between items-center p-2 bg-background border ${entry.seed === seed ? 'border-primary' : 'border-border'} rounded`}>
@@ -72,9 +93,15 @@ export const LeaderboardModal: React.FC<LeaderboardModalProps> = ({
             </div>
           ))}
       </div>
-      <Button onClick={onClose} variant="outline" className="w-full border border-border hover:bg-secondary">
-        Close
-      </Button>
-    </div>
-  );
+      </div>
+        <DialogFooter>
+          <DialogClose asChild>
+            <Button onClick={onClose} variant="outline" className="w-full border border-border hover:bg-secondary">
+              Close
+            </Button>
+          </DialogClose>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  )
 };
