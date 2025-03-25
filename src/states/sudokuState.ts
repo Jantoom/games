@@ -4,8 +4,8 @@ import {
   HistoryEntry,
   LeaderboardEntry,
   Notes,
-} from "@/lib/types";
-import { create } from "zustand";
+} from '@/lib/types';
+import { create } from 'zustand';
 
 interface SudokuState {
   seed: number;
@@ -21,14 +21,18 @@ interface SudokuState {
   selectedNumber: number | null;
   isPencilMode: boolean;
   leaderboard: LeaderboardEntry[];
-  setState: (state: Partial<SudokuState> | ((state: SudokuState) => Partial<SudokuState>)) => void;
+  setState: (
+    state:
+      | Partial<SudokuState>
+      | ((state: SudokuState) => Partial<SudokuState>),
+  ) => void;
 }
 
 export const useSudokuState = create<SudokuState>((set) => ({
   seed: 0,
   isActive: false,
   time: 0,
-  difficulty: "easy",
+  difficulty: 'easy',
   originalGrid: [],
   solvedGrid: [],
   grid: [],
