@@ -7,9 +7,10 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import ControlButton from './ControlButton';
+import ControlButton from '../../ControlButton';
 import { useState } from 'react';
 import { RotateCcw } from 'lucide-react';
+import { DialogDescription } from '@radix-ui/react-dialog';
 
 interface RestartButtonProps {
   restart: () => void;
@@ -34,6 +35,7 @@ const RestartButton: React.FC<RestartButtonProps> = ({ restart }) => {
           <DialogTitle className="text-center">
             Are you sure you want to restart?
           </DialogTitle>
+          <DialogDescription />
         </DialogHeader>
         <DialogClose asChild>
           <Button

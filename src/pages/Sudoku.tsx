@@ -15,9 +15,10 @@ import RestartButton from '@/components/sudoku/controls/RestartButton';
 import HintsButton from '@/components/sudoku/controls/HintsButton';
 import PencilButton from '@/components/sudoku/controls/PencilButton';
 import UndoButton from '@/components/sudoku/controls/UndoButton';
-import ThemeButton from '@/components/sudoku/controls/ThemeButton';
+import ThemeButton from '@/components/menu/ThemeButton';
 import LeaderboardButton from '@/components/sudoku/controls/LeaderboardButton';
 import { useSudokuState } from '@/states/sudokuState';
+import AnimatedPage from './AnimatedPage';
 
 const Sudoku: React.FC = () => {
   const { seed, grid, setState } = useSudokuState();
@@ -152,30 +153,31 @@ const Sudoku: React.FC = () => {
 
   return (
     grid.length > 0 && (
-      <div
-        key={seed}
-        className="flex flex-col h-svh items-center bg-background"
-      >
-        <div className="flex flex-col items-center justify-between h-screen py-8">
-          <div className="flex justify-between items-center w-full">
-            <TimerText />
-            <DifficultyButtons reset={reset} />
-          </div>
+      <AnimatedPage>
+        <div
+          key={seed}
+          className="flex flex-col h-svh items-center bg-background"
+        >
+          <div className="flex flex-col items-center justify-between h-screen py-8">
+            <div className="flex justify-between items-center w-full">
+              <TimerText />
+              <DifficultyButtons reset={reset} />
+            </div>
 
-          <SudokuGrid update={update} />
+            <SudokuGrid update={update} />
 
-          <NumberButtons />
+            <NumberButtons />
 
-          <div className="flex justify-evenly w-full">
-            <RestartButton restart={restart} />
-            <HintsButton update={update} />
-            <PencilButton />
-            <UndoButton undo={undo} />
-            <ThemeButton />
-            <LeaderboardButton />
+            <div className="flex justify-evenly w-full">
+              <RestartButton restart={restart} />
+              <HintsButton update={update} />
+              <PencilButton />
+              <UndoButton undo={undo} />
+              <LeaderboardButton />
+            </div>
           </div>
         </div>
-      </div>
+      </AnimatedPage>
     )
   );
 };

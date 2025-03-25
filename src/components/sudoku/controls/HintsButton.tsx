@@ -8,7 +8,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import ControlButton from './ControlButton';
+import ControlButton from '../../ControlButton';
 import { Lightbulb } from 'lucide-react';
 import { useCallback, useRef, useState } from 'react';
 import { useSudokuState } from '@/states/sudokuState';
@@ -19,6 +19,7 @@ import {
   getMismatchCells,
   toCellKeys,
 } from '@/lib/sudoku';
+import { DialogDescription } from '@radix-ui/react-dialog';
 
 interface HintsButtonProps {
   update: (
@@ -84,6 +85,7 @@ const HintsButton: React.FC<HintsButtonProps> = ({ update }) => {
         <DialogHeader>
           <DialogTitle className="text-center">Hints</DialogTitle>
         </DialogHeader>
+        <DialogDescription />
         <DialogClose asChild>
           <Button
             onClick={getHint}

@@ -1,27 +1,21 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import NotFound from './pages/NotFound';
-import Sudoku from './pages/Sudoku';
+import { useLocation, useOutlet } from 'react-router-dom';
+import { AnimatePresence, motion } from 'framer-motion';
+import React from 'react';
 
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <BrowserRouter
-      future={{
-        v7_relativeSplatPath: true,
-        v7_startTransition: true,
-      }}
-    >
-      <Routes>
-        <Route path="/">
-          <Route index element={<></>} />
-          <Route path="sudoku" element={<Sudoku />} />
-          <Route path="*" element={<NotFound />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
-  </QueryClientProvider>
-);
+const App = () => {
+  const { pathname } = useLocation();
+  const element = useOutlet();
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <AnimatePresence mode="wait">
+        {element && React.cloneElement(element, { key: pathname })}
+      </AnimatePresence>
+    </QueryClientProvider>
+  );
+};
 
 export default App;

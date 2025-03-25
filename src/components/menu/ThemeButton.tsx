@@ -11,7 +11,8 @@ import {
 import { Themes } from '@/lib/styles';
 import { Palette } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
-import ControlButton from './ControlButton';
+import ControlButton from '../ControlButton';
+import { DialogDescription } from '@radix-ui/react-dialog';
 
 const ThemeButton: React.FC = () => {
   const [isThemeOpen, setIsThemeOpen] = useState(false);
@@ -47,9 +48,13 @@ const ThemeButton: React.FC = () => {
           onClick={() => setIsThemeOpen(true)}
         />
       </DialogTrigger>
-      <DialogContent className="border-border [&>button:last-child]:hidden">
+      <DialogContent
+        className="border-border [&>button:last-child]:hidden"
+        aria-description="theme button"
+      >
         <DialogHeader>
           <DialogTitle className="text-center">Themes</DialogTitle>
+          <DialogDescription />
         </DialogHeader>
         {Object.keys(Themes).map((t) => (
           <DialogClose asChild key={t}>

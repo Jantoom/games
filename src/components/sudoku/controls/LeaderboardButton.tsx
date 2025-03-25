@@ -8,12 +8,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import ControlButton from './ControlButton';
+import ControlButton from '../../ControlButton';
 import { Difficulty, LeaderboardEntry } from '../../../lib/types';
 import { formatTime } from '@/lib/utils';
 import { useEffect, useState } from 'react';
 import { useSudokuState } from '@/states/sudokuState';
 import { Trophy } from 'lucide-react';
+import { DialogDescription } from '@radix-ui/react-dialog';
 
 const LeaderboardButton: React.FC = () => {
   const { seed, isActive } = useSudokuState();
@@ -67,6 +68,7 @@ const LeaderboardButton: React.FC = () => {
         <DialogHeader>
           <DialogTitle className="text-center">Leaderboard</DialogTitle>
         </DialogHeader>
+        <DialogDescription />
         <div>
           <div className="flex items-center justify-between mb-4">
             <Button

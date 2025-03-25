@@ -1,5 +1,5 @@
 import React from 'react';
-import ControlButton from './ControlButton';
+import ControlButton from '../../ControlButton';
 import { useSudokuState } from '@/states/sudokuState';
 import { Pencil } from 'lucide-react';
 
