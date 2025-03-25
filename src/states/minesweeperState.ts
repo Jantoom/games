@@ -3,11 +3,10 @@ import {
   Grid,
   HistoryEntry,
   LeaderboardEntry,
-  Notes,
-} from '@/lib/sudokuTypes';
+} from '@/lib/minesweeperTypes';
 import { create } from 'zustand';
 
-interface SudokuState {
+interface MinesweeperState {
   seed: number;
   isActive: boolean;
   time: number;
@@ -15,20 +14,16 @@ interface SudokuState {
   originalGrid: Grid;
   solvedGrid: Grid;
   grid: Grid;
-  notes: Notes;
   history: HistoryEntry[];
-  errors: string[];
-  selectedNumber: number | null;
-  isPencilMode: boolean;
   leaderboard: LeaderboardEntry[];
   setState: (
     state:
-      | Partial<SudokuState>
-      | ((state: SudokuState) => Partial<SudokuState>),
+      | Partial<MinesweeperState>
+      | ((state: MinesweeperState) => Partial<MinesweeperState>),
   ) => void;
 }
 
-export const useSudokuState = create<SudokuState>((set) => ({
+export const useMinesweeperState = create<MinesweeperState>((set) => ({
   seed: 0,
   isActive: false,
   time: 0,
@@ -36,11 +31,7 @@ export const useSudokuState = create<SudokuState>((set) => ({
   originalGrid: [],
   solvedGrid: [],
   grid: [],
-  notes: {},
   history: [],
-  errors: [],
-  selectedNumber: null,
-  isPencilMode: false,
   leaderboard: [],
   setState: (newState) => set(newState),
 }));

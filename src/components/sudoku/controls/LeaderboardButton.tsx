@@ -9,7 +9,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import ControlButton from '../../ControlButton';
-import { Difficulty, LeaderboardEntry } from '../../../lib/types';
+import { Difficulty, LeaderboardEntry } from '../../../lib/sudokuTypes';
 import { formatTime } from '@/lib/utils';
 import { useEffect, useState } from 'react';
 import { useSudokuState } from '@/states/sudokuState';

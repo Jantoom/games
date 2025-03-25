@@ -1,6 +1,7 @@
 import React from 'react';
 import Menu from './Menu';
 import Sudoku from './Sudoku';
+import Minesweeper from './Minesweeper';
 
 const Page = {
   Menu: {
@@ -12,6 +13,11 @@ const Page = {
     name: 'Sudoku',
     path: '/games/sudoku',
     element: React.createElement(Sudoku),
+  },
+  Minesweeper: {
+    name: 'Minesweeper',
+    path: '/games/minesweeper',
+    element: React.createElement(Minesweeper),
   },
 } as const;
 

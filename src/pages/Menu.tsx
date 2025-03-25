@@ -16,7 +16,7 @@ const Menu: React.FC = () => {
             <Button asChild variant="ghost" className="hover:bg-secondary text-xl">
               <Link to="./sudoku">Sudoku</Link>
             </Button>
-            {/* <Separator className='-my-4'/>
+            <Separator className='-my-4'/>
             <Button asChild variant="ghost" className="hover:bg-secondary text-xl">
               <Link to="./minesweeper">Minesweeper</Link>
             </Button>
@@ -35,7 +35,7 @@ const Menu: React.FC = () => {
             <Separator className='-my-4'/>
             <Button asChild variant="ghost" className="hover:bg-secondary text-xl">
               <Link to="./2048">2048</Link>
-            </Button> */}
+            </Button>
           </div>
           <div className="flex justify-evenly w-full">
             <ThemeButton />

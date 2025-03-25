@@ -6,7 +6,7 @@ import {
   isSolved,
   toCellKeys,
 } from '@/lib/sudoku';
-import { Difficulty, LeaderboardEntry } from '@/lib/types';
+import { Difficulty, LeaderboardEntry } from '@/lib/sudokuTypes';
 import TimerText from '@/components/sudoku/TimerText';
 import DifficultyButtons from '@/components/sudoku/DifficultyButtons';
 import SudokuGrid from '@/components/sudoku/SudokuGrid';
@@ -156,9 +156,9 @@ const Sudoku: React.FC = () => {
       <AnimatedPage>
         <div
           key={seed}
-          className="flex flex-col h-svh items-center bg-background"
+          className="flex flex-col h-svh items-center py-8"
         >
-          <div className="flex flex-col items-center justify-between h-screen py-8">
+          <div className="flex flex-col items-center justify-between h-screen">
             <div className="flex justify-between items-center w-full">
               <TimerText />
               <DifficultyButtons reset={reset} />

@@ -1,4 +1,4 @@
-import { Difficulty, Grid, Notes } from './types';
+import { Difficulty, Grid, Notes } from './sudokuTypes';
 import { shuffle } from './utils';
 
 const cellCoords: { row: number; col: number }[] = [...Array(9)].flatMap(

@@ -1,14 +1,14 @@
 import { Button } from '@/components/ui/button';
-import { Difficulty } from '../../lib/sudokuTypes';
+import { Difficulty } from '../../lib/minesweeperTypes';
 import React from 'react';
-import { useSudokuState } from '@/states/sudokuState';
+import { useMinesweeperState } from '@/states/minesweeperState';
 
 interface DifficultyButtonsProps {
   reset: (difficulty: Difficulty) => void;
 }
 
 const DifficultyButtons: React.FC<DifficultyButtonsProps> = ({ reset }) => {
-  const { difficulty } = useSudokuState();
+  const { difficulty } = useMinesweeperState();
 
   return (
     <div className="flex justify-between w-[50%] min-w-[200px]">

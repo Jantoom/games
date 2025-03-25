@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CellNotes } from '@/lib/types';
+import { CellNotes } from '@/lib/sudokuTypes';
 
 interface SudokuCellProps {
   num: number;
