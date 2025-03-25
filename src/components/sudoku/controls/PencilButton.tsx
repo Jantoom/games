@@ -4,7 +4,7 @@ import { useSudokuState } from '@/states/sudokuState';
 import { Pencil } from 'lucide-react';
 
 const PencilButton: React.FC = () => {
-  const { isPencilMode, setState } = useSudokuState();
+  const { isActive, isPencilMode, setState } = useSudokuState();
   return (
     <ControlButton
       isSelected={isPencilMode}
@@ -12,6 +12,7 @@ const PencilButton: React.FC = () => {
       onClick={() =>
         setState((prevState) => ({ isPencilMode: !prevState.isPencilMode }))
       }
+      disabled={!isActive}
     />
   );
 };

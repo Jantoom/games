@@ -139,7 +139,7 @@ const Sudoku: React.FC = () => {
         JSON.stringify(newLeaderboard),
       );
 
-      return { isActive: false };
+      return { isActive: false, selectedNumber: null };
     });
   }, [setState]);
 

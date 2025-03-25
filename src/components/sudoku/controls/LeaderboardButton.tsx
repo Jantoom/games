@@ -64,7 +64,7 @@ const LeaderboardButton: React.FC = () => {
           onClick={() => setIsLeaderboardOpen(true)}
         />
       </DialogTrigger>
-      <DialogContent className="border-border [&>button:last-child]:hidden">
+      <DialogContent className="border-border [&>button:last-child]:hidden max-w-[90%]">
         <DialogHeader>
           <DialogTitle className="text-center">Leaderboard</DialogTitle>
         </DialogHeader>

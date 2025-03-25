@@ -10,33 +10,14 @@ import {
 } from '@/components/ui/dialog';
 import { Themes } from '@/lib/styles';
 import { Palette } from 'lucide-react';
-import { useCallback, useEffect, useState } from 'react';
+import { useState } from 'react';
 import ControlButton from '../ControlButton';
 import { DialogDescription } from '@radix-ui/react-dialog';
+import { useGlobalState } from '@/states/globalState';
 
 const ThemeButton: React.FC = () => {
   const [isThemeOpen, setIsThemeOpen] = useState(false);
-  const [theme, setTheme] = useState<string>(
-    localStorage.getItem('theme') || 'light-blue',
-  );
-
-  const updateThemeColors = useCallback(() => {
-    if (theme in Themes) {
-      for (const [colorAlias, hexCode] of Object.entries(Themes[theme])) {
-        document.documentElement.style.setProperty(`--${colorAlias}`, hexCode);
-      }
-      localStorage.setItem('theme', theme);
-    }
-  }, [theme]);
-
-  useEffect(() => {
-    updateThemeColors();
-  }, [updateThemeColors]);
-
-  useEffect(() => {
-    updateThemeColors();
-  }, [theme, updateThemeColors]);
-
+  const { theme, setTheme } = useGlobalState();
   const close = () => setIsThemeOpen(false);
 
   return (
@@ -49,7 +30,7 @@ const ThemeButton: React.FC = () => {
         />
       </DialogTrigger>
       <DialogContent
-        className="border-border [&>button:last-child]:hidden"
+        className="border-border [&>button:last-child]:hidden max-w-[90%]"
         aria-description="theme button"
       >
         <DialogHeader>

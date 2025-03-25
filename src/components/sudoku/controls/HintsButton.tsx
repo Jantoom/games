@@ -31,7 +31,7 @@ interface HintsButtonProps {
 }
 
 const HintsButton: React.FC<HintsButtonProps> = ({ update }) => {
-  const { solvedGrid, grid, notes, setState } = useSudokuState();
+  const { isActive, solvedGrid, grid, notes, setState } = useSudokuState();
   const [isHintsOpen, setIsHintsOpen] = useState(false);
   const errorBlinkerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -79,9 +79,10 @@ const HintsButton: React.FC<HintsButtonProps> = ({ update }) => {
           isSelected={isHintsOpen}
           Icon={Lightbulb}
           onClick={() => setIsHintsOpen(true)}
+          disabled={!isActive}
         />
       </DialogTrigger>
-      <DialogContent className="border-border [&>button:last-child]:hidden">
+      <DialogContent className="border-border [&>button:last-child]:hidden max-w-[90%]">
         <DialogHeader>
           <DialogTitle className="text-center">Hints</DialogTitle>
         </DialogHeader>

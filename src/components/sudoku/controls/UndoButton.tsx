@@ -8,14 +8,14 @@ interface UndoButtonProps {
 }
 
 const UndoButton: React.FC<UndoButtonProps> = ({ undo }) => {
-  const { history } = useSudokuState();
+  const { isActive, history } = useSudokuState();
 
   return (
     <ControlButton
       isSelected={false}
       Icon={Undo}
       onClick={undo}
-      disabled={history.length === 0}
+      disabled={history.length === 0 || !isActive}
       className="w-[10%] h-auto aspect-square rounded-full active:bg-primary active:text-background"
     />
   );
