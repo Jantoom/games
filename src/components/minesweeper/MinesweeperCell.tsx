@@ -8,14 +8,14 @@ interface MinesweeperCellProps {
   id: string;
   num: number;
   isFlagged: boolean;
-  // isExploded: boolean;
+  isExploded: boolean;
 }
 
 const MinesweeperCell: React.FC<MinesweeperCellProps> = ({
   id,
   num,
   isFlagged,
-  // isExploded,
+  isExploded,
 }) => {
   const { theme } = useGlobalState();
   const randomDelay = Math.random() * 0.1;
@@ -34,25 +34,26 @@ const MinesweeperCell: React.FC<MinesweeperCellProps> = ({
           ease: 'easeInOut',
           delay: randomDelay * 2,
         }}
-        className={`relative flex w-full h-full items-center justify-center ${num === -1 ? 'bg-secondary' : ''}`}
+        className={`relative flex w-full h-full items-center justify-center ${num === -1 || isExploded ? 'bg-secondary' : ''}`}
       >
         <AnimatePresence mode="sync">
-          {isFlagged ? (
+          {isFlagged || isExploded ? (
             <motion.div
-              key={`${isFlagged}`}
+              key={`${isFlagged}${isExploded}`}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3, ease: 'easeInOut' }}
               className={`absolute text-lg font-medium select-none transition-colors text-primary`}
             >
-              {isFlagged ? (
+              {isExploded ? (
+                <Bomb className="stroke-background" fill="black" />
+              ) : (
                 <Flag
                   className="stroke-background"
                   fill={Themes[theme].primary}
                 />
-              ) : (
-                <Bomb className="stroke-background" fill="black" />
+                
               )}
             </motion.div>
           ) : (

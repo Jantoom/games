@@ -8,6 +8,7 @@ const MinesweeperGrid: React.FC = () => {
   const {
     dimensions,
     grid,
+    bombs,
     flags,
     flagOnClick,
     flagOnDoubleClick,
@@ -59,6 +60,9 @@ const MinesweeperGrid: React.FC = () => {
 
   const tryCachedUpdate = (flagCheck: boolean) => {
     if (
+      lastClickPos &&
+      lastClickCell.current &&
+      mouseCell.current &&
       Math.abs(lastClickPos.current?.x - mousePos.current.x) < 20 &&
       Math.abs(lastClickPos.current?.y - mousePos.current.y) < 20 &&
       lastClickCell.current.row === mouseCell.current.row &&
@@ -172,11 +176,13 @@ const MinesweeperGrid: React.FC = () => {
 
         if (!clickConsumed) {
           clickTimeout.current = setTimeout(() => {
-            update(
-              lastClickCell.current.row,
-              lastClickCell.current.col,
-              flagOnClick,
-            );
+            if (lastClickCell.current) {
+              update(
+                lastClickCell.current.row,
+                lastClickCell.current.col,
+                flagOnClick,
+              );
+            }
           }, 300);
         }
 
@@ -284,6 +290,7 @@ const MinesweeperGrid: React.FC = () => {
                   id={`${row}-${col}`}
                   num={num}
                   isFlagged={flags.has(`${row}-${col}`)}
+                  isExploded={bombs.has(`${row}-${col}`) && num != -1}
                 />
               )),
             )}

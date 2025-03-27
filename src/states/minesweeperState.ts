@@ -1,4 +1,10 @@
-import { generateMinesweeper, getSafeCells } from '@/lib/minesweeper';
+import {
+  generateMinesweeper,
+  getAdjacentCells,
+  getAdjacentSafeCells,
+  getSafeCells,
+  toCellCoords,
+} from '@/lib/minesweeper';
 import {
   Difficulty,
   Grid,
@@ -14,9 +20,9 @@ interface MinesweeperState {
   time: number;
   difficulty: Difficulty;
   dimensions: [number, number];
-  bombs: number;
-  solvedGrid: Grid;
+  numBombs: number;
   grid: Grid;
+  bombs: Set<string>;
   flags: Set<string>;
   history: HistoryEntry[];
   isFlagMode: boolean;
@@ -32,7 +38,7 @@ interface MinesweeperState {
   ) => void;
   reset: (difficulty: Difficulty) => void;
   update: (row: number, col: number, isFlagMode: boolean) => void;
-  stop: () => void;
+  stop: (win: boolean) => void;
 }
 
 export const useMinesweeperState = create<MinesweeperState>((set) => ({
@@ -41,9 +47,9 @@ export const useMinesweeperState = create<MinesweeperState>((set) => ({
   time: 0,
   difficulty: 'easy',
   dimensions: [0, 0],
-  bombs: 0,
-  solvedGrid: [],
+  numBombs: 0,
   grid: [],
+  bombs: new Set(),
   flags: new Set(),
   history: [],
   isFlagMode: false,
@@ -56,7 +62,7 @@ export const useMinesweeperState = create<MinesweeperState>((set) => ({
   reset: (difficulty) => {
     const newSeed = Math.random();
     seedrandom(`${newSeed}`, { global: true });
-    const { puzzle, solution, dimensions, bombs } =
+    const { dimensions, numBombs, puzzle, bombs } =
       generateMinesweeper(difficulty);
 
     set({
@@ -65,16 +71,16 @@ export const useMinesweeperState = create<MinesweeperState>((set) => ({
       time: 0,
       difficulty: difficulty,
       dimensions: dimensions,
-      bombs: bombs,
-      solvedGrid: solution.map((row) => [...row]),
+      numBombs: numBombs,
       grid: puzzle.map((row) => [...row]),
+      bombs: new Set(bombs),
       flags: new Set(),
       history: [],
     });
   },
   update: (row, col, isFlagMode) => {
     set((prevState) => {
-      if (!prevState.isActive) return;
+      if (!prevState.isActive) return {};
 
       const newFlags = new Set(prevState.flags);
       const newHistory = [
@@ -95,24 +101,23 @@ export const useMinesweeperState = create<MinesweeperState>((set) => ({
       }
 
       const newGrid = prevState.grid.map((r) => [...r]);
-      const safeCells = getSafeCells(prevState.solvedGrid, row, col);
+      const safeCells = getSafeCells(prevState.bombs, row, col);
       if (safeCells.length === 0) {
-        ;
+        prevState.stop(false);
+        return { }
       }
-      safeCells.forEach(
-        ({ row, col }) => {
-          newGrid[row][col] = prevState.solvedGrid[row][col]
-          newFlags.delete(`${row}-${col}`);
-        },
-      );
+      safeCells.forEach(({ row, col, adjacentBombs }) => {
+        newGrid[row][col] = adjacentBombs;
+        newFlags.delete(`${row}-${col}`);
+      });
 
       return { grid: newGrid, flags: newFlags, history: newHistory };
     });
   },
-  stop: () => {
+  stop: (win) => {
     set((prevState) => {
       const prevLeaderboard =
-        JSON.parse(localStorage.getItem('sudoku-leaderboard')) || [];
+        JSON.parse(localStorage.getItem('minesweeper-leaderboard')) || [];
       const newEntry: LeaderboardEntry = {
         seed: prevState.seed,
         time: prevState.time,
@@ -122,11 +127,30 @@ export const useMinesweeperState = create<MinesweeperState>((set) => ({
       const newLeaderboard = [...prevLeaderboard, newEntry];
       newLeaderboard.sort((a, b) => a.time - b.time);
       localStorage.setItem(
-        'sudoku-leaderboard',
+        'minesweeper-leaderboard',
         JSON.stringify(newLeaderboard),
       );
 
-      return { isActive: false, selectedNumber: null };
+      if (win) {
+        const newGrid = prevState.grid.map((array, row) =>
+          array.map((num, col) => {
+            if (num != -1) return num;
+            const adjacentCells = getAdjacentCells(row, col);
+            return (
+              adjacentCells.length -
+              getAdjacentSafeCells(prevState.bombs, adjacentCells).length
+            );
+          }),
+        );
+
+        return { isActive: false, grid: newGrid };
+      } else {
+        const newGrid = prevState.grid.map((r) => [...r]);
+        toCellCoords([...prevState.bombs]).forEach(({ row, col }) => {
+          newGrid[row][col] = 999;
+        });
+        return { isActive: false, grid: newGrid };
+      }
     });
   },
 }));

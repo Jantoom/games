@@ -10,15 +10,17 @@ import TimerText from '@/components/minesweeper/TimerText';
 import DifficultyButtons from '@/components/minesweeper/DifficultyButtons';
 
 const Minesweeper: React.FC = () => {
-  const { seed, grid, reset, update, stop } = useMinesweeperState();
+  const { seed, bombs, flags, reset, stop } = useMinesweeperState();
 
   useEffect(() => {
     reset('easy');
   }, [reset]);
 
   useEffect(() => {
-    if (grid.length > 0 && isSolved(grid)) stop();
-  }, [grid, stop]);
+    if (isSolved(bombs, flags)) {
+      stop(true);
+    }
+  }, [bombs, flags, stop]);
 
   return (
     <AnimatedPage>
