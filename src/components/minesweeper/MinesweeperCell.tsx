@@ -1,40 +1,72 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CellNotes } from '@/lib/sudokuTypes';
+import { Bomb, Flag } from 'lucide-react';
+import { Themes } from '@/lib/styles';
+import { useGlobalState } from '@/states/globalState';
 
 interface MinesweeperCellProps {
+  id: string;
   num: number;
-  onClick: () => void;
+  isFlagged: boolean;
+  // isExploded: boolean;
 }
 
 const MinesweeperCell: React.FC<MinesweeperCellProps> = ({
+  id,
   num,
-  onClick,
+  isFlagged,
+  // isExploded,
 }) => {
+  const { theme } = useGlobalState();
   const randomDelay = Math.random() * 0.1;
+
   return (
     <div
+      data-id={id}
       className={`w-full aspect-square ${num === -1 ? 'cursor-pointer' : ''}`}
-      onClick={onClick}
     >
       <motion.div
         key="cell"
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
-        transition={{ duration: 0.5, ease: 'easeInOut', delay: randomDelay * 2 }}
-        className={`relative flex w-full h-full items-center justify-center ${num === -1 ? 'bg-primary' : ''}`}
+        transition={{
+          duration: 0.5,
+          ease: 'easeInOut',
+          delay: randomDelay * 2,
+        }}
+        className={`relative flex w-full h-full items-center justify-center ${num === -1 ? 'bg-secondary' : ''}`}
       >
         <AnimatePresence mode="sync">
-        <motion.span
+          {isFlagged ? (
+            <motion.div
+              key={`${isFlagged}`}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3, ease: 'easeInOut' }}
+              className={`absolute text-lg font-medium select-none transition-colors text-primary`}
+            >
+              {isFlagged ? (
+                <Flag
+                  className="stroke-background"
+                  fill={Themes[theme].primary}
+                />
+              ) : (
+                <Bomb className="stroke-background" fill="black" />
+              )}
+            </motion.div>
+          ) : (
+            <motion.span
               key={num}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3, ease: 'easeInOut' }}
-              className={`absolute text-[min(4vw,2vh)] font-medium select-none transition-colors text-primary`}
+              className={`absolute text-lg font-medium select-none transition-colors text-primary`}
             >
               {num > 0 ? num : ''}
             </motion.span>
+          )}
         </AnimatePresence>
       </motion.div>
     </div>

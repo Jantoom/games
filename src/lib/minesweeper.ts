@@ -4,11 +4,16 @@ let cellCoords: { row: number; col: number }[] = [...Array(9)].flatMap(
   (_, row) => [...Array(9)].map((_, col) => ({ row, col })),
 );
 let dimensions: { row: number; col: number } = { row: 15, col: 10 };
-let numBombs: number = 15;
+let bombs: number = 15;
 
 export const generateMinesweeper = (
   difficulty: Difficulty,
-): { puzzle: Grid; solution: Grid } => {
+): {
+  puzzle: Grid;
+  solution: Grid;
+  dimensions: [number, number];
+  bombs: number;
+} => {
   // First, prepare based on difficulty
   dimensions = {
     easy: { row: 12, col: 8 },
@@ -16,7 +21,7 @@ export const generateMinesweeper = (
     hard: { row: 30, col: 20 },
   }[difficulty];
 
-  numBombs = {
+  bombs = {
     easy: 12,
     medium: 36,
     hard: 72,
@@ -36,7 +41,7 @@ export const generateMinesweeper = (
     .map(() => Array(dimensions.col).fill(-1));
 
   let count = 0;
-  while (count < numBombs) {
+  while (count < bombs) {
     const row = Math.floor(Math.random() * dimensions.row);
     const col = Math.floor(Math.random() * dimensions.col);
     if (solution[row][col] != 9) {
@@ -56,7 +61,7 @@ export const generateMinesweeper = (
     }),
   );
 
-  return { puzzle, solution };
+  return { puzzle, solution, dimensions: [dimensions.row, dimensions.col], bombs };
 };
 
 export const isSolved = (grid: Grid): boolean =>
