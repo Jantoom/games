@@ -142,7 +142,7 @@ const MinesweeperGrid: React.FC = () => {
         );
       },
       onPinch: ({ event, offset: [d] }) => {
-        setScale(clamp(scaleBounds.min, scaleBounds.max, d ** 200));
+        setScale(clamp(scaleBounds.min, scaleBounds.max, d ** 2));
       },
       onPointerDown: ({ event }) => {
         lastClickCell.current = getRowColFromElement(event.target as Element);
@@ -225,12 +225,13 @@ const MinesweeperGrid: React.FC = () => {
             }}
             className={`grid relative`}
             style={{
+              gridTemplateColumns: `repeat(${dimensions[1]},minmax(0,1fr))`,
               height: dimensions[0] * svgFactor,
               width: dimensions[1] * svgFactor,
               x,
               y,
               scale,
-              gridTemplateColumns: `repeat(${dimensions[1]},minmax(0,1fr))`,
+              touchAction: 'none'
             }}
           >
             <svg
