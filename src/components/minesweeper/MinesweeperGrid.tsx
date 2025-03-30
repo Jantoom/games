@@ -142,7 +142,7 @@ const MinesweeperGrid: React.FC = () => {
         );
       },
       onPinch: ({ event, offset: [d] }) => {
-        setScale(clamp(scaleBounds.min, scaleBounds.max, d ** 2));
+        setScale(clamp(scaleBounds.min, scaleBounds.max, scaleBounds.min + (d / 2) ** 2));
       },
       onPointerDown: ({ event }) => {
         lastClickCell.current = getRowColFromElement(event.target as Element);

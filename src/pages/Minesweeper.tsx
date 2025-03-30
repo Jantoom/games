@@ -28,7 +28,7 @@ const Minesweeper: React.FC = () => {
         key={seed}
         className="flex flex-col h-svh items-center py-8"
       >
-        <div className="flex flex-col items-center justify-between h-screen">
+        <div className="flex flex-col items-center justify-between h-full">
           <div className="flex justify-between items-center w-full">
             <TimerText />
             <DifficultyButtons reset={reset} />
