@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import MinesweeperCell from './MinesweeperCell';
 import { useMinesweeperState } from '@/states/minesweeperState';
-import { createUseGesture, pinchAction, wheelAction } from '@use-gesture/react';
+import { createUseGesture, dragAction, pinchAction, wheelAction } from '@use-gesture/react';
+import { animated, useSpring, config } from '@react-spring/web';
 import { clamp, motion, useMotionValue } from 'framer-motion';
 
 const MinesweeperGrid: React.FC = () => {
@@ -17,22 +18,14 @@ const MinesweeperGrid: React.FC = () => {
     update,
   } = useMinesweeperState();
   // Grid transform
+  const gridRef = useRef(null);
+  const gridContainerRef = useRef(null);
   const svgFactor = 30;
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-  const [posBounds, setPosBounds] = useState<{
-    top: number;
-    bottom: number;
-    left: number;
-    right: number;
-  }>({ top: 0, bottom: 0, left: 0, right: 0 });
-  const [scale, setScale] = useState(0);
-  const [scaleBounds, setScaleBounds] = useState<{ min: number; max: number }>({
-    min: 0,
-    max: 0,
-  });
+  const [{ x, y, top, bottom, left, right }, posApi] = useSpring(() => ({ x: 0, y: 0, top: 0, bottom: 0, left: 0, right: 0 }));
+  const [{ scale, min, max }, scaleApi] = useSpring(() => ({ scale: 0.01, min: 0, max: 0, config: config.stiff }));
   // Gestures
-  const useGesture = createUseGesture([wheelAction, pinchAction]);
+  const useGesture = createUseGesture([dragAction, pinchAction, wheelAction]);
+  const dragStartPos = useRef([0, 0]);
   const clickTimeout = useRef(null);
   const longClickTimeout = useRef(null);
   const lastClickTime = useRef(0);
@@ -73,76 +66,86 @@ const MinesweeperGrid: React.FC = () => {
   };
 
   useEffect(() => {
-    const grid = document.getElementById('grid');
-    const gridContainer = document.getElementById('gridContainer');
-    if (!grid || !gridContainer) return;
+    if (!gridRef.current || !gridContainerRef.current) return;
 
     const min =
       Math.min(
-        gridContainer.clientHeight / grid.clientHeight,
-        gridContainer.clientWidth / grid.clientWidth,
+        gridContainerRef.current.clientHeight / gridRef.current.clientHeight,
+        gridContainerRef.current.clientWidth / gridRef.current.clientWidth,
       ) * 0.9;
 
     const max = Math.max(
       min,
-      gridContainer.clientHeight /
-        ((10 * Math.max(grid.clientHeight, grid.clientWidth)) /
-          Math.max(...dimensions)),
+      gridContainerRef.current.clientHeight /
+      ((10 * Math.max(gridRef.current.clientHeight, gridRef.current.clientWidth)) /
+        Math.max(...dimensions)),
     );
 
-    setScaleBounds({ min, max });
+    scaleApi.start({ scale: min, min, max });
+    console.log(min, max)
+    setTimeout(() => console.log(scale.get()), 1000)
   }, [dimensions]);
 
-  useEffect(() => {
-    if (scale > 0) {
-      const gridContainer = document.getElementById('gridContainer');
-      const grid = document.getElementById('grid');
-      if (!gridContainer || !grid) return;
+  const calcXYBounds = (scale: number) => {
+    if (!grid || !gridRef.current || !gridContainerRef.current) return;
 
-      const normalisedScale =
-        (scale - scaleBounds.min) / (scaleBounds.max - scaleBounds.min);
+    const normalisedScale =
+      (scale - min.get()) / (max.get() - min.get());
 
-      const vBound = Math.max(
-        0,
-        (grid.clientHeight * scale - gridContainer.clientHeight) / 2 +
-          100 * normalisedScale,
-      );
-      const hBound = Math.max(
-        0,
-        (grid.clientWidth * scale - gridContainer.clientWidth) / 2 +
-          100 * normalisedScale,
-      );
-      const posBounds = {
-        top: -vBound,
-        bottom: vBound,
-        left: -hBound,
-        right: hBound,
-      };
-      x.set(
-        Math.sign(x.get()) === 1
-          ? Math.min(x.get(), posBounds.right)
-          : Math.max(x.get(), posBounds.left),
-      );
-      y.set(
-        Math.sign(y.get()) === 1
-          ? Math.min(y.get(), posBounds.bottom)
-          : Math.max(y.get(), posBounds.top),
-      );
-      setPosBounds(posBounds);
-    } else if (scale === 0 && scaleBounds.min > 0) {
-      setScale(scaleBounds.min);
-    }
-  }, [scale, scaleBounds, x, y]);
+
+    const vBound = Math.max(
+      0,
+      (gridRef.current.clientHeight * scale - gridContainerRef.current.clientHeight) / 2 +
+      100 * normalisedScale,
+    );
+    const hBound = Math.max(
+      0,
+      (gridRef.current.clientWidth * scale - gridContainerRef.current.clientWidth) / 2 +
+      100 * normalisedScale,
+    );
+    const posBounds = {
+      top: -vBound,
+      bottom: vBound,
+      left: -hBound,
+      right: hBound,
+    };
+
+    return posBounds;
+  }
 
   const binds = useGesture(
     {
-      onWheel: ({ event, delta: [, dy] }) => {
-        setScale((prev) =>
-          clamp(scaleBounds.min, scaleBounds.max, prev - dy * 0.001),
-        );
+      onDrag: ({ movement: [ox, oy], down, first }) => {
+        // Calculate elasticity effect when panning beyond limits
+        if (first) dragStartPos.current = [x.get(), y.get()]
+        const leniency = down ? 50 * scale.get() / 2 : 0;
+        const elasticX = clamp(left.get() - leniency, right.get() + leniency, dragStartPos.current[0] + ox * scale.get() / 2);
+        const elasticY = clamp(top.get() - leniency, bottom.get() + leniency, dragStartPos.current[1] + oy * scale.get() / 2);
+        // If no longer panning but axis is beyond limits, snap back
+        const xConfig = !down && clamp(left.get(), right.get(), x.get()) != x.get() ? config.stiff : config.molasses;
+        const yConfig = !down && clamp(top.get(), bottom.get(), y.get()) != y.get() ? config.stiff : config.molasses;
+        
+        posApi.start({ x: elasticX, config: xConfig });
+        posApi.start({ y: elasticY, config: yConfig });
       },
-      onPinch: ({ event, offset: [d] }) => {
-        setScale(clamp(scaleBounds.min, scaleBounds.max, scaleBounds.min + (d / 2) ** 2));
+      onPinch: ({ offset: [d], active }) => {
+        // scaleApi.start({ scale: clamp(min.get(), max.get(), (d * 2) ** 2) });
+        // Calculate elasticity effect when zooming beyond limits
+        const leniency = active ? 0.1 : 0;
+        const elasticScale = clamp(min.get() * (1 - leniency), max.get() * (1 + leniency), scale.get() - d / (max.get() - min.get()) / 1.75);
+        const { top, bottom, left, right } = calcXYBounds(elasticScale);
+
+        scaleApi.start({ scale: elasticScale });
+        posApi.start({ x: clamp(top, bottom, x.get()), y: clamp(left, right, y.get()), top, bottom, left, right });
+      },
+      onWheel: ({ direction: [, dy], active }) => {
+        // Calculate elasticity effect when zooming beyond limits
+        const leniency = active ? 0.1 : 0;
+        const elasticScale = clamp(min.get() * (1 - leniency), max.get() * (1 + leniency), scale.get() - dy / (max.get() - min.get()) / 1.75);
+        const { top, bottom, left, right } = calcXYBounds(elasticScale);
+
+        scaleApi.start({ scale: elasticScale });
+        posApi.start({ x: clamp(top, bottom, x.get()), y: clamp(left, right, y.get()), top, bottom, left, right });
       },
       onPointerDown: ({ event }) => {
         lastClickCell.current = getRowColFromElement(event.target as Element);
@@ -209,17 +212,13 @@ const MinesweeperGrid: React.FC = () => {
 
   return (
     dimensions[0] > 0 && (
-      <div {...binds()} className="flex flex-col h-full justify-center">
+      <div {...binds()} className="flex flex-col h-full justify-center" style={{ touchAction: 'none' }}>
         <div
-          id="gridContainer"
+          ref={gridContainerRef}
           className="flex flex-col items-center justify-center w-[95vw] h-[85vh] overflow-hidden"
         >
-          <motion.div
-            id="grid"
-            drag
-            dragConstraints={posBounds}
-            dragElastic={0.3}
-            dragTransition={{ power: 0.2, timeConstant: 200 }}
+          <animated.div
+            ref={gridRef}
             onMouseMove={(event) => {
               mousePos.current = { x: event.clientX, y: event.clientY };
             }}
@@ -231,7 +230,6 @@ const MinesweeperGrid: React.FC = () => {
               x,
               y,
               scale,
-              touchAction: 'none'
             }}
           >
             <svg
@@ -295,7 +293,7 @@ const MinesweeperGrid: React.FC = () => {
                 />
               )),
             )}
-          </motion.div>
+          </animated.div>
         </div>
       </div>
     )
