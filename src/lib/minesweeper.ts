@@ -18,7 +18,7 @@ export const generateMinesweeper = (
   dimensions = {
     easy: { row: 12, col: 8 },
     medium: { row: 21, col: 14 },
-    hard: { row: 30, col: 20 },
+    hard: { row: 20, col: 30 },
   }[difficulty];
 
   numBombs = {

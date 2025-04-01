@@ -1,9 +1,9 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import MinesweeperCell from './MinesweeperCell';
 import { useMinesweeperState } from '@/states/minesweeperState';
 import { createUseGesture, dragAction, pinchAction, wheelAction } from '@use-gesture/react';
 import { animated, useSpring, config } from '@react-spring/web';
-import { clamp, motion, useMotionValue } from 'framer-motion';
+import { clamp } from 'framer-motion';
 
 const MinesweeperGrid: React.FC = () => {
   const {
@@ -18,201 +18,125 @@ const MinesweeperGrid: React.FC = () => {
     update,
   } = useMinesweeperState();
   // Grid transform
-  const gridRef = useRef(null);
-  const gridContainerRef = useRef(null);
+  const gridRef = useRef<HTMLDivElement>(null);
+  const gridContainerRef = useRef<HTMLDivElement>(null);
   const svgFactor = 30;
-  const [{ x, y, top, bottom, left, right }, posApi] = useSpring(() => ({ x: 0, y: 0, top: 0, bottom: 0, left: 0, right: 0 }));
+  const [{ x, y, top, bottom, left, right }, posApi] = useSpring(() => ({ x: 0, y: 0, top: 0, bottom: 0, left: 0, right: 0, config: config.stiff }));
   const [{ scale, min, max }, scaleApi] = useSpring(() => ({ scale: 0.01, min: 0, max: 0, config: config.stiff }));
   // Gestures
   const useGesture = createUseGesture([dragAction, pinchAction, wheelAction]);
-  const dragStartPos = useRef([0, 0]);
-  const clickTimeout = useRef(null);
-  const longClickTimeout = useRef(null);
-  const lastClickTime = useRef(0);
-  const lastClickPos = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
-  const lastClickCell = useRef<{ row: number; col: number }>({
-    row: 0,
-    col: 0,
-  });
-  const [clickConsumed, setClickConsumed] = useState(false);
-  const mousePos = useRef<{ x: number; y: number }>({
-    x: 0,
-    y: 0,
-  });
-  const mouseCell = useRef<{ row: number; col: number }>({
-    row: 0,
-    col: 0,
-  });
+  const clickTimeout = useRef<NodeJS.Timeout>(null);
+  const longClickTimeout = useRef<NodeJS.Timeout>(null);
+  const startClickPos = useRef<{ x: number; y: number }>(null);
+  const mousePos = useRef<{ x: number; y: number }>(null);
 
-  const getRowColFromElement = (elem: Element) => {
-    const key = elem.closest('[data-id]')?.getAttribute('data-id');
+  const calcXYBounds = (scale: number) => {
+    const normalisedScale = (scale - min.get()) / (max.get() - min.get());
+    const vBound = Math.max(0, (gridRef.current.clientHeight * scale - gridContainerRef.current.clientHeight) / 2 + 100 * normalisedScale);
+    const hBound = Math.max(0, (gridRef.current.clientWidth * scale - gridContainerRef.current.clientWidth) / 2 + 100 * normalisedScale);
+    return { top: -vBound, bottom: vBound, left: -hBound, right: hBound };
+  }
+
+  const getCellFromPosition = (position: { x: number, y: number }) => {
+    const key = document.elementFromPoint(position.x, position.y).closest('[data-id]')?.getAttribute('data-id');
     if (!key) return null;
     const cell = key ? key.split('-').map((val) => +val) : null;
     return { row: cell[0], col: cell[1] };
   };
 
-  const tryCachedUpdate = (flagCheck: boolean) => {
+  const tryUpdate = (startPos: { x: number, y: number }, finishPos: { x: number, y: number }, flagCheck: boolean) => {
+    const startClickCell = getCellFromPosition(startPos);
+    const finishClickCell = getCellFromPosition(finishPos);
     if (
-      lastClickPos &&
-      lastClickCell.current &&
-      mouseCell.current &&
-      Math.abs(lastClickPos.current?.x - mousePos.current.x) < 20 &&
-      Math.abs(lastClickPos.current?.y - mousePos.current.y) < 20 &&
-      lastClickCell.current.row === mouseCell.current.row &&
-      lastClickCell.current.col === mouseCell.current.col
+      Math.abs(startPos.x - finishPos.x) < 20 && Math.abs(startPos.y - finishPos.y) < 20 &&
+      startClickCell && finishClickCell && startClickCell.row === finishClickCell.row && startClickCell.col === finishClickCell.col
     ) {
-      update(lastClickCell.current.row, lastClickCell.current.col, flagCheck);
+      update(finishClickCell.row, finishClickCell.col, flagCheck);
     }
+    startClickPos.current = null;
   };
-
-  useEffect(() => {
-    if (!gridRef.current || !gridContainerRef.current) return;
-
-    const min =
-      Math.min(
-        gridContainerRef.current.clientHeight / gridRef.current.clientHeight,
-        gridContainerRef.current.clientWidth / gridRef.current.clientWidth,
-      ) * 0.9;
-
-    const max = Math.max(
-      min,
-      gridContainerRef.current.clientHeight /
-      ((10 * Math.max(gridRef.current.clientHeight, gridRef.current.clientWidth)) /
-        Math.max(...dimensions)),
-    );
-
-    scaleApi.start({ scale: min, min, max });
-    console.log(min, max)
-    setTimeout(() => console.log(scale.get()), 1000)
-  }, [dimensions]);
-
-  const calcXYBounds = (scale: number) => {
-    if (!grid || !gridRef.current || !gridContainerRef.current) return;
-
-    const normalisedScale =
-      (scale - min.get()) / (max.get() - min.get());
-
-
-    const vBound = Math.max(
-      0,
-      (gridRef.current.clientHeight * scale - gridContainerRef.current.clientHeight) / 2 +
-      100 * normalisedScale,
-    );
-    const hBound = Math.max(
-      0,
-      (gridRef.current.clientWidth * scale - gridContainerRef.current.clientWidth) / 2 +
-      100 * normalisedScale,
-    );
-    const posBounds = {
-      top: -vBound,
-      bottom: vBound,
-      left: -hBound,
-      right: hBound,
-    };
-
-    return posBounds;
-  }
 
   const binds = useGesture(
     {
-      onDrag: ({ movement: [ox, oy], down, first }) => {
-        // Calculate elasticity effect when panning beyond limits
-        if (first) dragStartPos.current = [x.get(), y.get()]
+      onDrag: ({ offset: [ox, oy], lastOffset: [lx, ly], down, first, memo, event }) => {
+        if (first) memo = { x: x.get(), y: y.get() }
         const leniency = down ? 50 * scale.get() / 2 : 0;
-        const elasticX = clamp(left.get() - leniency, right.get() + leniency, dragStartPos.current[0] + ox * scale.get() / 2);
-        const elasticY = clamp(top.get() - leniency, bottom.get() + leniency, dragStartPos.current[1] + oy * scale.get() / 2);
-        // If no longer panning but axis is beyond limits, snap back
-        const xConfig = !down && clamp(left.get(), right.get(), x.get()) != x.get() ? config.stiff : config.molasses;
-        const yConfig = !down && clamp(top.get(), bottom.get(), y.get()) != y.get() ? config.stiff : config.molasses;
-        
-        posApi.start({ x: elasticX, config: xConfig });
-        posApi.start({ y: elasticY, config: yConfig });
+        const elasticX = clamp(left.get() - leniency, right.get() + leniency, memo.x + (ox - lx) * scale.get() / (event instanceof TouchEvent ? 1 : 2));
+        const elasticY = clamp(top.get() - leniency, bottom.get() + leniency, memo.y + (oy - ly) * scale.get() / (event instanceof TouchEvent ? 1 : 2));
+        posApi.start({ x: elasticX, y: elasticY });
+        return memo;
       },
-      onPinch: ({ offset: [d], active }) => {
-        // scaleApi.start({ scale: clamp(min.get(), max.get(), (d * 2) ** 2) });
-        // Calculate elasticity effect when zooming beyond limits
+      onPinch: ({ offset: [os,], lastOffset: [ls,], active, first, memo, ...rest }) => {
+        if (first) memo = { scale: scale.get() }
         const leniency = active ? 0.1 : 0;
-        const elasticScale = clamp(min.get() * (1 - leniency), max.get() * (1 + leniency), scale.get() - d / (max.get() - min.get()) / 1.75);
+        const elasticScale = clamp(min.get() * (1 - leniency), max.get() * (1 + leniency), memo.scale + (os - ls) / (max.get() - min.get()));
         const { top, bottom, left, right } = calcXYBounds(elasticScale);
-
         scaleApi.start({ scale: elasticScale });
         posApi.start({ x: clamp(top, bottom, x.get()), y: clamp(left, right, y.get()), top, bottom, left, right });
+        return memo;
       },
-      onWheel: ({ direction: [, dy], active }) => {
-        // Calculate elasticity effect when zooming beyond limits
+      onWheel: ({ offset: [, oy], lastOffset: [, ly], active, first, memo }) => {
+        if (first) memo = { scale: scale.get() }
         const leniency = active ? 0.1 : 0;
-        const elasticScale = clamp(min.get() * (1 - leniency), max.get() * (1 + leniency), scale.get() - dy / (max.get() - min.get()) / 1.75);
+        const elasticScale = clamp(min.get() * (1 - leniency), max.get() * (1 + leniency), memo.scale - (oy - ly) / (max.get() - min.get()) / 100);
         const { top, bottom, left, right } = calcXYBounds(elasticScale);
-
         scaleApi.start({ scale: elasticScale });
         posApi.start({ x: clamp(top, bottom, x.get()), y: clamp(left, right, y.get()), top, bottom, left, right });
+        return memo;
       },
       onPointerDown: ({ event }) => {
-        lastClickCell.current = getRowColFromElement(event.target as Element);
-        if (!lastClickCell.current || event.button === 2) return;
-        const now = Date.now();
-
-        if (now - lastClickTime.current < 300) {
-          clearTimeout(clickTimeout.current);
-          mouseCell.current = getRowColFromElement(event.target as Element);
-          tryCachedUpdate(flagOnDoubleClick);
-          setClickConsumed(true);
-        } else {
-          longClickTimeout.current = setTimeout(() => {
-            const elem = document.elementFromPoint(
-              mousePos.current.x,
-              mousePos.current.y,
-            );
-            mouseCell.current = getRowColFromElement(elem);
-            tryCachedUpdate(flagOnLongClick);
-            setClickConsumed(true);
+        if (startClickPos.current) return; // Needs to be consumed by something else
+        startClickPos.current = { x: event.clientX, y: event.clientY }
+        clearTimeout(longClickTimeout.current);
+        longClickTimeout.current = setTimeout(() => {
+          longClickTimeout.current = null;
+          tryUpdate(startClickPos.current, mousePos.current, flagOnLongClick);
+        }, 500);
+      },
+      onClick: ({ event }) => {
+        if (!startClickPos.current) return;
+        clearTimeout(clickTimeout.current);
+        if (longClickTimeout.current) {
+          // Long click hasn't cleared itself yet
+          clearTimeout(longClickTimeout.current);
+          longClickTimeout.current = null;
+          clickTimeout.current = setTimeout(() => {
+            tryUpdate(startClickPos.current, { x: event.clientX, y: event.clientY }, flagOnClick);
           }, 500);
         }
-
-        lastClickPos.current = { ...mousePos.current };
-        lastClickTime.current = now;
       },
-      onPointerUp: ({ event }) => {
-        lastClickCell.current = getRowColFromElement(event.target as Element);
-        if (!lastClickCell.current || event.button === 2) return;
-        clearTimeout(longClickTimeout.current);
-
-        if (!clickConsumed) {
-          clickTimeout.current = setTimeout(() => {
-            if (lastClickCell.current) {
-              update(
-                lastClickCell.current.row,
-                lastClickCell.current.col,
-                flagOnClick,
-              );
-            }
-          }, 300);
-        }
-
-        setClickConsumed(false);
+      onDoubleClick: ({ event }) => {
+        if (!startClickPos.current) return;
+        tryUpdate(startClickPos.current, { x: event.clientX, y: event.clientY }, flagOnDoubleClick);
       },
       onContextMenu: ({ event }) => {
         event.preventDefault();
+        if (!startClickPos.current) return;
+        clearTimeout(clickTimeout.current);
         clearTimeout(longClickTimeout.current);
-        lastClickCell.current = getRowColFromElement(event.target as Element);
-
-        if (lastClickCell.current) {
-          update(
-            lastClickCell.current.row,
-            lastClickCell.current.col,
-            flagOnRightClick,
-          );
-        }
+        longClickTimeout.current = null;
+        tryUpdate(startClickPos.current, { x: event.clientX, y: event.clientY }, flagOnRightClick);
       },
     },
-    {
-      eventOptions: { passive: false },
-    },
+    { eventOptions: { passive: false } },
   );
+
+  useEffect(() => {
+    if (!gridRef.current || !gridContainerRef.current) return;
+    const min = Math.min(
+      gridContainerRef.current.clientHeight / gridRef.current.clientHeight,
+      gridContainerRef.current.clientWidth / gridRef.current.clientWidth,
+    ) * 0.9; // Small enough to fit whole grid in 90% of the container
+    const max = Math.max(min,
+      gridContainerRef.current.clientHeight /
+      ((10 * Math.max(gridRef.current.clientHeight, gridRef.current.clientWidth)) /
+        Math.max(...dimensions))); // Big enough to fit 10 cells vertically
+    scaleApi.start({ scale: min, min, max });
+  }, [dimensions]);
 
   return (
     dimensions[0] > 0 && (
-      <div {...binds()} className="flex flex-col h-full justify-center" style={{ touchAction: 'none' }}>
+      <div {...binds()} className="flex flex-col h-full justify-center" style={{ touchAction: 'none', userSelect: 'none' }}>
         <div
           ref={gridContainerRef}
           className="flex flex-col items-center justify-center w-[95vw] h-[85vh] overflow-hidden"
