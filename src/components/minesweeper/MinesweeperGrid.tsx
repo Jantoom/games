@@ -88,10 +88,7 @@ const MinesweeperGrid: React.FC = () => {
       memo + (offset - lastOffset) / (max.get() - min.get()) / calibration,
     );
     const normalisedScale = (scale - min.get()) / (max.get() - min.get());
-    const opacity = Math.min(
-      1,
-      (scale - min.get() + 0.01) / (max.get() - min.get()),
-    );
+    const opacity = Math.min(1, max.get() - (max.get() - scale) - 1);
     const vBound = Math.max(
       0,
       (gridRef.current.clientHeight * scale -
@@ -261,7 +258,7 @@ const MinesweeperGrid: React.FC = () => {
       scale: min,
       min,
       max,
-      opacity: Math.min(1, 0.01 / (max - min)),
+      opacity: Math.min(1, max - (max - min) - 1),
     });
   }, [dimensions, scaleApi]);
 
@@ -269,7 +266,7 @@ const MinesweeperGrid: React.FC = () => {
     if (!isActive) {
       scaleApi.start({
         scale: min.get(),
-        opacity: Math.min(1, 0.01 / (max.get() - min.get())),
+        opacity: Math.min(1, max.get() - (max.get() - min.get()) - 1),
         config: config.slow,
       });
       posApi.start({ x: 0, y: 0, config: config.slow });

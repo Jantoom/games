@@ -134,7 +134,7 @@ export const useMinesweeperState = create<MinesweeperState>((set) => ({
       if (win) {
         const newGrid = prevState.grid.map((array, row) =>
           array.map((num, col) => {
-            if (num != -1 || prevState.flags.has(`${row}-${col}`)) return num;
+            if (num != null || prevState.flags.has(`${row}-${col}`)) return num;
             const adjacentCells = getAdjacentCells(row, col);
             return (
               adjacentCells.length -
