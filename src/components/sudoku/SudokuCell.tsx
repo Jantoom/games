@@ -29,7 +29,11 @@ const SudokuCell: React.FC<SudokuCellProps> = ({
         key="cell"
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
-        transition={{ duration: 0.5, ease: 'easeInOut', delay: randomDelay * 2 }}
+        transition={{
+          duration: 0.5,
+          ease: 'easeInOut',
+          delay: randomDelay * 2,
+        }}
         className={`relative flex w-full h-full items-center justify-center`}
       >
         <AnimatePresence mode="sync">

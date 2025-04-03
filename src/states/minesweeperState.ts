@@ -82,7 +82,6 @@ export const useMinesweeperState = create<MinesweeperState>((set) => ({
     set((prevState) => {
       if (!prevState.isActive) return {};
 
-      const newFlags = new Set(prevState.flags);
       const newHistory = [
         ...prevState.history,
         {
@@ -90,7 +89,8 @@ export const useMinesweeperState = create<MinesweeperState>((set) => ({
           flags: new Set(prevState.flags),
         },
       ];
-
+      
+      const newFlags = new Set(prevState.flags);
       if (isFlagMode && prevState.grid[row][col] === -1) {
         if (newFlags.has(`${row}-${col}`)) {
           newFlags.delete(`${row}-${col}`);
@@ -104,7 +104,7 @@ export const useMinesweeperState = create<MinesweeperState>((set) => ({
       const safeCells = getSafeCells(prevState.bombs, row, col);
       if (safeCells.length === 0) {
         prevState.stop(false);
-        return { }
+        return {};
       }
       safeCells.forEach(({ row, col, adjacentBombs }) => {
         newGrid[row][col] = adjacentBombs;
@@ -134,7 +134,7 @@ export const useMinesweeperState = create<MinesweeperState>((set) => ({
       if (win) {
         const newGrid = prevState.grid.map((array, row) =>
           array.map((num, col) => {
-            if (num != -1) return num;
+            if (num != -1 || prevState.flags.has(`${row}-${col}`)) return num;
             const adjacentCells = getAdjacentCells(row, col);
             return (
               adjacentCells.length -

@@ -21,7 +21,8 @@ const NumberButtons: React.FC = () => {
             variant="outline"
             onClick={() =>
               setState((prevState) => ({
-                selectedNumber: isActive && prevState.selectedNumber !== num ? num : null,
+                selectedNumber:
+                  isActive && prevState.selectedNumber !== num ? num : null,
               }))
             }
             className={`w-full h-full aspect-square relative rounded-full hover:bg-secondary ${isSelected ? 'bg-primary text-background' : ''}`}

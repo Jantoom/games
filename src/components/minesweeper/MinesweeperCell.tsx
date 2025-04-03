@@ -53,7 +53,6 @@ const MinesweeperCell: React.FC<MinesweeperCellProps> = ({
                   className="stroke-background"
                   fill={Themes[theme].primary}
                 />
-                
               )}
             </motion.div>
           ) : (

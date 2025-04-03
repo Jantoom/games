@@ -154,10 +154,7 @@ const Sudoku: React.FC = () => {
   return (
     grid.length > 0 && (
       <AnimatedPage>
-        <div
-          key={seed}
-          className="flex flex-col h-svh items-center py-8"
-        >
+        <div key={seed} className="flex flex-col h-svh items-center py-8">
           <div className="flex flex-col items-center justify-between h-screen">
             <div className="flex justify-between items-center w-full">
               <TimerText />
