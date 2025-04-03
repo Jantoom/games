@@ -23,7 +23,7 @@ const MinesweeperCell: React.FC<MinesweeperCellProps> = ({
   return (
     <div
       data-id={id}
-      className={`w-full aspect-square ${num === -1 ? 'cursor-pointer' : ''}`}
+      className={`w-full aspect-square ${num === null ? 'cursor-pointer' : ''}`}
     >
       <motion.div
         key="cell"
@@ -34,7 +34,7 @@ const MinesweeperCell: React.FC<MinesweeperCellProps> = ({
           ease: 'easeInOut',
           delay: randomDelay * 2,
         }}
-        className={`relative flex w-full h-full items-center justify-center ${num === -1 || isExploded ? 'bg-secondary' : ''}`}
+        className={`relative flex w-full h-full items-center justify-center ${(num === null && !isFlagged) || isExploded ? 'bg-secondary' : ''}`}
       >
         <AnimatePresence mode="sync">
           {isFlagged || isExploded ? (
@@ -50,8 +50,8 @@ const MinesweeperCell: React.FC<MinesweeperCellProps> = ({
                 <Bomb className="stroke-background" fill="black" />
               ) : (
                 <Flag
-                  className="stroke-background"
-                  fill={Themes[theme].primary}
+                  className="stroke-primary"
+                  fill={Themes[theme].secondary}
                 />
               )}
             </motion.div>

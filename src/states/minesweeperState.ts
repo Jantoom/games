@@ -89,9 +89,9 @@ export const useMinesweeperState = create<MinesweeperState>((set) => ({
           flags: new Set(prevState.flags),
         },
       ];
-      
+
       const newFlags = new Set(prevState.flags);
-      if (isFlagMode && prevState.grid[row][col] === -1) {
+      if (isFlagMode && prevState.grid[row][col] === null) {
         if (newFlags.has(`${row}-${col}`)) {
           newFlags.delete(`${row}-${col}`);
         } else {
@@ -147,7 +147,7 @@ export const useMinesweeperState = create<MinesweeperState>((set) => ({
       } else {
         const newGrid = prevState.grid.map((r) => [...r]);
         toCellCoords([...prevState.bombs]).forEach(({ row, col }) => {
-          newGrid[row][col] = 999;
+          newGrid[row][col] = -1;
         });
         return { isActive: false, grid: newGrid };
       }

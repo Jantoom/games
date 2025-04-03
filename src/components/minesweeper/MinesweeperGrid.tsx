@@ -17,6 +17,7 @@ const MinesweeperGrid: React.FC = () => {
     grid,
     bombs,
     flags,
+    isFlagMode,
     flagOnClick,
     flagOnDoubleClick,
     flagOnLongClick,
@@ -148,7 +149,7 @@ const MinesweeperGrid: React.FC = () => {
       Math.abs(startPos.y - finishPos.y) < 20 &&
       positionCellsAreEqual(startPos, finishPos)
     ) {
-      update(updateCell.row, updateCell.col, flagCheck);
+      update(updateCell.row, updateCell.col, flagCheck || isFlagMode);
     }
   };
 
@@ -364,7 +365,7 @@ const MinesweeperGrid: React.FC = () => {
                   id={`${row}-${col}`}
                   num={num}
                   isFlagged={flags.has(`${row}-${col}`)}
-                  isExploded={bombs.has(`${row}-${col}`) && num != -1}
+                  isExploded={bombs.has(`${row}-${col}`) && num != null}
                 />
               )),
             )}

@@ -1,4 +1,4 @@
-import { Difficulty, Grid, Notes } from './sudokuTypes';
+import { Difficulty, Grid } from './minesweeperTypes';
 
 let cellCoords: { row: number; col: number }[] = [...Array(9)].flatMap(
   (_, row) => [...Array(9)].map((_, col) => ({ row, col })),
@@ -34,7 +34,7 @@ export const generateMinesweeper = (
 
   const puzzle = Array(dimensions.row)
     .fill(null)
-    .map(() => Array(dimensions.col).fill(-1));
+    .map(() => Array(dimensions.col).fill(null));
 
   const bombs = new Set<string>();
 
@@ -126,6 +126,14 @@ export const getSafeCells = (
 
   return result;
 };
+
+export const getHintCells = (
+  grid: Grid,
+  bombs: Set<string>,
+): { row: number; col: number }[] =>
+  cellCoords.filter(
+    ({ row, col }) => grid[row][col] === null && !bombs.has(`${row}-${col}`),
+  );
 
 export const toCellKeys = (cells: { row: number; col: number }[]): string[] =>
   cells.map(({ row, col }) => `${row}-${col}`);

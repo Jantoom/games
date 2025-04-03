@@ -6,6 +6,9 @@ import { isSolved } from '@/lib/minesweeper';
 import TimerText from '@/components/minesweeper/TimerText';
 import DifficultyButtons from '@/components/minesweeper/DifficultyButtons';
 import LeaderboardButton from '@/components/minesweeper/controls/LeaderboardButton';
+import FlagButton from '@/components/minesweeper/controls/FlagButton';
+import HintButton from '@/components/minesweeper/controls/HintButton';
+import OptionsButton from '@/components/minesweeper/controls/OptionsButton';
 
 const Minesweeper: React.FC = () => {
   const { seed, bombs, flags, reset, stop } = useMinesweeperState();
@@ -30,11 +33,13 @@ const Minesweeper: React.FC = () => {
           </div>
           <MinesweeperGrid />
           <div className="flex justify-evenly w-full">
-              {/* <PencilButton /> */}
-              <LeaderboardButton />
-            </div>
+            <HintButton />
+            <FlagButton />
+            <LeaderboardButton />
+            <OptionsButton />
           </div>
         </div>
+      </div>
     </AnimatedPage>
   );
 };
