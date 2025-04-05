@@ -1,5 +1,14 @@
-import seedrandom from 'seedrandom';
 import React, { useEffect, useCallback } from 'react';
+import seedrandom from 'seedrandom';
+import HintsButton from '@/components/sudoku/controls/HintsButton';
+import LeaderboardButton from '@/components/sudoku/controls/LeaderboardButton';
+import PencilButton from '@/components/sudoku/controls/PencilButton';
+import RestartButton from '@/components/sudoku/controls/RestartButton';
+import UndoButton from '@/components/sudoku/controls/UndoButton';
+import DifficultyButtons from '@/components/sudoku/DifficultyButtons';
+import NumberButtons from '@/components/sudoku/NumberButtons';
+import SudokuGrid from '@/components/sudoku/SudokuGrid';
+import TimerText from '@/components/sudoku/TimerText';
 import {
   generateSudoku,
   getRelatedCells,
@@ -7,16 +16,6 @@ import {
   toCellKeys,
 } from '@/lib/sudoku';
 import { Difficulty, LeaderboardEntry } from '@/lib/sudokuTypes';
-import TimerText from '@/components/sudoku/TimerText';
-import DifficultyButtons from '@/components/sudoku/DifficultyButtons';
-import SudokuGrid from '@/components/sudoku/SudokuGrid';
-import NumberButtons from '@/components/sudoku/NumberButtons';
-import RestartButton from '@/components/sudoku/controls/RestartButton';
-import HintsButton from '@/components/sudoku/controls/HintsButton';
-import PencilButton from '@/components/sudoku/controls/PencilButton';
-import UndoButton from '@/components/sudoku/controls/UndoButton';
-import ThemeButton from '@/components/menu/ThemeButton';
-import LeaderboardButton from '@/components/sudoku/controls/LeaderboardButton';
 import { useSudokuState } from '@/states/sudokuState';
 import AnimatedPage from './AnimatedPage';
 
@@ -38,13 +37,16 @@ const Sudoku: React.FC = () => {
         solvedGrid: solution.map((row) => [...row]),
         grid: puzzle.map((row) => [...row]),
         notes: Object.fromEntries(
-          [...Array(9)].flatMap((_, row) =>
-            [...Array(9)].map((_, col) => [`${row}-${col}`, new Set<number>()]),
+          Array.from({ length: 9 }).flatMap((_, row) =>
+            Array.from({ length: 9 }).map((_, col) => [
+              `${row}-${col}`,
+              new Set<number>(),
+            ]),
           ),
         ),
         history: [],
         errors: [],
-        selectedNumber: null,
+        selectedNumber: undefined,
         isPencilMode: false,
       });
     },
@@ -55,33 +57,36 @@ const Sudoku: React.FC = () => {
     setState((prevState) => ({
       grid: prevState.originalGrid.map((row) => [...row]),
       notes: Object.fromEntries(
-        [...Array(9)].flatMap((_, row) =>
-          [...Array(9)].map((_, col) => [`${row}-${col}`, new Set<number>()]),
+        Array.from({ length: 9 }).flatMap((_, row) =>
+          Array.from({ length: 9 }).map((_, col) => [
+            `${row}-${col}`,
+            new Set<number>(),
+          ]),
         ),
       ),
       history: [],
       errors: [],
-      selectedNumber: null,
+      selectedNumber: undefined,
       isPencilMode: false,
     }));
   }, [setState]);
 
   const update = useCallback(
-    (row: number, col: number, num: number, isPencilMode: boolean) => {
+    (row: number, col: number, number_: number, isPencilMode: boolean) => {
       setState((prevState) => {
         const newGrid = prevState.grid.map((r) => [...r]);
-        newGrid[row][col] =
-          isPencilMode || prevState.grid[row][col] === num ? 0 : num;
+        newGrid[row]![col] =
+          isPencilMode || prevState.grid[row]![col] === number_ ? 0 : number_;
 
         const newNotes = { ...prevState.notes };
         for (const key of isPencilMode
           ? [`${row}-${col}`]
           : toCellKeys(getRelatedCells(row, col))) {
           newNotes[key] = new Set(prevState.notes[key]);
-          if (newNotes[key].has(num)) {
-            newNotes[key].delete(num);
+          if (newNotes[key].has(number_)) {
+            newNotes[key].delete(number_);
           } else if (isPencilMode) {
-            newNotes[key].add(num);
+            newNotes[key].add(number_);
           }
         }
         if (!isPencilMode) newNotes[`${row}-${col}`] = new Set();
@@ -108,11 +113,11 @@ const Sudoku: React.FC = () => {
   const undo = useCallback(() => {
     setState((prevState) => {
       if (prevState.history.length === 0) return {};
-      const lastStep = prevState.history[prevState.history.length - 1];
+      const lastStep = prevState.history.at(-1);
       return {
-        grid: lastStep.grid.map((row) => [...row]),
+        grid: lastStep!.grid.map((row) => [...row]),
         notes: Object.fromEntries(
-          Object.entries(lastStep.notes).map(([key, value]) => [
+          Object.entries(lastStep!.notes).map(([key, value]) => [
             key,
             new Set(value),
           ]),
@@ -124,8 +129,9 @@ const Sudoku: React.FC = () => {
 
   const stop = useCallback(() => {
     setState((prevState) => {
-      const prevLeaderboard =
-        JSON.parse(localStorage.getItem('sudoku-leaderboard')) || [];
+      const prevLeaderboard = JSON.parse(
+        localStorage.getItem('sudoku-leaderboard') ?? '[]',
+      ) as LeaderboardEntry[];
       const newEntry: LeaderboardEntry = {
         seed: prevState.seed,
         time: prevState.time,
@@ -139,7 +145,7 @@ const Sudoku: React.FC = () => {
         JSON.stringify(newLeaderboard),
       );
 
-      return { isActive: false, selectedNumber: null };
+      return { isActive: false, selectedNumber: undefined };
     });
   }, [setState]);
 
@@ -154,9 +160,9 @@ const Sudoku: React.FC = () => {
   return (
     grid.length > 0 && (
       <AnimatedPage>
-        <div key={seed} className="flex flex-col h-svh items-center py-8">
-          <div className="flex flex-col items-center justify-between h-screen">
-            <div className="flex justify-between items-center w-full">
+        <div key={seed} className="flex h-svh flex-col items-center py-8">
+          <div className="flex h-screen flex-col items-center justify-between">
+            <div className="flex w-full items-center justify-between">
               <TimerText />
               <DifficultyButtons reset={reset} />
             </div>
@@ -165,7 +171,7 @@ const Sudoku: React.FC = () => {
 
             <NumberButtons />
 
-            <div className="flex justify-evenly w-full">
+            <div className="flex w-full justify-evenly">
               <RestartButton restart={restart} />
               <HintsButton update={update} />
               <PencilButton />

@@ -1,10 +1,10 @@
-import { createRoot } from 'react-dom/client';
-import App from './App.tsx';
 import './main.css';
 import React from 'react';
+import { createRoot } from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import NotFound from './pages/NotFound.tsx';
-import Page from './pages/page.type.ts';
+import App from './App';
+import NotFound from './pages/NotFound';
+import Page from './pages/page.type';
 
 const router = createBrowserRouter(
   [
@@ -22,7 +22,7 @@ const router = createBrowserRouter(
   },
 );
 
-createRoot(document.getElementById('root')!).render(
+createRoot(document.querySelector('#root')).render(
   <React.StrictMode>
     <RouterProvider
       future={{

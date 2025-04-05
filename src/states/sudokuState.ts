@@ -1,3 +1,5 @@
+import { create, ExtractState } from 'zustand';
+import { combine } from 'zustand/middleware';
 import {
   Difficulty,
   Grid,
@@ -5,42 +7,32 @@ import {
   LeaderboardEntry,
   Notes,
 } from '@/lib/sudokuTypes';
-import { create } from 'zustand';
 
-interface SudokuState {
-  seed: number;
-  isActive: boolean;
-  time: number;
-  difficulty: Difficulty;
-  originalGrid: Grid;
-  solvedGrid: Grid;
-  grid: Grid;
-  notes: Notes;
-  history: HistoryEntry[];
-  errors: string[];
-  selectedNumber: number | null;
-  isPencilMode: boolean;
-  leaderboard: LeaderboardEntry[];
-  setState: (
-    state:
-      | Partial<SudokuState>
-      | ((state: SudokuState) => Partial<SudokuState>),
-  ) => void;
-}
+type SudokuState = ExtractState<typeof useSudokuState>;
 
-export const useSudokuState = create<SudokuState>((set) => ({
-  seed: 0,
-  isActive: false,
-  time: 0,
-  difficulty: 'easy',
-  originalGrid: [],
-  solvedGrid: [],
-  grid: [],
-  notes: {},
-  history: [],
-  errors: [],
-  selectedNumber: null,
-  isPencilMode: false,
-  leaderboard: [],
-  setState: (newState) => set(newState),
-}));
+export const useSudokuState = create(
+  combine(
+    {
+      seed: 0,
+      isActive: false,
+      time: 0,
+      difficulty: 'easy' as Difficulty,
+      originalGrid: [] as Grid,
+      solvedGrid: [] as Grid,
+      grid: [] as Grid,
+      notes: {} as Notes,
+      history: [] as HistoryEntry[],
+      errors: [] as string[],
+      selectedNumber: undefined,
+      isPencilMode: false,
+      leaderboard: [] as LeaderboardEntry[],
+    },
+    (set) => ({
+      setState: (
+        state:
+          | Partial<SudokuState>
+          | ((state: SudokuState) => Partial<SudokuState>),
+      ) => set(state),
+    }),
+  ),
+);

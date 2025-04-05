@@ -1,3 +1,6 @@
+import { DialogDescription } from '@radix-ui/react-dialog';
+import { Palette } from 'lucide-react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -9,11 +12,8 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Themes } from '@/lib/styles';
-import { Palette } from 'lucide-react';
-import { useState } from 'react';
-import ControlButton from '../ControlButton';
-import { DialogDescription } from '@radix-ui/react-dialog';
 import { useGlobalState } from '@/states/globalState';
+import ControlButton from '../ControlButton';
 
 const ThemeButton: React.FC = () => {
   const [isThemeOpen, setIsThemeOpen] = useState(false);
@@ -21,7 +21,11 @@ const ThemeButton: React.FC = () => {
   const close = () => setIsThemeOpen(false);
 
   return (
-    <Dialog onOpenChange={(isOpen) => (isOpen ? null : close())}>
+    <Dialog
+      onOpenChange={(isOpen) => {
+        if (isOpen) close();
+      }}
+    >
       <DialogTrigger asChild>
         <ControlButton
           isSelected={isThemeOpen}
@@ -30,7 +34,7 @@ const ThemeButton: React.FC = () => {
         />
       </DialogTrigger>
       <DialogContent
-        className="border-border [&>button:last-child]:hidden max-w-[90%]"
+        className="max-w-[90%] border-border [&>button:last-child]:hidden"
         aria-description="theme button"
       >
         <DialogHeader>

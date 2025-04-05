@@ -1,3 +1,6 @@
+import { DialogDescription } from '@radix-ui/react-dialog';
+import { Trophy } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -8,44 +11,45 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import ControlButton from '../../ControlButton';
-import { Difficulty, LeaderboardEntry } from '../../../lib/minesweeperTypes';
-import { formatTime } from '@/lib/utils';
-import { useEffect, useState } from 'react';
-import { useMinesweeperState } from '@/states/minesweeperState';
-import { Trophy } from 'lucide-react';
-import { DialogDescription } from '@radix-ui/react-dialog';
 import { isSolved } from '@/lib/minesweeper';
+import { formatTime } from '@/lib/utils';
+import { useMinesweeperState } from '@/states/minesweeperState';
+import { Difficulty, LeaderboardEntry } from '../../../lib/minesweeperTypes';
+import ControlButton from '../../ControlButton';
 
 const LeaderboardButton: React.FC = () => {
   const { seed, isActive, bombs, flags } = useMinesweeperState();
   const [isLeaderboardOpen, setIsLeaderboardOpen] = useState(false);
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>(
-    JSON.parse(localStorage.getItem('minesweeper-leaderboard')) || [],
+    JSON.parse(
+      localStorage.getItem('minesweeper-leaderboard') ?? '[]',
+    ) as LeaderboardEntry[],
   );
   const [selectedDifficulty, setSelectedDifficulty] =
     useState<Difficulty>('easy');
 
   useEffect(() => {
     if (!isActive && isSolved(bombs, flags)) {
-      setLeaderboard(JSON.parse(localStorage.getItem('minesweeper-leaderboard')));
-      setTimeout(() => setIsLeaderboardOpen(true), 1500);      
+      setLeaderboard(
+        JSON.parse(
+          localStorage.getItem('minesweeper-leaderboard') ?? '[]',
+        ) as LeaderboardEntry[],
+      );
+      setTimeout(() => setIsLeaderboardOpen(true), 1500);
     }
-  }, [isActive]);
+  }, [isActive, bombs, flags]);
 
   const close = () => setIsLeaderboardOpen(false);
   const changeDifficulty = (direction: 'prev' | 'next') => {
     const difficulties: Difficulty[] = ['easy', 'medium', 'hard'];
-    const currentIndex = difficulties.indexOf(selectedDifficulty);
+    const currIndex = difficulties.indexOf(selectedDifficulty);
     const newIndex =
-      direction === 'prev'
-        ? (currentIndex - 1 + 3) % 3
-        : (currentIndex + 1) % 3;
-    setSelectedDifficulty(difficulties[newIndex]);
+      direction === 'prev' ? (currIndex - 1 + 3) % 3 : (currIndex + 1) % 3;
+    setSelectedDifficulty(difficulties[newIndex] as Difficulty);
   };
-  const deleteEntry = (index) =>
+  const deleteEntry = (index: number) =>
     setLeaderboard((prev) => {
-      const newLeaderboard = prev.filter((_, i) => i !== index);
+      const newLeaderboard = prev.filter((_, index_) => index_ !== index);
       localStorage.setItem(
         'minesweeper-leaderboard',
         JSON.stringify(newLeaderboard),
@@ -55,8 +59,9 @@ const LeaderboardButton: React.FC = () => {
 
   return (
     <Dialog
-      open={isLeaderboardOpen}
-      onOpenChange={(isOpen) => (isOpen ? null : close())}
+      onOpenChange={(isOpen) => {
+        if (isOpen) close();
+      }}
     >
       <DialogTrigger asChild>
         <ControlButton
@@ -65,17 +70,17 @@ const LeaderboardButton: React.FC = () => {
           onClick={() => setIsLeaderboardOpen(true)}
         />
       </DialogTrigger>
-      <DialogContent className="border-border [&>button:last-child]:hidden max-w-[90%]">
+      <DialogContent className="max-w-[90%] border-border [&>button:last-child]:hidden">
         <DialogHeader>
           <DialogTitle className="text-center">Leaderboard</DialogTitle>
         </DialogHeader>
         <DialogDescription />
         <div>
-          <div className="flex items-center justify-between mb-4">
+          <div className="mb-4 flex items-center justify-between">
             <Button
               variant="ghost"
               onClick={() => changeDifficulty('prev')}
-              className="w-10 h-10 p-0 hover:bg-secondary rounded-full"
+              className="h-10 w-10 rounded-full p-0 hover:bg-secondary"
             >
               <svg
                 className="h-5 w-5 rotate-180 fill-none stroke-foreground stroke-2"
@@ -84,13 +89,13 @@ const LeaderboardButton: React.FC = () => {
                 <path d="m9 18 6-6-6-6" />
               </svg>
             </Button>
-            <span className="flex capitalize text-center">
+            <span className="flex text-center capitalize">
               {selectedDifficulty}
             </span>
             <Button
               variant="ghost"
               onClick={() => changeDifficulty('next')}
-              className="w-10 h-10 p-0 hover:bg-secondary rounded-full"
+              className="h-10 w-10 rounded-full p-0 hover:bg-secondary"
             >
               <svg
                 className="h-5 w-5 fill-none stroke-foreground stroke-2"
@@ -101,7 +106,7 @@ const LeaderboardButton: React.FC = () => {
             </Button>
           </div>
           <div
-            className="h-60 overflow-y-auto scrollbar-none touch-pan-y space-y-2 mb-4"
+            className="scrollbar-none mb-4 h-60 touch-pan-y space-y-2 overflow-y-auto"
             style={{ msOverflowStyle: 'none', scrollbarWidth: 'none' }}
           >
             {leaderboard
@@ -109,14 +114,14 @@ const LeaderboardButton: React.FC = () => {
               .map((entry, index) => (
                 <div
                   key={index}
-                  className={`flex justify-between items-center p-2 bg-background border ${entry.seed === seed ? 'border-primary' : 'border-border'} rounded`}
+                  className={`flex items-center justify-between border bg-background p-2 ${entry.seed === seed ? 'border-primary' : 'border-border'} rounded`}
                 >
                   <span>{formatTime(entry.time)}</span>
                   <span>{new Date(entry.date).toLocaleDateString()}</span>
                   <Button
                     variant="ghost"
                     onClick={() => deleteEntry(index)}
-                    className="w-8 h-8 p-0 hover:bg-secondary rounded-full"
+                    className="h-8 w-8 rounded-full p-0 hover:bg-secondary"
                   >
                     <svg
                       className="h-4 w-4 fill-none stroke-foreground stroke-2"

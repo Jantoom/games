@@ -1,5 +1,5 @@
-import React, { useEffect, useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import React from 'react';
 import { CellNotes } from '@/lib/sudokuTypes';
 
 interface SudokuCellProps {
@@ -22,7 +22,7 @@ const SudokuCell: React.FC<SudokuCellProps> = ({
   const randomDelay = Math.random() * 0.1;
   return (
     <div
-      className={`w-full aspect-square p-[10%] ${!isOriginal ? 'cursor-pointer' : ''}`}
+      className={`aspect-square w-full p-[10%] ${isOriginal ? '' : 'cursor-pointer'}`}
       onClick={onClick}
     >
       <motion.div
@@ -34,7 +34,7 @@ const SudokuCell: React.FC<SudokuCellProps> = ({
           ease: 'easeInOut',
           delay: randomDelay * 2,
         }}
-        className={`relative flex w-full h-full items-center justify-center`}
+        className={`relative flex h-full w-full items-center justify-center`}
       >
         <AnimatePresence mode="sync">
           {isOriginal && (
@@ -68,18 +68,8 @@ const SudokuCell: React.FC<SudokuCellProps> = ({
             />
           )}
 
-          {num != 0 ? (
-            <motion.span
-              key={num}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.3, ease: 'easeInOut' }}
-              className={`absolute text-[min(4vw,2vh)] font-medium select-none transition-colors ${isHighlighted || isFlagged ? 'text-background' : isOriginal ? 'text-border' : 'text-primary'}`}
-            >
-              {num ? num : ''}
-            </motion.span>
-          ) : (
+          {num == 0 ? (
+            notes != undefined &&
             notes.size > 0 && (
               <motion.div
                 key={JSON.stringify([...notes])}
@@ -87,21 +77,32 @@ const SudokuCell: React.FC<SudokuCellProps> = ({
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.3, ease: 'easeInOut' }}
-                className="absolute flex flex-wrap justify-center gap-y-[0.1vh] w-[70%]"
+                className="absolute flex w-[70%] flex-wrap justify-center gap-y-[0.1vh]"
               >
                 {Array.from({ length: 9 }).map(
-                  (_, i) =>
-                    notes?.has(i + 1) && (
+                  (_, index) =>
+                    notes.has(index + 1) && (
                       <span
-                        key={i}
-                        className={`text-[min(2.25vw,1.125vh)] w-1/3 font-medium leading-none text-center select-none transition-colors ${isHighlighted ? 'text-background' : 'text-primary'}`}
+                        key={index}
+                        className={`w-1/3 select-none text-center text-[min(2.25vw,1.125vh)] font-medium leading-none transition-colors ${isHighlighted ? 'text-background' : 'text-primary'}`}
                       >
-                        {i + 1}
+                        {index + 1}
                       </span>
                     ),
                 )}
               </motion.div>
             )
+          ) : (
+            <motion.span
+              key={`${num}`}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3, ease: 'easeInOut' }}
+              className={`absolute select-none text-[min(4vw,2vh)] font-medium transition-colors ${isHighlighted || isFlagged ? 'text-background' : isOriginal ? 'text-border' : 'text-primary'}`}
+            >
+              {num ?? ''}
+            </motion.span>
           )}
         </AnimatePresence>
       </motion.div>

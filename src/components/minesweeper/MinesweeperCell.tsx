@@ -1,6 +1,6 @@
-import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Bomb, Flag } from 'lucide-react';
+import React from 'react';
 import { Themes } from '@/lib/styles';
 import { useGlobalState } from '@/states/globalState';
 
@@ -22,8 +22,8 @@ const MinesweeperCell: React.FC<MinesweeperCellProps> = ({
 
   return (
     <div
-      data-id={id}
-      className={`w-full aspect-square ${num === null ? 'cursor-pointer' : ''}`}
+      data-id={`${id}`}
+      className={`aspect-square w-full ${num === undefined ? 'cursor-pointer' : ''}`}
     >
       <motion.div
         key="cell"
@@ -34,7 +34,7 @@ const MinesweeperCell: React.FC<MinesweeperCellProps> = ({
           ease: 'easeInOut',
           delay: randomDelay * 2,
         }}
-        className={`relative flex w-full h-full items-center justify-center ${(num === null && !isFlagged) || isExploded ? 'bg-secondary' : ''}`}
+        className={`relative flex h-full w-full items-center justify-center ${(num === undefined && !isFlagged) || isExploded ? 'bg-secondary' : ''}`}
       >
         <AnimatePresence mode="sync">
           {isFlagged || isExploded ? (
@@ -44,25 +44,25 @@ const MinesweeperCell: React.FC<MinesweeperCellProps> = ({
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3, ease: 'easeInOut' }}
-              className={`absolute text-lg font-medium select-none transition-colors text-primary`}
+              className={`absolute select-none text-lg font-medium text-primary transition-colors`}
             >
               {isExploded ? (
                 <Bomb className="stroke-background" fill="black" />
               ) : (
                 <Flag
                   className="stroke-primary"
-                  fill={Themes[theme].secondary}
+                  fill={Themes[theme]!.secondary}
                 />
               )}
             </motion.div>
           ) : (
             <motion.span
-              key={num}
+              key={`${num}`}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3, ease: 'easeInOut' }}
-              className={`absolute text-lg font-medium select-none transition-colors text-primary`}
+              className={`absolute select-none text-lg font-medium text-primary transition-colors`}
             >
               {num > 0 ? num : ''}
             </motion.span>

@@ -1,3 +1,6 @@
+import { DialogDescription } from '@radix-ui/react-dialog';
+import { RotateCcw } from 'lucide-react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -7,11 +10,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import ControlButton from '../../ControlButton';
-import { useState } from 'react';
-import { RotateCcw } from 'lucide-react';
-import { DialogDescription } from '@radix-ui/react-dialog';
 import { useSudokuState } from '@/states/sudokuState';
+import ControlButton from '../../ControlButton';
 
 interface RestartButtonProps {
   restart: () => void;
@@ -24,7 +24,11 @@ const RestartButton: React.FC<RestartButtonProps> = ({ restart }) => {
   const close = () => setIsRestartOpen(false);
 
   return (
-    <Dialog onOpenChange={(isOpen) => (isOpen ? null : close())}>
+    <Dialog
+      onOpenChange={(isOpen) => {
+        if (isOpen) close();
+      }}
+    >
       <DialogTrigger asChild>
         <ControlButton
           isSelected={isRestartOpen}
@@ -33,7 +37,7 @@ const RestartButton: React.FC<RestartButtonProps> = ({ restart }) => {
           disabled={!isActive}
         />
       </DialogTrigger>
-      <DialogContent className="border-border [&>button:last-child]:hidden max-w-[90%]">
+      <DialogContent className="max-w-[90%] border-border [&>button:last-child]:hidden">
         <DialogHeader>
           <DialogTitle className="text-center">
             Are you sure you want to restart?

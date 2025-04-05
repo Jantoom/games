@@ -1,22 +1,22 @@
-import { Link } from 'react-router-dom';
 import React from 'react';
-import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
 import ThemeButton from '@/components/menu/ThemeButton';
+import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import AnimatedPage from './AnimatedPage';
 import { Separator } from '@/components/ui/separator';
+import AnimatedPage from './AnimatedPage';
 
 const Menu: React.FC = () => {
   return (
     <AnimatedPage>
-      <div className="flex flex-col h-svh items-center bg-background">
-        <div className="flex flex-col items-center justify-evenly h-screen w-1/2 py-8">
-          <Label className="text-3xl text-center">Games by Jaleel</Label>
-          <div className="flex flex-col gap-5 justify-evenly w-full">
+      <div className="flex h-svh flex-col items-center bg-background">
+        <div className="flex h-screen w-1/2 flex-col items-center justify-evenly py-8">
+          <Label className="text-center text-3xl">Games by Jaleel</Label>
+          <div className="flex w-full flex-col justify-evenly gap-5">
             <Button
               asChild
               variant="ghost"
-              className="hover:bg-secondary text-xl"
+              className="text-xl hover:bg-secondary"
             >
               <Link to="./sudoku">Sudoku</Link>
             </Button>
@@ -24,7 +24,7 @@ const Menu: React.FC = () => {
             <Button
               asChild
               variant="ghost"
-              className="hover:bg-secondary text-xl"
+              className="text-xl hover:bg-secondary"
             >
               <Link to="./minesweeper">Minesweeper</Link>
             </Button>
@@ -32,7 +32,7 @@ const Menu: React.FC = () => {
             <Button
               asChild
               variant="ghost"
-              className="hover:bg-secondary text-xl"
+              className="text-xl hover:bg-secondary"
             >
               <Link to="./solitaire">Solitaire</Link>
             </Button>
@@ -40,7 +40,7 @@ const Menu: React.FC = () => {
             <Button
               asChild
               variant="ghost"
-              className="hover:bg-secondary text-xl"
+              className="text-xl hover:bg-secondary"
             >
               <Link to="./snake">Snake</Link>
             </Button>
@@ -48,7 +48,7 @@ const Menu: React.FC = () => {
             <Button
               asChild
               variant="ghost"
-              className="hover:bg-secondary text-xl"
+              className="text-xl hover:bg-secondary"
             >
               <Link to="./pong">Pong</Link>
             </Button>
@@ -56,12 +56,12 @@ const Menu: React.FC = () => {
             <Button
               asChild
               variant="ghost"
-              className="hover:bg-secondary text-xl"
+              className="text-xl hover:bg-secondary"
             >
               <Link to="./2048">2048</Link>
             </Button>
           </div>
-          <div className="flex justify-evenly w-full">
+          <div className="flex w-full justify-evenly">
             <ThemeButton />
           </div>
         </div>

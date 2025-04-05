@@ -1,3 +1,6 @@
+import { DialogDescription } from '@radix-ui/react-dialog';
+import { Settings } from 'lucide-react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -8,13 +11,10 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import ControlButton from '../../ControlButton';
-import { Lightbulb, Settings } from 'lucide-react';
-import { useCallback, useRef, useState } from 'react';
-import { useMinesweeperState } from '@/states/minesweeperState';
-import { DialogDescription } from '@radix-ui/react-dialog';
-import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
+import { useMinesweeperState } from '@/states/minesweeperState';
+import ControlButton from '../../ControlButton';
 
 const OptionsButton: React.FC = () => {
   const {
@@ -22,7 +22,6 @@ const OptionsButton: React.FC = () => {
     flagOnDoubleClick,
     flagOnLongClick,
     flagOnRightClick,
-    update,
     setState,
   } = useMinesweeperState();
   const [isOptionsOpen, setIsOptionsOpen] = useState(false);
@@ -30,7 +29,11 @@ const OptionsButton: React.FC = () => {
   const close = () => setIsOptionsOpen(false);
 
   return (
-    <Dialog onOpenChange={(isOpen) => (isOpen ? null : close())}>
+    <Dialog
+      onOpenChange={(isOpen) => {
+        if (isOpen) close();
+      }}
+    >
       <DialogTrigger asChild>
         <ControlButton
           isSelected={isOptionsOpen}
@@ -38,13 +41,13 @@ const OptionsButton: React.FC = () => {
           onClick={() => setIsOptionsOpen(true)}
         />
       </DialogTrigger>
-      <DialogContent className="border-border [&>button:last-child]:hidden max-w-[90%]">
+      <DialogContent className="max-w-[90%] border-border [&>button:last-child]:hidden">
         <DialogHeader>
           <DialogTitle className="text-center">Options</DialogTitle>
         </DialogHeader>
         <DialogDescription />
-        <Label className="text-base -mb-2">Flag Behaviour</Label>
-        <div className="grid grid-cols-2 gap-2 w-[100%] justify-items-center items-center p-2">
+        <Label className="-mb-2 text-center text-base">Flag Behaviour</Label>
+        <div className="grid w-[100%] grid-cols-2 items-center justify-items-center gap-2 p-2">
           <Label>Click</Label>
           <Switch
             checked={flagOnClick}

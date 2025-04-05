@@ -1,10 +1,12 @@
 import { Difficulty, Grid } from './minesweeperTypes';
 
-let cellCoords: { row: number; col: number }[] = [...Array(9)].flatMap(
-  (_, row) => [...Array(9)].map((_, col) => ({ row, col })),
+let cellCoords: { row: number; col: number }[] = Array.from({
+  length: 9,
+}).flatMap((_, row) =>
+  Array.from({ length: 9 }).map((_, col) => ({ row, col })),
 );
 let dimensions: { row: number; col: number } = { row: 15, col: 10 };
-let numBombs: number = 15;
+let numberBombs: number = 15;
 
 export const generateMinesweeper = (
   difficulty: Difficulty,
@@ -21,25 +23,25 @@ export const generateMinesweeper = (
     hard: { row: 30, col: 20 },
   }[difficulty];
 
-  numBombs = {
+  numberBombs = {
     easy: 12,
     medium: 36,
     hard: 72,
   }[difficulty];
 
   // Then generate grids and add bombs based on difficulty
-  cellCoords = [...Array(dimensions.row)].flatMap((_, row) =>
-    [...Array(dimensions.col)].map((_, col) => ({ row, col })),
+  cellCoords = Array.from({ length: dimensions.row }).flatMap((_, row) =>
+    Array.from({ length: dimensions.col }).map((_, col) => ({ row, col })),
   );
 
-  const puzzle = Array(dimensions.row)
-    .fill(null)
-    .map(() => Array(dimensions.col).fill(null));
+  const puzzle = Array.from({ length: dimensions.row })
+    .fill()
+    .map(() => Array.from({ length: dimensions.col }).fill()) as Grid;
 
   const bombs = new Set<string>();
 
   let count = 0;
-  while (count < numBombs) {
+  while (count < numberBombs) {
     const row = Math.floor(Math.random() * dimensions.row);
     const col = Math.floor(Math.random() * dimensions.col);
     if (!bombs.has(`${row}-${col}`)) {
@@ -50,7 +52,7 @@ export const generateMinesweeper = (
 
   return {
     dimensions: [dimensions.row, dimensions.col],
-    numBombs,
+    numBombs: numberBombs,
     puzzle,
     bombs,
   };
@@ -65,16 +67,18 @@ export const getAdjacentCells = (
   row: number,
   col: number,
 ): { row: number; col: number }[] =>
-  [
-    [-1, -1],
-    [-1, 0],
-    [-1, 1],
-    [0, -1],
-    [0, 1],
-    [1, -1],
-    [1, 0],
-    [1, 1],
-  ]
+  (
+    [
+      [-1, -1],
+      [-1, 0],
+      [-1, 1],
+      [0, -1],
+      [0, 1],
+      [1, -1],
+      [1, 0],
+      [1, 1],
+    ] as [number, number][]
+  )
     .map(([dy, dx]) => ({ row: row + dy, col: col + dx }))
     .filter(
       ({ row: y, col: x }) =>
@@ -118,9 +122,9 @@ export const getSafeCells = (
 
     // Expand if no adjacent bombs
     if (!adjacentBombs) {
-      adjacentSafeCells.forEach(({ row, col }) => {
+      for (const { row, col } of adjacentSafeCells) {
         queue.push({ row, col });
-      });
+      }
     }
   }
 
@@ -132,7 +136,8 @@ export const getHintCells = (
   bombs: Set<string>,
 ): { row: number; col: number }[] =>
   cellCoords.filter(
-    ({ row, col }) => grid[row][col] === null && !bombs.has(`${row}-${col}`),
+    ({ row, col }) =>
+      grid[row][col] === undefined && !bombs.has(`${row}-${col}`),
   );
 
 export const toCellKeys = (cells: { row: number; col: number }[]): string[] =>
@@ -140,6 +145,35 @@ export const toCellKeys = (cells: { row: number; col: number }[]): string[] =>
 
 export const toCellCoords = (cells: string[]): { row: number; col: number }[] =>
   cells.map((cell) => {
-    const [row, col] = cell.split('-').map(Number);
+    const [row, col] = cell.split('-').map(Number) as [number, number];
     return { row, col };
   });
+
+export const positionCellsAreEqual = (
+  pos1: { x: number; y: number },
+  pos2: { x: number; y: number },
+): boolean => {
+  const cell1 = getCellFromPosition(pos1);
+  const cell2 = getCellFromPosition(pos2);
+  return (
+    cell1 !== undefined &&
+    cell2 !== undefined &&
+    cell1.row === cell2.row &&
+    cell1.col === cell2.col
+  );
+};
+
+export const getCellFromPosition = (position: {
+  x: number;
+  y: number;
+}): { row: number; col: number } | undefined => {
+  if (!position) return;
+  const key: string | undefined =
+    document
+      .elementFromPoint(position.x, position.y)
+      ?.closest('[data-id]')
+      ?.getAttribute('data-id') ?? undefined;
+  if (!key) return;
+  const [row, col] = key.split('-').map((value) => +value) as [number, number];
+  return { row, col };
+};

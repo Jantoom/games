@@ -1,11 +1,10 @@
-import * as React from 'react';
 import useEmblaCarousel, {
   type UseEmblaCarouselType,
 } from 'embla-carousel-react';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
-
-import { cn } from '@/lib/utils';
+import * as React from 'react';
 import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 type CarouselApi = UseEmblaCarouselType[1];
 type UseCarouselParameters = Parameters<typeof useEmblaCarousel>;
@@ -28,8 +27,13 @@ type CarouselContextProps = {
   canScrollNext: boolean;
 } & CarouselProps;
 
-const CarouselContext = React.createContext<CarouselContextProps | null>(null);
+const CarouselContext = React.createContext<CarouselContextProps | undefined>(
+  undefined,
+);
 
+/**
+ *
+ */
 function useCarousel() {
   const context = React.useContext(CarouselContext);
 
@@ -121,14 +125,14 @@ const Carousel = React.forwardRef<
     return (
       <CarouselContext.Provider
         value={{
-          carouselRef,
+          carouselRef: carouselRef,
           api: api,
           opts,
           orientation:
             orientation || (opts?.axis === 'y' ? 'vertical' : 'horizontal'),
-          scrollPrev,
+          scrollPrev: scrollPrev,
           scrollNext,
-          canScrollPrev,
+          canScrollPrev: canScrollPrev,
           canScrollNext,
         }}
       >
@@ -192,7 +196,7 @@ const CarouselItem = React.forwardRef<
 });
 CarouselItem.displayName = 'CarouselItem';
 
-const CarouselPrevious = React.forwardRef<
+const CarouselPrev = React.forwardRef<
   HTMLButtonElement,
   React.ComponentProps<typeof Button>
 >(({ className, variant = 'outline', size = 'icon', ...props }, ref) => {
@@ -204,7 +208,7 @@ const CarouselPrevious = React.forwardRef<
       variant={variant}
       size={size}
       className={cn(
-        'absolute  h-8 w-8 rounded-full',
+        'absolute h-8 w-8 rounded-full',
         orientation === 'horizontal'
           ? '-left-12 top-1/2 -translate-y-1/2'
           : '-top-12 left-1/2 -translate-x-1/2 rotate-90',
@@ -215,11 +219,11 @@ const CarouselPrevious = React.forwardRef<
       {...props}
     >
       <ArrowLeft className="h-4 w-4" />
-      <span className="sr-only">Previous slide</span>
+      <span className="sr-only">Prev slide</span>
     </Button>
   );
 });
-CarouselPrevious.displayName = 'CarouselPrevious';
+CarouselPrev.displayName = 'CarouselPrev';
 
 const CarouselNext = React.forwardRef<
   HTMLButtonElement,
@@ -255,6 +259,6 @@ export {
   Carousel,
   CarouselContent,
   CarouselItem,
-  CarouselPrevious,
+  CarouselPrev,
   CarouselNext,
 };

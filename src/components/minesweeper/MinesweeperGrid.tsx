@@ -1,14 +1,15 @@
-import React, { useEffect, useRef } from 'react';
-import MinesweeperCell from './MinesweeperCell';
-import { useMinesweeperState } from '@/states/minesweeperState';
+import { animated, useSpring, config } from '@react-spring/web';
 import {
   createUseGesture,
   dragAction,
   pinchAction,
   wheelAction,
 } from '@use-gesture/react';
-import { animated, useSpring, config } from '@react-spring/web';
 import { clamp } from 'framer-motion';
+import React, { useEffect, useRef } from 'react';
+import { getCellFromPosition, positionCellsAreEqual } from '@/lib/minesweeper';
+import { useMinesweeperState } from '@/states/minesweeperState';
+import MinesweeperCell from './MinesweeperCell';
 
 const MinesweeperGrid: React.FC = () => {
   const {
@@ -25,8 +26,8 @@ const MinesweeperGrid: React.FC = () => {
     update,
   } = useMinesweeperState();
   // Grid transform
-  const gridRef = useRef<HTMLDivElement>(null);
-  const gridContainerRef = useRef<HTMLDivElement>(null);
+  const gridRef = useRef<HTMLDivElement | null>(null);
+  const gridContainerRef = useRef<HTMLDivElement | null>(null);
   const svgFactor = 30;
   const [{ x, y, top, bottom, left, right }, posApi] = useSpring(() => ({
     x: 0,
@@ -46,11 +47,11 @@ const MinesweeperGrid: React.FC = () => {
   }));
   // Gestures
   const useGesture = createUseGesture([dragAction, pinchAction, wheelAction]);
-  const clickTimeout = useRef<NodeJS.Timeout>(null);
-  const longClickTimeout = useRef<NodeJS.Timeout>(null);
-  const prevClickPos = useRef<{ x: number; y: number }>(null);
-  const currClickPos = useRef<{ x: number; y: number }>(null);
-  const mousePos = useRef<{ x: number; y: number }>(null);
+  const clickTimeout = useRef<NodeJS.Timeout | undefined>(undefined);
+  const longClickTimeout = useRef<NodeJS.Timeout | undefined>(undefined);
+  const prevClickPos = useRef<{ x: number; y: number } | undefined>(undefined);
+  const currClickPos = useRef<{ x: number; y: number } | undefined>(undefined);
+  const mousePos = useRef<{ x: number; y: number } | undefined>(undefined);
 
   const updatePos = (
     lenient: boolean,
@@ -58,7 +59,7 @@ const MinesweeperGrid: React.FC = () => {
     offset: [number, number],
     lastOffset: [number, number],
     calibration: number,
-  ) => {
+  ): void => {
     const leniency = lenient ? (50 * scale.get()) / 2 : 0;
     const x = clamp(
       left.get() - leniency,
@@ -70,7 +71,7 @@ const MinesweeperGrid: React.FC = () => {
       bottom.get() + leniency,
       memo[1] + ((offset[1] - lastOffset[1]) * scale.get()) / calibration,
     );
-    posApi.start({ x, y });
+    void posApi.start({ x, y });
   };
 
   const updateScale = (
@@ -80,7 +81,7 @@ const MinesweeperGrid: React.FC = () => {
     lastOffset: number,
     origin: [number, number],
     calibration: number,
-  ) => {
+  ): void => {
     const leniency = lenient ? 0.1 : 0;
     const scale = clamp(
       min.get() * (1 - leniency),
@@ -91,20 +92,20 @@ const MinesweeperGrid: React.FC = () => {
     const opacity = Math.min(1, max.get() - (max.get() - scale) - 1);
     const vBound = Math.max(
       0,
-      (gridRef.current.clientHeight * scale -
-        gridContainerRef.current.clientHeight) /
+      (gridRef.current!.clientHeight * scale -
+        gridContainerRef.current!.clientHeight) /
         2 +
         100 * normalisedScale,
     );
     const hBound = Math.max(
       0,
-      (gridRef.current.clientWidth * scale -
-        gridContainerRef.current.clientWidth) /
+      (gridRef.current!.clientWidth * scale -
+        gridContainerRef.current!.clientWidth) /
         2 +
         100 * normalisedScale,
     );
-    scaleApi.start({ scale, opacity });
-    posApi.start({
+    void scaleApi.start({ scale, opacity });
+    void posApi.start({
       x: clamp(-hBound, hBound, -origin[0] * normalisedScale ** 2),
       y: clamp(-vBound, vBound, -origin[1] * normalisedScale ** 2),
       top: -vBound,
@@ -115,33 +116,14 @@ const MinesweeperGrid: React.FC = () => {
     });
   };
 
-  const getCellFromPosition = (position: { x: number; y: number }) => {
-    if (!position) return null;
-    const key = document
-      .elementFromPoint(position.x, position.y)
-      .closest('[data-id]')
-      ?.getAttribute('data-id');
-    if (!key) return null;
-    const cell = key ? key.split('-').map((val) => +val) : null;
-    return { row: cell[0], col: cell[1] };
-  };
-
-  const positionCellsAreEqual = (
-    pos1: { x: number; y: number },
-    pos2: { x: number; y: number },
-  ) => {
-    const cell1 = getCellFromPosition(pos1);
-    const cell2 = getCellFromPosition(pos2);
-    return cell1 && cell2 && cell1.row === cell2.row && cell1.col === cell2.col;
-  };
-
   const tryUpdate = (
     startPos: { x: number; y: number },
     finishPos: { x: number; y: number },
     flagCheck: boolean,
-  ) => {
+  ): void => {
     const updateCell = getCellFromPosition(finishPos);
     if (
+      updateCell &&
       Math.abs(startPos.x - finishPos.x) < 20 &&
       Math.abs(startPos.y - finishPos.y) < 20 &&
       positionCellsAreEqual(startPos, finishPos)
@@ -152,31 +134,71 @@ const MinesweeperGrid: React.FC = () => {
 
   const binds = useGesture(
     {
-      onDrag: ({ first, down, memo, offset, lastOffset, event }) => {
+      onDrag: ({
+        first,
+        down,
+        memo,
+        offset,
+        lastOffset,
+        event,
+      }): [number, number] | undefined => {
         if (first) memo = [x.get(), y.get()];
         const calibration = event instanceof TouchEvent ? 1 : 2;
-        updatePos(down, memo, offset, lastOffset, calibration);
-        return memo;
+        updatePos(
+          down,
+          memo as [number, number],
+          offset,
+          lastOffset,
+          calibration,
+        );
+        return memo as [number, number];
       },
-      onPinch: ({ first, active, memo, offset, lastOffset, origin }) => {
+      onPinch: ({
+        first,
+        active,
+        memo,
+        offset,
+        lastOffset,
+        origin,
+      }): number | undefined => {
         if (first) memo = scale.get();
-        const grid = gridRef.current.getBoundingClientRect();
+        const grid = gridRef.current!.getBoundingClientRect();
         origin = [
           origin[0] - (grid.x + grid.width / 2),
           origin[1] - (grid.y + grid.height / 2),
         ];
-        updateScale(active, memo, offset[0], lastOffset[0], origin, 1);
-        return memo;
+        updateScale(
+          active,
+          memo as number,
+          offset[0],
+          lastOffset[0],
+          origin,
+          1,
+        );
+        return memo as number;
       },
-      onWheel: ({ first, active, memo, offset, lastOffset }) => {
+      onWheel: ({
+        first,
+        active,
+        memo,
+        offset,
+        lastOffset,
+      }): number | undefined => {
         if (first) memo = scale.get();
-        const grid = gridRef.current.getBoundingClientRect();
+        const grid = gridRef.current!.getBoundingClientRect();
         const origin: [number, number] = [
-          mousePos.current.x - (grid.x + grid.width / 2),
-          mousePos.current.y - (grid.y + grid.height / 2),
+          mousePos.current!.x - (grid.x + grid.width / 2),
+          mousePos.current!.y - (grid.y + grid.height / 2),
         ];
-        updateScale(active, memo, -offset[1], -lastOffset[1], origin, 200);
-        return memo;
+        updateScale(
+          active,
+          memo as number,
+          -offset[1],
+          -lastOffset[1],
+          origin,
+          200,
+        );
+        return memo as number;
       },
       onPointerDown: ({ event }) => {
         prevClickPos.current = currClickPos.current;
@@ -185,8 +207,8 @@ const MinesweeperGrid: React.FC = () => {
         clearTimeout(longClickTimeout.current);
         longClickTimeout.current = setTimeout(
           (pos) => {
-            tryUpdate(pos.start, mousePos.current, flagOnLongClick);
-            longClickTimeout.current = null;
+            tryUpdate(pos.start, mousePos.current!, flagOnLongClick);
+            longClickTimeout.current = undefined;
           },
           250,
           { start: { ...currClickPos.current } },
@@ -194,16 +216,18 @@ const MinesweeperGrid: React.FC = () => {
       },
       onClick: ({ event }) => {
         if (!currClickPos.current) return;
-        if (positionCellsAreEqual(prevClickPos.current, currClickPos.current)) {
+        if (
+          positionCellsAreEqual(prevClickPos.current!, currClickPos.current)
+        ) {
           clearTimeout(clickTimeout.current);
         }
         if (longClickTimeout.current) {
           clearTimeout(longClickTimeout.current);
-          longClickTimeout.current = null;
+          longClickTimeout.current = undefined;
           clickTimeout.current = setTimeout(
             (pos) => {
               tryUpdate(pos.start, pos.finish, flagOnClick);
-              clickTimeout.current = null;
+              clickTimeout.current = undefined;
             },
             250,
             {
@@ -221,7 +245,7 @@ const MinesweeperGrid: React.FC = () => {
           flagOnDoubleClick,
         );
         clearTimeout(clickTimeout.current);
-        clickTimeout.current = null;
+        clickTimeout.current = undefined;
       },
       onContextMenu: ({ event }) => {
         event.preventDefault();
@@ -232,9 +256,9 @@ const MinesweeperGrid: React.FC = () => {
           flagOnRightClick,
         );
         clearTimeout(clickTimeout.current);
-        clickTimeout.current = null;
+        clickTimeout.current = undefined;
         clearTimeout(longClickTimeout.current);
-        longClickTimeout.current = null;
+        longClickTimeout.current = undefined;
       },
     },
     { eventOptions: { passive: false } },
@@ -254,7 +278,7 @@ const MinesweeperGrid: React.FC = () => {
           Math.max(gridRef.current.clientHeight, gridRef.current.clientWidth)) /
           Math.max(...dimensions)),
     ); // Big enough to fit 10 cells vertically
-    scaleApi.start({
+    void scaleApi.start({
       scale: min,
       min,
       max,
@@ -264,20 +288,20 @@ const MinesweeperGrid: React.FC = () => {
 
   useEffect(() => {
     if (!isActive) {
-      scaleApi.start({
+      void scaleApi.start({
         scale: min.get(),
         opacity: Math.min(1, max.get() - (max.get() - min.get()) - 1),
         config: config.slow,
       });
-      posApi.start({ x: 0, y: 0, config: config.slow });
+      void posApi.start({ x: 0, y: 0, config: config.slow });
     }
-  }, [isActive]);
+  }, [isActive, scaleApi, posApi, min, max]);
 
   return (
     dimensions[0] > 0 && (
       <div
         {...binds()}
-        className="flex flex-col h-full justify-center"
+        className="flex h-full flex-col justify-center"
         style={{
           touchAction: 'none',
           userSelect: 'none',
@@ -287,14 +311,14 @@ const MinesweeperGrid: React.FC = () => {
       >
         <div
           ref={gridContainerRef}
-          className="flex flex-col items-center justify-center w-[95vw] h-[85vh] overflow-hidden"
+          className="flex h-[85vh] w-[95vw] flex-col items-center justify-center overflow-hidden"
         >
           <animated.div
             ref={gridRef}
             onMouseMove={(event) => {
               mousePos.current = { x: event.clientX, y: event.clientY };
             }}
-            className={`grid relative`}
+            className={`relative grid`}
             style={{
               gridTemplateColumns: `repeat(${dimensions[1]},minmax(0,1fr))`,
               height: dimensions[0] * svgFactor,
@@ -305,7 +329,7 @@ const MinesweeperGrid: React.FC = () => {
             }}
           >
             <animated.svg
-              className="absolute inset-0 pointer-events-none"
+              className="pointer-events-none absolute inset-0"
               viewBox={`0 0 ${dimensions[1] * svgFactor} ${dimensions[0] * svgFactor}`}
               style={{ opacity: opacity }}
             >
@@ -326,11 +350,11 @@ const MinesweeperGrid: React.FC = () => {
                 />
               </defs>
               <g className="stroke-primary stroke-[0.5]">
-                {Array(grid.length - 1)
-                  .fill(null)
+                {Array.from({ length: grid.length - 1 })
+                  .fill()
                   .map((_, row) =>
-                    Array(grid[0].length)
-                      .fill(null)
+                    Array.from({ length: grid[0]!.length })
+                      .fill()
                       .map((_, col) => (
                         <use
                           key={`hline ${row}-${col}`}
@@ -339,11 +363,11 @@ const MinesweeperGrid: React.FC = () => {
                         />
                       )),
                   )}
-                {Array(grid.length)
-                  .fill(null)
+                {Array.from({ length: grid.length })
+                  .fill()
                   .map((_, row) =>
-                    Array(grid[0].length - 1)
-                      .fill(null)
+                    Array.from({ length: grid[0]!.length - 1 })
+                      .fill()
                       .map((_, col) => (
                         <use
                           key={`vline ${row}-${col}`}
@@ -356,13 +380,15 @@ const MinesweeperGrid: React.FC = () => {
             </animated.svg>
 
             {grid.map((array, row) =>
-              array.map((num, col) => (
+              array.map((number_, col) => (
                 <MinesweeperCell
                   key={`${row}-${col}`}
                   id={`${row}-${col}`}
-                  num={num}
+                  num={number_}
                   isFlagged={flags.has(`${row}-${col}`)}
-                  isExploded={bombs.has(`${row}-${col}`) && num != null}
+                  isExploded={
+                    bombs.has(`${row}-${col}`) && number_ != undefined
+                  }
                 />
               )),
             )}

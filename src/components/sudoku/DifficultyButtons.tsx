@@ -1,17 +1,17 @@
-import { Button } from '@/components/ui/button';
-import { Difficulty } from '../../lib/sudokuTypes';
 import React from 'react';
+import { Button } from '@/components/ui/button';
 import { useSudokuState } from '@/states/sudokuState';
+import { Difficulty } from '../../lib/sudokuTypes';
 
 interface DifficultyButtonsProps {
   reset: (difficulty: Difficulty) => void;
 }
 
 const DifficultyButtons: React.FC<DifficultyButtonsProps> = ({ reset }) => {
-  const { difficulty } = useSudokuState();
+  const { difficulty } = useSudokuState() as { difficulty: Difficulty };
 
   return (
-    <div className="flex justify-between w-[50%] min-w-[200px]">
+    <div className="flex w-[50%] min-w-[200px] justify-between">
       {(['easy', 'medium', 'hard'] as const).map((diff) => (
         <Button
           key={diff}

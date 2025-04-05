@@ -1,3 +1,6 @@
+import { DialogDescription } from '@radix-ui/react-dialog';
+import { Lightbulb } from 'lucide-react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -7,29 +10,39 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import ControlButton from '../../ControlButton';
-import { useState } from 'react';
-import { Lightbulb } from 'lucide-react';
-import { DialogDescription } from '@radix-ui/react-dialog';
-import { useMinesweeperState } from '@/states/minesweeperState';
 import { getHintCells } from '@/lib/minesweeper';
+import { useMinesweeperState } from '@/states/minesweeperState';
+import ControlButton from '../../ControlButton';
 
 const HintButton: React.FC = () => {
-  const { isActive, grid, bombs, update } = useMinesweeperState();
+  const isActive = useMinesweeperState((state) => state.isActive);
+  const grid = useMinesweeperState((state) => state.grid);
+  const bombs = useMinesweeperState((state) => state.bombs);
+  const update = useMinesweeperState((state) => state.update) as (
+    row: number,
+    col: number,
+    isFlagMode: boolean,
+  ) => void;
   const [isHintOpen, setIsHintOpen] = useState(false);
 
   const close = () => setIsHintOpen(false);
   const getHint = () => {
     const targetCells = getHintCells(grid, bombs);
     if (targetCells.length > 0) {
-      const { row, col } =
+      const targetCell =
         targetCells[Math.floor(Math.random() * targetCells.length)];
-      update(row, col, false);
+      if (targetCell) {
+        update(targetCell.row, targetCell.col, false);
+      }
     }
   };
 
   return (
-    <Dialog onOpenChange={(isOpen) => (isOpen ? null : close())}>
+    <Dialog
+      onOpenChange={(isOpen) => {
+        if (isOpen) close();
+      }}
+    >
       <DialogTrigger asChild>
         <ControlButton
           isSelected={isHintOpen}
@@ -38,7 +51,7 @@ const HintButton: React.FC = () => {
           disabled={!isActive}
         />
       </DialogTrigger>
-      <DialogContent className="border-border [&>button:last-child]:hidden max-w-[90%]">
+      <DialogContent className="max-w-[90%] border-border [&>button:last-child]:hidden">
         <DialogHeader>
           <DialogTitle className="text-center">
             Are you sure you want a hint?

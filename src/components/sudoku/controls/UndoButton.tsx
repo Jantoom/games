@@ -1,7 +1,7 @@
-import React from 'react';
-import ControlButton from '../../ControlButton';
-import { useSudokuState } from '@/states/sudokuState';
 import { Undo } from 'lucide-react';
+import React from 'react';
+import { useSudokuState } from '@/states/sudokuState';
+import ControlButton from '../../ControlButton';
 
 interface UndoButtonProps {
   undo: () => void;
@@ -16,7 +16,7 @@ const UndoButton: React.FC<UndoButtonProps> = ({ undo }) => {
       Icon={Undo}
       onClick={undo}
       disabled={history.length === 0 || !isActive}
-      className="w-[10%] h-auto aspect-square rounded-full active:bg-primary active:text-background"
+      className="aspect-square h-auto w-[10%] rounded-full active:bg-primary active:text-background"
     />
   );
 };

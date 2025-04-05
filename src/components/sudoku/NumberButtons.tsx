@@ -1,6 +1,6 @@
+import { Eraser } from 'lucide-react';
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Eraser } from 'lucide-react';
 import { getMatchingCells } from '@/lib/sudoku';
 import { useSudokuState } from '@/states/sudokuState';
 
@@ -8,30 +8,35 @@ const NumberButtons: React.FC = () => {
   const { isActive, grid, selectedNumber, setState } = useSudokuState();
 
   return (
-    <div className="grid grid-rows-2 grid-cols-5 gap-[clamp(min(0.8vh,1.5vw),1.5vw,0.5em)] justify-items-center w-2/3">
-      {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => {
-        const isSelected = selectedNumber === num;
+    <div className="grid w-2/3 grid-cols-5 grid-rows-2 justify-items-center gap-[clamp(min(0.8vh,1.5vw),1.5vw,0.5em)]">
+      {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((number_) => {
+        const isSelected = selectedNumber === number_;
         const remainingCount = Math.max(
-          9 - getMatchingCells(grid, num).length,
+          9 - getMatchingCells(grid, number_).length,
           0,
         );
         return (
           <Button
-            key={num}
+            key={number_}
             variant="outline"
             onClick={() =>
               setState((prevState) => ({
                 selectedNumber:
-                  isActive && prevState.selectedNumber !== num ? num : null,
+                  (isActive &&
+                    prevState.selectedNumber !== number_ &&
+                    number_) ||
+                  undefined,
               }))
             }
-            className={`w-full h-full aspect-square relative rounded-full hover:bg-secondary ${isSelected ? 'bg-primary text-background' : ''}`}
+            className={`relative aspect-square h-full w-full rounded-full hover:bg-secondary ${isSelected ? 'bg-primary text-background' : ''}`}
           >
-            {num ? (
+            {number_ ? (
               <>
-                <span className="text-[min(5vw,2.5vh)] font-medium">{num}</span>
-                <span className="text-[min(2.5vw,1.25vh)] font-medium absolute pt-[65%]">
-                  {remainingCount ? remainingCount : ''}
+                <span className="text-[min(5vw,2.5vh)] font-medium">
+                  {number_}
+                </span>
+                <span className="absolute pt-[65%] text-[min(2.5vw,1.25vh)] font-medium">
+                  {remainingCount ?? ''}
                 </span>
               </>
             ) : (

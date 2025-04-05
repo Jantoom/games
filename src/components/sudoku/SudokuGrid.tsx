@@ -1,11 +1,11 @@
-import SudokuCell from './SudokuCell';
 import { useSudokuState } from '@/states/sudokuState';
+import SudokuCell from './SudokuCell';
 
 interface SudokuGridProps {
   update: (
     row: number,
     col: number,
-    num: number,
+    number_: number,
     isPencilMode: boolean,
   ) => void;
 }
@@ -22,8 +22,8 @@ const SudokuGrid: React.FC<SudokuGridProps> = ({ update }) => {
   } = useSudokuState();
 
   return (
-    <div className="grid grid-cols-9 relative aspect-square w-[min(95vw,50vh)]">
-      <svg className="absolute pointer-events-none" viewBox="0 0 1350 1350">
+    <div className="relative grid aspect-square w-[min(95vw,50vh)] grid-cols-9">
+      <svg className="pointer-events-none absolute" viewBox="0 0 1350 1350">
         <defs>
           <svg id="small">
             <line x1="25" y1="150" x2="125" y2="150" />
@@ -59,22 +59,22 @@ const SudokuGrid: React.FC<SudokuGridProps> = ({ update }) => {
         </g>
       </svg>
       {grid.map((array, row) =>
-        array.map((num, col) => (
+        array.map((number_, col) => (
           <SudokuCell
             key={`${row}-${col}`}
-            num={num}
-            isOriginal={originalGrid[row][col] !== 0}
+            num={number_}
+            isOriginal={originalGrid[row]![col] !== 0}
             isHighlighted={
-              selectedNumber &&
-              (num === selectedNumber ||
-                notes[`${row}-${col}`].has(selectedNumber))
+              selectedNumber !== undefined &&
+              (number_ === selectedNumber ||
+                notes[`${row}-${col}`]!.has(selectedNumber))
             }
             isFlagged={errors.includes(`${row}-${col}`)}
             notes={notes[`${row}-${col}`]}
             onClick={() =>
               isActive &&
-              selectedNumber !== null &&
-              !originalGrid[row][col] &&
+              selectedNumber !== undefined &&
+              !originalGrid[row]![col] &&
               update(row, col, selectedNumber, isPencilMode)
             }
           />

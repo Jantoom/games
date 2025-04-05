@@ -1,10 +1,10 @@
+import React, { useEffect, useRef } from 'react';
 import { formatTime } from '@/lib/utils';
 import { useSudokuState } from '@/states/sudokuState';
-import React, { useEffect, useRef } from 'react';
 
 const TimerText: React.FC = () => {
   const { isActive, time, setState } = useSudokuState();
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const timerRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
   useEffect(() => {
     if (isActive) {
@@ -15,14 +15,14 @@ const TimerText: React.FC = () => {
     } else {
       if (timerRef.current) {
         clearInterval(timerRef.current);
-        timerRef.current = null; // Reset reference
+        timerRef.current = undefined; // Reset ref
       }
     }
 
     return () => {
       if (timerRef.current) {
         clearInterval(timerRef.current);
-        timerRef.current = null;
+        timerRef.current = undefined;
       }
     };
   }, [isActive, setState]);

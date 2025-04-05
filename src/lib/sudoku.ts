@@ -1,21 +1,23 @@
 import { Difficulty, Grid, Notes } from './sudokuTypes';
 import { shuffle } from './utils';
 
-const cellCoords: { row: number; col: number }[] = [...Array(9)].flatMap(
-  (_, row) => [...Array(9)].map((_, col) => ({ row, col })),
+const cellCoords: { row: number; col: number }[] = Array.from({
+  length: 9,
+}).flatMap((_, row) =>
+  Array.from({ length: 9 }).map((_, col) => ({ row, col })),
 );
 
 const fillGrid = (grid: Grid): boolean => {
   const emptyCell =
-    cellCoords.find(({ row, col }) => grid[row][col] === 0) || null;
+    cellCoords.find(({ row, col }) => grid[row][col] === 0) || undefined;
   if (!emptyCell) return true;
 
   const { row, col } = emptyCell;
   const nums = shuffle([1, 2, 3, 4, 5, 6, 7, 8, 9]);
 
-  for (const num of nums) {
-    if (isValidCell(grid, row, col, num)) {
-      grid[row][col] = num;
+  for (const number_ of nums) {
+    if (isValidCell(grid, row, col, number_)) {
+      grid[row][col] = number_;
       if (fillGrid(grid)) return true;
       grid[row][col] = 0;
     }
@@ -28,10 +30,10 @@ const isValidCell = (
   grid: Grid,
   row: number,
   col: number,
-  num: number,
+  number_: number,
 ): boolean =>
   [{ row, col }, ...getRelatedCells(row, col)].every(
-    ({ row, col }) => grid[row][col] !== num,
+    ({ row, col }) => grid[row][col] !== number_,
   );
 
 const toUniqueCells = (
@@ -43,13 +45,13 @@ export const generateSudoku = (
   difficulty: Difficulty,
 ): { puzzle: Grid; solution: Grid } => {
   // First, generate a solved grid
-  const solution = Array(9)
-    .fill(null)
-    .map(() => Array(9).fill(0));
+  const solution = Array.from({ length: 9 })
+    .fill()
+    .map(() => Array.from({ length: 9 }).fill(0)) as Grid;
   fillGrid(solution);
 
   // Then remove numbers based on difficulty
-  const numToRemove = {
+  const numberToRemove = {
     easy: 35,
     medium: 45,
     hard: 55,
@@ -57,7 +59,7 @@ export const generateSudoku = (
 
   const puzzle = solution.map((row) => [...row]);
   let count = 0;
-  while (count < numToRemove) {
+  while (count < numberToRemove) {
     const row = Math.floor(Math.random() * 9);
     const col = Math.floor(Math.random() * 9);
     if (puzzle[row][col] !== 0) {
@@ -74,9 +76,9 @@ export const isSolved = (grid: Grid): boolean =>
 
 export const getMatchingCells = (
   grid: Grid,
-  num: number,
+  number_: number,
 ): { row: number; col: number }[] =>
-  cellCoords.filter(({ row, col }) => grid[row][col] === num);
+  cellCoords.filter(({ row, col }) => grid[row][col] === number_);
 
 export const getRelatedCells = (
   row: number,
@@ -132,8 +134,8 @@ export const getAutoNotes = (grid: Grid): Notes =>
     .map(({ row, col }): [string, Set<number>] => [
       `${row}-${col}`,
       new Set(
-        [1, 2, 3, 4, 5, 6, 7, 8, 9].filter((num) =>
-          isValidCell(grid, row, col, num),
+        [1, 2, 3, 4, 5, 6, 7, 8, 9].filter((number_) =>
+          isValidCell(grid, row, col, number_),
         ),
       ),
     ])
@@ -144,6 +146,6 @@ export const toCellKeys = (cells: { row: number; col: number }[]): string[] =>
 
 export const toCellCoords = (cells: string[]): { row: number; col: number }[] =>
   cells.map((cell) => {
-    const [row, col] = cell.split('-').map(Number);
+    const [row, col] = cell.split('-').map(Number) as [number, number];
     return { row, col };
   });

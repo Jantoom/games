@@ -1,7 +1,8 @@
-import type { Config } from 'tailwindcss';
+import { Config } from 'tailwindcss';
+// import { PluginCreator } from 'tailwindcss/types/config';
 import tailwindcssAnimate from 'tailwindcss-animate';
 
-export default {
+const config: Config = {
   future: {
     hoverOnlyWhenSupported: true,
   },
@@ -63,4 +64,6 @@ export default {
     },
   },
   plugins: [tailwindcssAnimate],
-} satisfies Config;
+};
+
+export default config;

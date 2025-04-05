@@ -1,3 +1,6 @@
+import { DialogDescription } from '@radix-ui/react-dialog';
+import { Lightbulb } from 'lucide-react';
+import React, { useCallback, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -8,10 +11,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import ControlButton from '../../ControlButton';
-import { Lightbulb } from 'lucide-react';
-import { useCallback, useRef, useState } from 'react';
-import { useSudokuState } from '@/states/sudokuState';
 import {
   getAutoNotes,
   getConflictCells,
@@ -19,13 +18,14 @@ import {
   getMismatchCells,
   toCellKeys,
 } from '@/lib/sudoku';
-import { DialogDescription } from '@radix-ui/react-dialog';
+import { useSudokuState } from '@/states/sudokuState';
+import ControlButton from '../../ControlButton';
 
 interface HintsButtonProps {
   update: (
     row: number,
     col: number,
-    num: number,
+    number_: number,
     isPencilMode: boolean,
   ) => void;
 }
@@ -33,7 +33,7 @@ interface HintsButtonProps {
 const HintsButton: React.FC<HintsButtonProps> = ({ update }) => {
   const { isActive, solvedGrid, grid, notes, setState } = useSudokuState();
   const [isHintsOpen, setIsHintsOpen] = useState(false);
-  const errorBlinkerRef = useRef<NodeJS.Timeout | null>(null);
+  const errorBlinkerRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
   const showErrorAnimation = useCallback(
     (cells: string[]) => {
@@ -44,7 +44,7 @@ const HintsButton: React.FC<HintsButtonProps> = ({ update }) => {
       let count = 0;
       errorBlinkerRef.current = setInterval(() => {
         setState((prevState) => ({
-          errors: prevState.errors.length ? [] : cells,
+          errors: prevState.errors.length > 0 ? [] : cells,
         }));
         count++;
         if (count >= 6) clearInterval(errorBlinkerRef.current);
@@ -56,10 +56,16 @@ const HintsButton: React.FC<HintsButtonProps> = ({ update }) => {
   const getHint = () => {
     const targetCells = getHintCells(grid, notes, solvedGrid);
     if (targetCells.length > 0) {
-      const { row, col } =
+      const targetCell =
         targetCells[Math.floor(Math.random() * targetCells.length)];
-      const correctNumber = solvedGrid[row][col];
-      update(row, col, correctNumber, false);
+      if (targetCell) {
+        update(
+          targetCell.row,
+          targetCell.col,
+          solvedGrid[targetCell.row]![targetCell.col]!,
+          false,
+        );
+      }
     }
   };
   const showMismatches = () =>
@@ -73,7 +79,7 @@ const HintsButton: React.FC<HintsButtonProps> = ({ update }) => {
   const close = () => setIsHintsOpen(false);
 
   return (
-    <Dialog onOpenChange={(isOpen) => (isOpen ? null : close())}>
+    <Dialog onOpenChange={(isOpen) => (isOpen ? undefined : close())}>
       <DialogTrigger asChild>
         <ControlButton
           isSelected={isHintsOpen}
@@ -82,7 +88,7 @@ const HintsButton: React.FC<HintsButtonProps> = ({ update }) => {
           disabled={!isActive}
         />
       </DialogTrigger>
-      <DialogContent className="border-border [&>button:last-child]:hidden max-w-[90%]">
+      <DialogContent className="max-w-[90%] border-border [&>button:last-child]:hidden">
         <DialogHeader>
           <DialogTitle className="text-center">Hints</DialogTitle>
         </DialogHeader>

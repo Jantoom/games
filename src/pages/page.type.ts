@@ -1,7 +1,7 @@
 import React from 'react';
 import Menu from './Menu';
-import Sudoku from './Sudoku';
 import Minesweeper from './Minesweeper';
+import Sudoku from './Sudoku';
 
 const Page = {
   Menu: {

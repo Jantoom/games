@@ -1,6 +1,13 @@
 {
-  "include": ["src/**/*"],
+  "include": ["."],
+  "exclude": ["dist", "node_modules", "public"],
   "compilerOptions": {
+    /* Modules */
+    "allowImportingTsExtensions": true, // Vite requirement
+
+    /* Emit */
+    "noEmit": true,
+
     /* Type Checking */
     "alwaysStrict": true,
     "noFallthroughCasesInSwitch": true,
@@ -27,6 +34,7 @@
 
     /* Interop Constaints */
     "isolatedModules": true,
+    "esModuleInterop": true,
 
     /* Language and Environment */
     "jsx": "react-jsx",
@@ -34,9 +42,6 @@
     "moduleDetection": "force",
     "target": "ESNext",
     "useDefineForClassFields": true,
-
-    /* Projects */
-    "composite": true,
 
     /* Completeness */
     "skipLibCheck": true

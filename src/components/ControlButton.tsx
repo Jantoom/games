@@ -1,10 +1,10 @@
+import { LucideProps } from 'lucide-react';
 import React, { forwardRef } from 'react';
 import { Button, ButtonProps } from '@/components/ui/button';
-import { LucideProps } from 'lucide-react';
 
 interface ControlButtonProps extends ButtonProps {
   isSelected: boolean;
-  Icon?: React.FC<LucideProps> | null;
+  Icon?: React.FC<LucideProps> | undefined;
 }
 
 const ControlButton = forwardRef<HTMLButtonElement, ControlButtonProps>(
@@ -12,10 +12,10 @@ const ControlButton = forwardRef<HTMLButtonElement, ControlButtonProps>(
     <Button
       ref={ref}
       variant={isSelected ? 'default' : 'ghost'}
-      className={`h-auto aspect-square rounded-full hover:bg-secondary ${isSelected ? 'text-background' : ''} ${className}`}
+      className={`aspect-square h-auto rounded-full hover:bg-secondary ${isSelected ? 'text-background' : ''} ${className}`}
       {...props}
     >
-      {Icon !== null ? <Icon /> : <></>}
+      {Icon === undefined ? <></> : <Icon />}
     </Button>
   ),
 );

@@ -1,6 +1,11 @@
 import { motion } from 'framer-motion';
+import React from 'react';
 
-const AnimatedPage = ({ children }) => {
+interface AnimatedPageProps {
+  children: React.ReactNode;
+}
+
+const AnimatedPage: React.FC<AnimatedPageProps> = ({ children }) => {
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.75 }}

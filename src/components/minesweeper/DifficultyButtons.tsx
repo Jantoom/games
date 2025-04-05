@@ -1,17 +1,19 @@
-import { Button } from '@/components/ui/button';
-import { Difficulty } from '../../lib/minesweeperTypes';
 import React from 'react';
+import { Button } from '@/components/ui/button';
 import { useMinesweeperState } from '@/states/minesweeperState';
+import { Difficulty } from '../../lib/minesweeperTypes';
 
-interface DifficultyButtonsProps {
+interface DifficultyButtonsProperties {
   reset: (difficulty: Difficulty) => void;
 }
 
-const DifficultyButtons: React.FC<DifficultyButtonsProps> = ({ reset }) => {
+const DifficultyButtons: React.FC<DifficultyButtonsProperties> = ({
+  reset,
+}) => {
   const { difficulty } = useMinesweeperState();
 
   return (
-    <div className="flex justify-between w-[50%] min-w-[200px]">
+    <div className="flex w-[50%] min-w-[200px] justify-between">
       {(['easy', 'medium', 'hard'] as const).map((diff) => (
         <Button
           key={diff}
