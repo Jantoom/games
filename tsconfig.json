@@ -3,7 +3,8 @@
   "exclude": ["dist", "node_modules", "public"],
   "references": [
     { "path": "./tsconfig.app.json" },
-    { "path": "./tsconfig.vite.json" }
+    { "path": "./tsconfig.vite.json" },
+    { "path": "./tsconfig.eslint.json" }
   ],
   "compilerOptions": {
     /* Modules */

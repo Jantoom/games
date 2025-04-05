@@ -39,7 +39,6 @@ const LeaderboardButton: React.FC = () => {
     }
   }, [isActive, bombs, flags]);
 
-  const close = () => setIsLeaderboardOpen(false);
   const changeDifficulty = (direction: 'prev' | 'next') => {
     const difficulties: Difficulty[] = ['easy', 'medium', 'hard'];
     const currIndex = difficulties.indexOf(selectedDifficulty);
@@ -58,11 +57,7 @@ const LeaderboardButton: React.FC = () => {
     });
 
   return (
-    <Dialog
-      onOpenChange={(isOpen) => {
-        if (isOpen) close();
-      }}
-    >
+    <Dialog open={isLeaderboardOpen} onOpenChange={setIsLeaderboardOpen}>
       <DialogTrigger asChild>
         <ControlButton
           isSelected={isLeaderboardOpen}

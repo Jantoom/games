@@ -18,14 +18,9 @@ import ControlButton from '../ControlButton';
 const ThemeButton: React.FC = () => {
   const [isThemeOpen, setIsThemeOpen] = useState(false);
   const { theme, setTheme } = useGlobalState();
-  const close = () => setIsThemeOpen(false);
 
   return (
-    <Dialog
-      onOpenChange={(isOpen) => {
-        if (isOpen) close();
-      }}
-    >
+    <Dialog open={isThemeOpen} onOpenChange={setIsThemeOpen}>
       <DialogTrigger asChild>
         <ControlButton
           isSelected={isThemeOpen}

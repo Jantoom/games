@@ -26,14 +26,8 @@ const OptionsButton: React.FC = () => {
   } = useMinesweeperState();
   const [isOptionsOpen, setIsOptionsOpen] = useState(false);
 
-  const close = () => setIsOptionsOpen(false);
-
   return (
-    <Dialog
-      onOpenChange={(isOpen) => {
-        if (isOpen) close();
-      }}
-    >
+    <Dialog open={isOptionsOpen} onOpenChange={setIsOptionsOpen}>
       <DialogTrigger asChild>
         <ControlButton
           isSelected={isOptionsOpen}

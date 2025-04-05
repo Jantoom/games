@@ -25,7 +25,6 @@ const HintButton: React.FC = () => {
   ) => void;
   const [isHintOpen, setIsHintOpen] = useState(false);
 
-  const close = () => setIsHintOpen(false);
   const getHint = () => {
     const targetCells = getHintCells(grid, bombs);
     if (targetCells.length > 0) {
@@ -38,11 +37,7 @@ const HintButton: React.FC = () => {
   };
 
   return (
-    <Dialog
-      onOpenChange={(isOpen) => {
-        if (isOpen) close();
-      }}
-    >
+    <Dialog open={isHintOpen} onOpenChange={setIsHintOpen}>
       <DialogTrigger asChild>
         <ControlButton
           isSelected={isHintOpen}

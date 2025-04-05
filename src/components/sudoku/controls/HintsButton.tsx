@@ -76,10 +76,9 @@ const HintsButton: React.FC<HintsButtonProps> = ({ update }) => {
     setState((prevState) => ({
       notes: { ...prevState.notes, ...getAutoNotes(prevState.grid) },
     }));
-  const close = () => setIsHintsOpen(false);
 
   return (
-    <Dialog onOpenChange={(isOpen) => (isOpen ? undefined : close())}>
+    <Dialog open={isHintsOpen} onOpenChange={setIsHintsOpen}>
       <DialogTrigger asChild>
         <ControlButton
           isSelected={isHintsOpen}

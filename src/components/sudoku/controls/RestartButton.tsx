@@ -21,14 +21,8 @@ const RestartButton: React.FC<RestartButtonProps> = ({ restart }) => {
   const { isActive } = useSudokuState();
   const [isRestartOpen, setIsRestartOpen] = useState(false);
 
-  const close = () => setIsRestartOpen(false);
-
   return (
-    <Dialog
-      onOpenChange={(isOpen) => {
-        if (isOpen) close();
-      }}
-    >
+    <Dialog open={isRestartOpen} onOpenChange={setIsRestartOpen}>
       <DialogTrigger asChild>
         <ControlButton
           isSelected={isRestartOpen}
