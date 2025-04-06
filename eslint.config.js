@@ -18,12 +18,17 @@ export default config(
     extends: [js.configs.recommended],
   },
   {
-    // files: ['src/**/*'],
-    ignores: ['dist', 'node_modules', 'public'],
+    ignores: [
+      'dist',
+      'node_modules',
+      'public',
+      'eslint.config.js',
+      'postcss.config.js',
+    ],
     extends: [
       tseslintConfigs.recommendedTypeChecked,
-      importPlugin.flatConfigs.recommended, // eslint-disable-line
-      importPlugin.flatConfigs.typescript, // eslint-disable-line
+      importPlugin.flatConfigs.recommended,
+      importPlugin.flatConfigs.typescript,
       unicorn.configs.recommended,
       reactHooks.configs['recommended-latest'],
       reactRefresh.configs.recommended,

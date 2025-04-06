@@ -14,8 +14,8 @@ import {
 import { isSolved } from '@/lib/minesweeper';
 import { formatTime } from '@/lib/utils';
 import { useMinesweeperState } from '@/states/minesweeperState';
-import { Difficulty, LeaderboardEntry } from '../../../lib/minesweeperTypes';
-import ControlButton from '../../ControlButton';
+import ControlButton from '@/components/ControlButton';
+import { Difficulty, LeaderboardEntry } from '@/lib/minesweeperTypes';
 
 const LeaderboardButton: React.FC = () => {
   const { seed, isActive, bombs, flags } = useMinesweeperState();

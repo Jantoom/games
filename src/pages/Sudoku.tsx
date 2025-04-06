@@ -17,7 +17,7 @@ import {
 } from '@/lib/sudoku';
 import { Difficulty, LeaderboardEntry } from '@/lib/sudokuTypes';
 import { useSudokuState } from '@/states/sudokuState';
-import AnimatedPage from './AnimatedPage';
+import AnimatedPage from '@/pages/AnimatedPage';
 
 const Sudoku: React.FC = () => {
   const { seed, grid, setState } = useSudokuState();

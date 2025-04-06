@@ -9,7 +9,7 @@ import { clamp } from 'framer-motion';
 import React, { useEffect, useRef } from 'react';
 import { getCellFromPosition, positionCellsAreEqual } from '@/lib/minesweeper';
 import { useMinesweeperState } from '@/states/minesweeperState';
-import MinesweeperCell from './MinesweeperCell';
+import MinesweeperCell from '@/components/minesweeper/MinesweeperCell';
 
 const MinesweeperGrid: React.FC = () => {
   const {
@@ -351,10 +351,8 @@ const MinesweeperGrid: React.FC = () => {
               </defs>
               <g className="stroke-primary stroke-[0.5]">
                 {Array.from({ length: grid.length - 1 })
-                  .fill()
                   .map((_, row) =>
                     Array.from({ length: grid[0]!.length })
-                      .fill()
                       .map((_, col) => (
                         <use
                           key={`hline ${row}-${col}`}
@@ -364,10 +362,8 @@ const MinesweeperGrid: React.FC = () => {
                       )),
                   )}
                 {Array.from({ length: grid.length })
-                  .fill()
                   .map((_, row) =>
                     Array.from({ length: grid[0]!.length - 1 })
-                      .fill()
                       .map((_, col) => (
                         <use
                           key={`vline ${row}-${col}`}

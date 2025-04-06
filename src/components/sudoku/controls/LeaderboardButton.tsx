@@ -13,8 +13,8 @@ import {
 } from '@/components/ui/dialog';
 import { formatTime } from '@/lib/utils';
 import { useSudokuState } from '@/states/sudokuState';
-import { Difficulty, LeaderboardEntry } from '../../../lib/sudokuTypes';
-import ControlButton from '../../ControlButton';
+import ControlButton from '@/components/ControlButton';
+import { Difficulty, LeaderboardEntry } from '@/lib/sudokuTypes';
 
 const LeaderboardButton: React.FC = () => {
   const { seed, isActive } = useSudokuState();

@@ -4,7 +4,7 @@ import ThemeButton from '@/components/menu/ThemeButton';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
-import AnimatedPage from './AnimatedPage';
+import AnimatedPage from '@/pages/AnimatedPage';
 
 const Menu: React.FC = () => {
   return (

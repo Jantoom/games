@@ -1,7 +1,7 @@
 import { Flag } from 'lucide-react';
 import React from 'react';
 import { useMinesweeperState } from '@/states/minesweeperState';
-import ControlButton from '../../ControlButton';
+import ControlButton from '@/components/ControlButton';
 
 const FlagButton: React.FC = () => {
   const { isActive, isFlagMode, setState } = useMinesweeperState();

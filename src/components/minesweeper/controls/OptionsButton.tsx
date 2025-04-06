@@ -14,7 +14,7 @@ import {
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { useMinesweeperState } from '@/states/minesweeperState';
-import ControlButton from '../../ControlButton';
+import ControlButton from '@/components/ControlButton';
 
 const OptionsButton: React.FC = () => {
   const {

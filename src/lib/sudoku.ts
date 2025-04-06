@@ -1,5 +1,5 @@
-import { Difficulty, Grid, Notes } from './sudokuTypes';
-import { shuffle } from './utils';
+import { Difficulty, Grid, Notes } from '@/lib/sudokuTypes';
+import { shuffle } from '@/lib/utils';
 
 const cellCoords: { row: number; col: number }[] = Array.from({
   length: 9,
@@ -46,7 +46,6 @@ export const generateSudoku = (
 ): { puzzle: Grid; solution: Grid } => {
   // First, generate a solved grid
   const solution = Array.from({ length: 9 })
-    .fill()
     .map(() => Array.from({ length: 9 }).fill(0)) as Grid;
   fillGrid(solution);
 

@@ -8,7 +8,7 @@ import MinesweeperGrid from '@/components/minesweeper/MinesweeperGrid';
 import TimerText from '@/components/minesweeper/TimerText';
 import { isSolved } from '@/lib/minesweeper';
 import { useMinesweeperState } from '@/states/minesweeperState';
-import AnimatedPage from './AnimatedPage';
+import AnimatedPage from '@/pages/AnimatedPage';
 
 const Minesweeper: React.FC = () => {
   const { seed, bombs, flags, reset, stop } = useMinesweeperState();

@@ -1,7 +1,7 @@
 import { Undo } from 'lucide-react';
 import React from 'react';
 import { useSudokuState } from '@/states/sudokuState';
-import ControlButton from '../../ControlButton';
+import ControlButton from '@/components/ControlButton';
 
 interface UndoButtonProps {
   undo: () => void;

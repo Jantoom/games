@@ -1,4 +1,4 @@
-import { Difficulty, Grid } from './minesweeperTypes';
+import { Difficulty, Grid } from '@/lib/minesweeperTypes';
 
 let cellCoords: { row: number; col: number }[] = Array.from({
   length: 9,
@@ -35,8 +35,7 @@ export const generateMinesweeper = (
   );
 
   const puzzle = Array.from({ length: dimensions.row })
-    .fill()
-    .map(() => Array.from({ length: dimensions.col }).fill()) as Grid;
+    .map(() => Array.from({ length: dimensions.col })) as Grid;
 
   const bombs = new Set<string>();
 

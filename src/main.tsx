@@ -1,10 +1,10 @@
-import './main.css';
+import '@/main.css';
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import App from './App';
-import NotFound from './pages/NotFound';
-import Page from './pages/page.type';
+import App from '@/App';
+import NotFound from '@/pages/NotFound';
+import Page from '@/pages/page.type';
 
 const router = createBrowserRouter(
   [

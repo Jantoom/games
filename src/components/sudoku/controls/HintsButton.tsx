@@ -19,7 +19,7 @@ import {
   toCellKeys,
 } from '@/lib/sudoku';
 import { useSudokuState } from '@/states/sudokuState';
-import ControlButton from '../../ControlButton';
+import ControlButton from '@/components/ControlButton';
 
 interface HintsButtonProps {
   update: (

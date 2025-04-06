@@ -1,5 +1,5 @@
 import { useSudokuState } from '@/states/sudokuState';
-import SudokuCell from './SudokuCell';
+import SudokuCell from '@/components/sudoku/SudokuCell';
 
 interface SudokuGridProps {
   update: (

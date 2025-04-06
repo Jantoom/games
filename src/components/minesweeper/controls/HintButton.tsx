@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/dialog';
 import { getHintCells } from '@/lib/minesweeper';
 import { useMinesweeperState } from '@/states/minesweeperState';
-import ControlButton from '../../ControlButton';
+import ControlButton from '@/components/ControlButton';
 
 const HintButton: React.FC = () => {
   const isActive = useMinesweeperState((state) => state.isActive);

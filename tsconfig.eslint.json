@@ -1,13 +1,13 @@
 {
   "include": ["."],
-  "exclude": ["dist", "node_modules", "public"],
+  "exclude": [
+    "dist",
+    "node_modules",
+    "public",
+    "eslint.config.js",
+    "postcss.config.js"
+  ],
   "compilerOptions": {
-    /* Modules */
-    "allowImportingTsExtensions": true, // Vite requirement
-
-    /* Emit */
-    "noEmit": true,
-
     /* Type Checking */
     "alwaysStrict": true,
     "noFallthroughCasesInSwitch": true,
@@ -22,11 +22,11 @@
     "strict": true,
 
     /* Modules */
-    "baseUrl": ".",
+    "baseUrl": "./",
     "module": "ESNext",
     "moduleResolution": "bundler",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["src/*"]
     },
 
     /* JavaScript Support */
@@ -42,6 +42,9 @@
     "moduleDetection": "force",
     "target": "ESNext",
     "useDefineForClassFields": true,
+
+    /* Projects */
+    "composite": true,
 
     /* Completeness */
     "skipLibCheck": true

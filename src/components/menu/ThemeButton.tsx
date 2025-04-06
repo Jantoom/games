@@ -1,6 +1,7 @@
 import { DialogDescription } from '@radix-ui/react-dialog';
 import { Palette } from 'lucide-react';
 import React, { useState } from 'react';
+import ControlButton from '@/components/ControlButton';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -13,7 +14,6 @@ import {
 } from '@/components/ui/dialog';
 import { Themes } from '@/lib/styles';
 import { useGlobalState } from '@/states/globalState';
-import ControlButton from '../ControlButton';
 
 const ThemeButton: React.FC = () => {
   const [isThemeOpen, setIsThemeOpen] = useState(false);

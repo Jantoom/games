@@ -11,7 +11,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { useSudokuState } from '@/states/sudokuState';
-import ControlButton from '../../ControlButton';
+import ControlButton from '@/components/ControlButton';
 
 interface RestartButtonProps {
   restart: () => void;
