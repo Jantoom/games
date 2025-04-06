@@ -33,8 +33,8 @@ declare global {
   }
 }
 
-Array.prototype.falsyIfEmpty = function () {
-  return this.length > 0 ? this : false;
+Array.prototype.falsyIfEmpty = function<T>() {
+  return (this as T[]).length > 0 ? this as T[] : false;
 };
 
 Array.prototype.toObject = function <K extends PropertyKey, V>(this: [K, V][]) {

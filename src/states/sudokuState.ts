@@ -23,7 +23,7 @@ export const useSudokuState = create(
       notes: {} as Notes,
       history: [] as HistoryEntry[],
       errors: [] as string[],
-      selectedNumber: undefined,
+      selectedNumber: -1,
       isPencilMode: false,
       leaderboard: [] as LeaderboardEntry[],
     },

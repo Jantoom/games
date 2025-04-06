@@ -1,6 +1,7 @@
 import { DialogDescription } from '@radix-ui/react-dialog';
 import { Trophy } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
+import ControlButton from '@/components/ControlButton';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -11,10 +12,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import { Difficulty, LeaderboardEntry } from '@/lib/sudokuTypes';
 import { formatTime } from '@/lib/utils';
 import { useSudokuState } from '@/states/sudokuState';
-import ControlButton from '@/components/ControlButton';
-import { Difficulty, LeaderboardEntry } from '@/lib/sudokuTypes';
 
 const LeaderboardButton: React.FC = () => {
   const { seed, isActive } = useSudokuState();
@@ -43,7 +43,7 @@ const LeaderboardButton: React.FC = () => {
     const currIndex = difficulties.indexOf(selectedDifficulty);
     const newIndex =
       direction === 'prev' ? (currIndex - 1 + 3) % 3 : (currIndex + 1) % 3;
-    setSelectedDifficulty(difficulties[newIndex] as Difficulty);
+    setSelectedDifficulty(difficulties[newIndex]);
   };
   const deleteEntry = (index: number) =>
     setLeaderboard((prev) => {

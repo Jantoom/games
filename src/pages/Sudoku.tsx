@@ -16,8 +16,8 @@ import {
   toCellKeys,
 } from '@/lib/sudoku';
 import { Difficulty, LeaderboardEntry } from '@/lib/sudokuTypes';
-import { useSudokuState } from '@/states/sudokuState';
 import AnimatedPage from '@/pages/AnimatedPage';
+import { useSudokuState } from '@/states/sudokuState';
 
 const Sudoku: React.FC = () => {
   const { seed, grid, setState } = useSudokuState();
@@ -46,7 +46,7 @@ const Sudoku: React.FC = () => {
         ),
         history: [],
         errors: [],
-        selectedNumber: undefined,
+        selectedNumber: -1,
         isPencilMode: false,
       });
     },
@@ -66,7 +66,7 @@ const Sudoku: React.FC = () => {
       ),
       history: [],
       errors: [],
-      selectedNumber: undefined,
+      selectedNumber: -1,
       isPencilMode: false,
     }));
   }, [setState]);
@@ -75,8 +75,8 @@ const Sudoku: React.FC = () => {
     (row: number, col: number, number_: number, isPencilMode: boolean) => {
       setState((prevState) => {
         const newGrid = prevState.grid.map((r) => [...r]);
-        newGrid[row]![col] =
-          isPencilMode || prevState.grid[row]![col] === number_ ? 0 : number_;
+        newGrid[row][col] =
+          isPencilMode || prevState.grid[row][col] === number_ ? 0 : number_;
 
         const newNotes = { ...prevState.notes };
         for (const key of isPencilMode
@@ -112,12 +112,12 @@ const Sudoku: React.FC = () => {
 
   const undo = useCallback(() => {
     setState((prevState) => {
-      if (prevState.history.length === 0) return {};
       const lastStep = prevState.history.at(-1);
+      if (lastStep === undefined) return {}
       return {
-        grid: lastStep!.grid.map((row) => [...row]),
+        grid: lastStep.grid.map((row) => [...row]),
         notes: Object.fromEntries(
-          Object.entries(lastStep!.notes).map(([key, value]) => [
+          Object.entries(lastStep.notes).map(([key, value]) => [
             key,
             new Set(value),
           ]),

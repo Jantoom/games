@@ -1,6 +1,7 @@
 import { DialogDescription } from '@radix-ui/react-dialog';
 import { Trophy } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import ControlButton from '@/components/ControlButton';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -12,10 +13,9 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { isSolved } from '@/lib/minesweeper';
+import { Difficulty, LeaderboardEntry } from '@/lib/minesweeperTypes';
 import { formatTime } from '@/lib/utils';
 import { useMinesweeperState } from '@/states/minesweeperState';
-import ControlButton from '@/components/ControlButton';
-import { Difficulty, LeaderboardEntry } from '@/lib/minesweeperTypes';
 
 const LeaderboardButton: React.FC = () => {
   const { seed, isActive, bombs, flags } = useMinesweeperState();
@@ -44,7 +44,7 @@ const LeaderboardButton: React.FC = () => {
     const currIndex = difficulties.indexOf(selectedDifficulty);
     const newIndex =
       direction === 'prev' ? (currIndex - 1 + 3) % 3 : (currIndex + 1) % 3;
-    setSelectedDifficulty(difficulties[newIndex] as Difficulty);
+    setSelectedDifficulty(difficulties[newIndex]);
   };
   const deleteEntry = (index: number) =>
     setLeaderboard((prev) => {

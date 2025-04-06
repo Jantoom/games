@@ -60,7 +60,7 @@ export const generateMinesweeper = (
 export const isSolved = (bombs: Set<string>, flags: Set<string>): boolean =>
   bombs.size > 0 &&
   bombs.size === flags.size &&
-  [...bombs].every((bomb) => flags.has(bomb));
+  ([...bombs] as string[]).every((bomb) => flags.has(bomb));
 
 export const getAdjacentCells = (
   row: number,
@@ -106,7 +106,7 @@ export const getSafeCells = (
   const visited = new Set<string>();
 
   while (queue.length > 0) {
-    const { row, col } = queue.shift()!;
+    const { row, col } = queue.shift() as {row: number, col: number};
     const key = `${row}-${col}`;
 
     if (visited.has(key)) continue;

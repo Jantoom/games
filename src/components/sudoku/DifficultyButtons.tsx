@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { useSudokuState } from '@/states/sudokuState';
 import { Difficulty } from '@/lib/sudokuTypes';
+import { useSudokuState } from '@/states/sudokuState';
 
 interface DifficultyButtonsProps {
   reset: (difficulty: Difficulty) => void;

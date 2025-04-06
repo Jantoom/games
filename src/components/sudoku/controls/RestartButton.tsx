@@ -1,6 +1,7 @@
 import { DialogDescription } from '@radix-ui/react-dialog';
 import { RotateCcw } from 'lucide-react';
 import React, { useState } from 'react';
+import ControlButton from '@/components/ControlButton';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -11,7 +12,6 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { useSudokuState } from '@/states/sudokuState';
-import ControlButton from '@/components/ControlButton';
 
 interface RestartButtonProps {
   restart: () => void;

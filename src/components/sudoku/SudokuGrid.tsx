@@ -1,5 +1,5 @@
-import { useSudokuState } from '@/states/sudokuState';
 import SudokuCell from '@/components/sudoku/SudokuCell';
+import { useSudokuState } from '@/states/sudokuState';
 
 interface SudokuGridProps {
   update: (
@@ -63,18 +63,18 @@ const SudokuGrid: React.FC<SudokuGridProps> = ({ update }) => {
           <SudokuCell
             key={`${row}-${col}`}
             num={number_}
-            isOriginal={originalGrid[row]![col] !== 0}
+            isOriginal={originalGrid[row][col] !== 0}
             isHighlighted={
-              selectedNumber !== undefined &&
+              selectedNumber !== -1 &&
               (number_ === selectedNumber ||
-                notes[`${row}-${col}`]!.has(selectedNumber))
+                notes[`${row}-${col}`].has(selectedNumber))
             }
             isFlagged={errors.includes(`${row}-${col}`)}
             notes={notes[`${row}-${col}`]}
             onClick={() =>
               isActive &&
-              selectedNumber !== undefined &&
-              !originalGrid[row]![col] &&
+              selectedNumber !== -1 &&
+              !originalGrid[row][col] &&
               update(row, col, selectedNumber, isPencilMode)
             }
           />

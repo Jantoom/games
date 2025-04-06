@@ -1,6 +1,7 @@
 import { DialogDescription } from '@radix-ui/react-dialog';
 import { Settings } from 'lucide-react';
 import { useState } from 'react';
+import ControlButton from '@/components/ControlButton';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -14,7 +15,6 @@ import {
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { useMinesweeperState } from '@/states/minesweeperState';
-import ControlButton from '@/components/ControlButton';
 
 const OptionsButton: React.FC = () => {
   const {

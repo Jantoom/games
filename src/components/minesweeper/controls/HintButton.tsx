@@ -1,6 +1,7 @@
 import { DialogDescription } from '@radix-ui/react-dialog';
 import { Lightbulb } from 'lucide-react';
 import { useState } from 'react';
+import ControlButton from '@/components/ControlButton';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -12,7 +13,6 @@ import {
 } from '@/components/ui/dialog';
 import { getHintCells } from '@/lib/minesweeper';
 import { useMinesweeperState } from '@/states/minesweeperState';
-import ControlButton from '@/components/ControlButton';
 
 const HintButton: React.FC = () => {
   const isActive = useMinesweeperState((state) => state.isActive);

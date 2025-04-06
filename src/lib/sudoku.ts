@@ -39,7 +39,7 @@ const isValidCell = (
 const toUniqueCells = (
   cells: { row: number; col: number }[],
 ): { row: number; col: number }[] =>
-  toCellCoords([...new Set(toCellKeys(cells))]);
+  toCellCoords([...new Set(toCellKeys(cells))] as string[]);
 
 export const generateSudoku = (
   difficulty: Difficulty,

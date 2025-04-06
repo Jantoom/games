@@ -8,19 +8,6 @@
     "postcss.config.js"
   ],
   "compilerOptions": {
-    /* Type Checking */
-    "alwaysStrict": true,
-    "noFallthroughCasesInSwitch": true,
-    "noImplicitAny": true,
-    "noImplicitOverride": true,
-    "noImplicitReturns": true,
-    "noImplicitThis": true,
-    "noPropertyAccessFromIndexSignature": true,
-    "noUncheckedIndexedAccess": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "strict": true,
-
     /* Modules */
     "baseUrl": "./",
     "module": "ESNext",
@@ -28,25 +15,14 @@
     "paths": {
       "@/*": ["src/*"]
     },
-
     /* JavaScript Support */
     "allowJs": true,
-
     /* Interop Constaints */
     "isolatedModules": true,
-    "esModuleInterop": true,
-
     /* Language and Environment */
     "jsx": "react-jsx",
     "lib": ["ESNext", "DOM", "DOM.Iterable"],
-    "moduleDetection": "force",
-    "target": "ESNext",
-    "useDefineForClassFields": true,
-
     /* Projects */
     "composite": true,
-
-    /* Completeness */
-    "skipLibCheck": true
   }
 }

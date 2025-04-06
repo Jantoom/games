@@ -51,7 +51,7 @@ const MinesweeperCell: React.FC<MinesweeperCellProps> = ({
               ) : (
                 <Flag
                   className="stroke-primary"
-                  fill={Themes[theme]!.secondary}
+                  fill={Themes[theme].secondary}
                 />
               )}
             </motion.div>

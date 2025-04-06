@@ -6,22 +6,17 @@
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "strict": true,
-
     /* Modules */
     "module": "ESNext",
     "moduleResolution": "bundler",
-
     /* Interop Constraints */
     "isolatedModules": true,
-
     /* Language and Environment */
     "lib": ["ES2023"],
     "moduleDetection": "force",
     "target": "ES2022",
-
     /* Projects */
     "composite": true,
-
     /* Completeness */
     "skipLibCheck": true
   }

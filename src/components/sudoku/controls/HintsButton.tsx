@@ -1,6 +1,7 @@
 import { DialogDescription } from '@radix-ui/react-dialog';
 import { Lightbulb } from 'lucide-react';
 import React, { useCallback, useRef, useState } from 'react';
+import ControlButton from '@/components/ControlButton';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -19,7 +20,6 @@ import {
   toCellKeys,
 } from '@/lib/sudoku';
 import { useSudokuState } from '@/states/sudokuState';
-import ControlButton from '@/components/ControlButton';
 
 interface HintsButtonProps {
   update: (
@@ -62,7 +62,7 @@ const HintsButton: React.FC<HintsButtonProps> = ({ update }) => {
         update(
           targetCell.row,
           targetCell.col,
-          solvedGrid[targetCell.row]![targetCell.col]!,
+          solvedGrid[targetCell.row][targetCell.col],
           false,
         );
       }
