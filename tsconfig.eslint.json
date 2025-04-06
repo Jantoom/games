@@ -1,12 +1,6 @@
 {
   "include": ["."],
-  "exclude": [
-    "dist",
-    "node_modules",
-    "public",
-    "eslint.config.js",
-    "postcss.config.js"
-  ],
+  "exclude": ["dist", "node_modules", "public"],
   "compilerOptions": {
     /* Modules */
     "baseUrl": "./",
@@ -15,14 +9,14 @@
     "paths": {
       "@/*": ["src/*"]
     },
+    /* Emit */
+    "noEmit": true,
     /* JavaScript Support */
     "allowJs": true,
     /* Interop Constaints */
     "isolatedModules": true,
     /* Language and Environment */
     "jsx": "react-jsx",
-    "lib": ["ESNext", "DOM", "DOM.Iterable"],
-    /* Projects */
-    "composite": true,
+    "lib": ["ESNext", "DOM", "DOM.Iterable"]
   }
 }

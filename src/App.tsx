@@ -2,7 +2,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AnimatePresence } from 'framer-motion';
 import { useEffect, cloneElement } from 'react';
 import { useLocation, useOutlet } from 'react-router-dom';
-import { useGlobalState } from '@/states/globalState';
+import { useGlobalState } from './menu/globalState';
 
 const queryClient = new QueryClient();
 

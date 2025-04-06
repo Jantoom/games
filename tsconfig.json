@@ -3,16 +3,13 @@
   "exclude": ["dist", "node_modules", "public"],
   "references": [
     { "path": "./tsconfig.app.json" },
-    { "path": "./tsconfig.vite.json" },
-    { "path": "./tsconfig.eslint.json" }
+    { "path": "./tsconfig.vite.json" }
   ],
   "compilerOptions": {
     /* Modules */
     "allowImportingTsExtensions": true, // Vite requirement
-
     /* Emit */
     "noEmit": true,
-
     /* Interop Constraints */
     "esModuleInterop": true
   }

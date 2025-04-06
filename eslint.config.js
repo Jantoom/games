@@ -78,7 +78,6 @@ export default config(
         },
       ],
       'unicorn/prevent-abbreviations': 'off',
-      // 'unicorn/no-useless-undefined': 'off',
       'unicorn/no-document-cookie': 'off',
       'unicorn/filename-case': [
         'error',
@@ -89,6 +88,7 @@ export default config(
         { allowConstantExport: true },
       ],
       '@typescript-eslint/no-unused-vars': 'off',
+      '@typescript-eslint/no-non-null-assertion': 'off',
       'unused-imports/no-unused-imports': 'error',
       'unused-imports/no-unused-vars': [
         'error',
