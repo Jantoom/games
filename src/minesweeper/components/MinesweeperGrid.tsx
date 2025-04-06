@@ -92,15 +92,15 @@ const MinesweeperGrid: React.FC = () => {
     const opacity = Math.min(1, max.get() - (max.get() - scale) - 1);
     const vBound = Math.max(
       0,
-      (gridRef.current!.clientHeight * scale -
-        gridContainerRef.current!.clientHeight) /
+      (gridRef.current.clientHeight * scale -
+        gridContainerRef.current.clientHeight) /
         2 +
         100 * normalisedScale,
     );
     const hBound = Math.max(
       0,
-      (gridRef.current!.clientWidth * scale -
-        gridContainerRef.current!.clientWidth) /
+      (gridRef.current.clientWidth * scale -
+        gridContainerRef.current.clientWidth) /
         2 +
         100 * normalisedScale,
     );
@@ -162,7 +162,7 @@ const MinesweeperGrid: React.FC = () => {
         origin,
       }): number | undefined => {
         if (first) memo = scale.get();
-        const grid = gridRef.current!.getBoundingClientRect();
+        const grid = gridRef.current.getBoundingClientRect();
         origin = [
           origin[0] - (grid.x + grid.width / 2),
           origin[1] - (grid.y + grid.height / 2),
@@ -185,10 +185,10 @@ const MinesweeperGrid: React.FC = () => {
         lastOffset,
       }): number | undefined => {
         if (first) memo = scale.get();
-        const grid = gridRef.current!.getBoundingClientRect();
+        const grid = gridRef.current.getBoundingClientRect();
         const origin: [number, number] = [
-          mousePos.current!.x - (grid.x + grid.width / 2),
-          mousePos.current!.y - (grid.y + grid.height / 2),
+          mousePos.current.x - (grid.x + grid.width / 2),
+          mousePos.current.y - (grid.y + grid.height / 2),
         ];
         updateScale(
           active,
@@ -207,7 +207,7 @@ const MinesweeperGrid: React.FC = () => {
         clearTimeout(longClickTimeout.current);
         longClickTimeout.current = setTimeout(
           (pos) => {
-            tryUpdate(pos.start, mousePos.current!, flagOnLongClick);
+            tryUpdate(pos.start, mousePos.current, flagOnLongClick);
             longClickTimeout.current = undefined;
           },
           250,
@@ -216,9 +216,7 @@ const MinesweeperGrid: React.FC = () => {
       },
       onClick: ({ event }) => {
         if (!currClickPos.current) return;
-        if (
-          positionCellsAreEqual(prevClickPos.current!, currClickPos.current)
-        ) {
+        if (positionCellsAreEqual(prevClickPos.current, currClickPos.current)) {
           clearTimeout(clickTimeout.current);
         }
         if (longClickTimeout.current) {

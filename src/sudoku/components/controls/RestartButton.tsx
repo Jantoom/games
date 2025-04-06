@@ -13,12 +13,8 @@ import {
 } from '@/components/ui/dialog';
 import { useSudokuState } from '../../sudokuState';
 
-interface RestartButtonProps {
-  restart: () => void;
-}
-
-const RestartButton: React.FC<RestartButtonProps> = ({ restart }) => {
-  const { isActive } = useSudokuState();
+const RestartButton: React.FC = () => {
+  const { isActive, restart } = useSudokuState();
   const [isRestartOpen, setIsRestartOpen] = useState(false);
 
   return (

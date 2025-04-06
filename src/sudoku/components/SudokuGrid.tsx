@@ -1,16 +1,7 @@
 import { useSudokuState } from '../sudokuState';
 import SudokuCell from './SudokuCell';
 
-interface SudokuGridProps {
-  update: (
-    row: number,
-    col: number,
-    number_: number,
-    isPencilMode: boolean,
-  ) => void;
-}
-
-const SudokuGrid: React.FC<SudokuGridProps> = ({ update }) => {
+const SudokuGrid: React.FC = () => {
   const {
     isActive,
     originalGrid,
@@ -19,6 +10,7 @@ const SudokuGrid: React.FC<SudokuGridProps> = ({ update }) => {
     errors,
     selectedNumber,
     isPencilMode,
+    update,
   } = useSudokuState();
 
   return (

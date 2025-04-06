@@ -1,4 +1,5 @@
-export type Difficulty = 'easy' | 'medium' | 'hard';
+export const difficulties = ['easy', 'medium', 'hard'] as const;
+export type Difficulty = (typeof difficulties)[number];
 export type Grid = number[][];
 export type CellNotes = Set<number>;
 export type Notes = { [cell: string]: CellNotes };

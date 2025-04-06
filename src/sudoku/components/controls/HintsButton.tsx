@@ -21,17 +21,9 @@ import {
 } from '../../sudokuLib';
 import { useSudokuState } from '../../sudokuState';
 
-interface HintsButtonProps {
-  update: (
-    row: number,
-    col: number,
-    number_: number,
-    isPencilMode: boolean,
-  ) => void;
-}
-
-const HintsButton: React.FC<HintsButtonProps> = ({ update }) => {
-  const { isActive, solvedGrid, grid, notes, setState } = useSudokuState();
+const HintsButton: React.FC = () => {
+  const { isActive, solvedGrid, grid, notes, update, setState } =
+    useSudokuState();
   const [isHintsOpen, setIsHintsOpen] = useState(false);
   const errorBlinkerRef = useRef<NodeJS.Timeout | undefined>(undefined);
 

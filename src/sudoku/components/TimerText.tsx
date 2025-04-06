@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { formatTime } from '@/lib/utils';
 import { useSudokuState } from '../sudokuState';
+import { Label } from '@/components/ui/label';
 
 const TimerText: React.FC = () => {
   const { isActive, time, setState } = useSudokuState();
@@ -27,7 +28,7 @@ const TimerText: React.FC = () => {
     };
   }, [isActive, setState]);
 
-  return <span className="pl-1 text-2xl font-medium">{formatTime(time)}</span>;
+  return <Label className="text-2xl font-medium">{formatTime(time)}</Label>;
 };
 
 export default TimerText;

@@ -3,12 +3,8 @@ import React from 'react';
 import ControlButton from '@/components/ControlButton';
 import { useSudokuState } from '../../sudokuState';
 
-interface UndoButtonProps {
-  undo: () => void;
-}
-
-const UndoButton: React.FC<UndoButtonProps> = ({ undo }) => {
-  const { isActive, history } = useSudokuState();
+const UndoButton: React.FC = () => {
+  const { isActive, history, undo } = useSudokuState();
 
   return (
     <ControlButton

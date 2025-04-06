@@ -18,7 +18,7 @@ const Menu: React.FC = () => {
               variant="ghost"
               className="text-xl hover:bg-secondary"
             >
-              <Link to="./sudoku">Sudoku</Link>
+              <Link to="/games/sudoku">Sudoku</Link>
             </Button>
             <Separator className="-my-4" />
             <Button
@@ -26,7 +26,7 @@ const Menu: React.FC = () => {
               variant="ghost"
               className="text-xl hover:bg-secondary"
             >
-              <Link to="./minesweeper">Minesweeper</Link>
+              <Link to="/games/minesweeper">Minesweeper</Link>
             </Button>
             <Separator className="-my-4" />
             <Button
@@ -34,7 +34,7 @@ const Menu: React.FC = () => {
               variant="ghost"
               className="text-xl hover:bg-secondary"
             >
-              <Link to="./solitaire">Solitaire</Link>
+              <Link to="/games/solitaire">Solitaire</Link>
             </Button>
             <Separator className="-my-4" />
             <Button
@@ -42,7 +42,7 @@ const Menu: React.FC = () => {
               variant="ghost"
               className="text-xl hover:bg-secondary"
             >
-              <Link to="./snake">Snake</Link>
+              <Link to="/games/snake">Snake</Link>
             </Button>
             <Separator className="-my-4" />
             <Button
@@ -50,7 +50,7 @@ const Menu: React.FC = () => {
               variant="ghost"
               className="text-xl hover:bg-secondary"
             >
-              <Link to="./pong">Pong</Link>
+              <Link to="/games/pong">Pong</Link>
             </Button>
             <Separator className="-my-4" />
             <Button
@@ -58,7 +58,7 @@ const Menu: React.FC = () => {
               variant="ghost"
               className="text-xl hover:bg-secondary"
             >
-              <Link to="./2048">2048</Link>
+              <Link to="/games/2048">2048</Link>
             </Button>
           </div>
           <div className="flex w-full justify-evenly">

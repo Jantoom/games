@@ -12,6 +12,7 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "strict": true,
+    "strictNullChecks": false,
     /* Modules */
     "baseUrl": ".",
     "module": "ESNext",

@@ -36,7 +36,7 @@ const NumberButtons: React.FC = () => {
                   {number_}
                 </span>
                 <span className="absolute pt-[65%] text-[min(2.5vw,1.25vh)] font-medium">
-                  {remainingCount ?? ''}
+                  {remainingCount || ''}
                 </span>
               </>
             ) : (
