@@ -24,7 +24,7 @@ const Minesweeper: React.FC = () => {
   }, [bombs, flags, stop]);
 
   return (
-    <AnimatedPage>
+    <AnimatedPage depth={1}>
       <div key={seed} className="flex h-svh flex-col items-center py-8">
         <div className="flex h-full flex-col items-center justify-between">
           <div className="flex w-full items-center justify-between">

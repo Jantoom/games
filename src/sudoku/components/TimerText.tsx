@@ -1,9 +1,8 @@
 import React, { useEffect, useRef } from 'react';
-import { formatTime } from '@/lib/utils';
+import { cn, formatTime } from '@/lib/utils';
 import { useSudokuState } from '../sudokuState';
-import { Label } from '@/components/ui/label';
 
-const TimerText: React.FC = () => {
+const TimerText: React.FC<{ className?: string }> = ({ className }) => {
   const { isActive, time, setState } = useSudokuState();
   const timerRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
@@ -28,7 +27,11 @@ const TimerText: React.FC = () => {
     };
   }, [isActive, setState]);
 
-  return <Label className="text-2xl font-medium">{formatTime(time)}</Label>;
+  return (
+    <span className={cn('justify-self-center text-3xl font-medium', className)}>
+      {formatTime(time)}
+    </span>
+  );
 };
 
 export default TimerText;

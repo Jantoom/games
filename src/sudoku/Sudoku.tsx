@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import AnimatedPage from '@/components/AnimatedPage';
-import DifficultySelect from '@/components/DifficultySelect';
+import DifficultyCarousel from '../components/DifficultyCarousel';
 import HintsButton from './components/controls/HintsButton';
 import LeaderboardButton from './components/controls/LeaderboardButton';
 import PencilButton from './components/controls/PencilButton';
@@ -13,9 +13,11 @@ import { isSolved } from './sudokuLib';
 import { useSudokuState } from './sudokuState';
 import { difficulties } from './sudokuTypes';
 import BackToMenuButton from '@/components/BackToMenuButton';
+import SettingsButton from '@/components/SettingsButton';
+import ThemeButton from '@/menu/components/ThemeButton';
 
 const Sudoku: React.FC = () => {
-  const { seed, difficulty, grid, reset, stop } = useSudokuState();
+  const { difficulty, grid, reset, stop } = useSudokuState();
 
   useEffect(() => {
     reset('easy');
@@ -27,26 +29,35 @@ const Sudoku: React.FC = () => {
 
   return (
     grid.length > 0 && (
-      <AnimatedPage>
-        <div key={seed} className="flex h-svh flex-col items-center py-8">
-          <div className="flex h-screen flex-col items-center justify-between">
-            <div className="grid grid-cols-3 w-full justify-items-center items-start">
-              <BackToMenuButton />
-              <TimerText />
-              <DifficultySelect
-                difficulty={difficulty}
-                difficulties={[...difficulties]}
-                reset={reset}
-              />
+      <AnimatedPage depth={1}>
+        <div className="flex h-svh w-[50vh] max-w-[95vw] flex-col justify-self-center py-8">
+          <div className="flex h-full w-full flex-col items-center justify-between">
+            <div className="h-[7.5%] w-full">
+              <div className="flex h-1/2 w-full flex-wrap items-center justify-center gap-y-2">
+                <div className="w-1/3">
+                  <BackToMenuButton />
+                </div>
+                <TimerText className="w-1/3 text-center text-3xl" />
+                <div className="flex h-full w-1/3 justify-end gap-1">
+                  <LeaderboardButton />
+                  <ThemeButton />
+                  <SettingsButton />
+                </div>
+                <DifficultyCarousel
+                    className="w-1/3 justify-self-center"
+                    difficulty={difficulty}
+                    difficulties={[...difficulties]}
+                    reset={reset}
+                  />
+              </div>
             </div>
             <SudokuGrid />
             <NumberButtons />
-            <div className="flex w-full justify-evenly">
+            <div className="flex h-[5%] w-full justify-evenly">
               <RestartButton />
               <HintsButton />
               <PencilButton />
               <UndoButton />
-              <LeaderboardButton />
             </div>
           </div>
         </div>

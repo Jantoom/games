@@ -8,7 +8,7 @@ import ThemeButton from './components/ThemeButton';
 
 const Menu: React.FC = () => {
   return (
-    <AnimatedPage>
+    <AnimatedPage depth={0}>
       <div className="flex h-svh flex-col items-center bg-background">
         <div className="flex h-screen w-1/2 flex-col items-center justify-evenly py-8">
           <Label className="text-center text-3xl">Games by Jaleel</Label>

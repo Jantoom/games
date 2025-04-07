@@ -196,7 +196,7 @@ const CarouselItem = React.forwardRef<
 });
 CarouselItem.displayName = 'CarouselItem';
 
-const CarouselPrev = React.forwardRef<
+const CarouselPrevious = React.forwardRef<
   HTMLButtonElement,
   React.ComponentProps<typeof Button>
 >(({ className, variant = 'outline', size = 'icon', ...props }, ref) => {
@@ -223,7 +223,7 @@ const CarouselPrev = React.forwardRef<
     </Button>
   );
 });
-CarouselPrev.displayName = 'CarouselPrev';
+CarouselPrevious.displayName = 'CarouselPrevious';
 
 const CarouselNext = React.forwardRef<
   HTMLButtonElement,
@@ -259,6 +259,6 @@ export {
   Carousel,
   CarouselContent,
   CarouselItem,
-  CarouselPrev,
+  CarouselPrevious,
   CarouselNext,
 };

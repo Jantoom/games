@@ -3,6 +3,7 @@ import SudokuCell from './SudokuCell';
 
 const SudokuGrid: React.FC = () => {
   const {
+    seed,
     isActive,
     originalGrid,
     grid,
@@ -14,7 +15,10 @@ const SudokuGrid: React.FC = () => {
   } = useSudokuState();
 
   return (
-    <div className="relative grid aspect-square w-[min(95vw,50vh)] grid-cols-9">
+    <div
+      key={seed}
+      className="relative grid aspect-square w-full max-w-[50vh] grid-cols-9"
+    >
       <svg className="pointer-events-none absolute" viewBox="0 0 1350 1350">
         <defs>
           <svg id="small">
