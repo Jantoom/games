@@ -28,9 +28,7 @@ const TimerText: React.FC<{ className?: string }> = ({ className }) => {
   }, [isActive, setState]);
 
   return (
-    <span className={cn('font-medium', className)}>
-      {formatTime(time)}
-    </span>
+    <span className={cn('font-medium', className)}>{formatTime(time)}</span>
   );
 };
 

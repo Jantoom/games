@@ -24,7 +24,7 @@ export const generateMinesweeper = (
   }[difficulty];
 
   numberBombs = {
-    easy: 12,
+    easy: 1,
     medium: 36,
     hard: 72,
   }[difficulty];
@@ -167,13 +167,13 @@ export const getCellFromPosition = (position: {
   x: number;
   y: number;
 }): { row: number; col: number } | undefined => {
-  if (!position) return;
+  if (!position) return undefined;
   const key: string | undefined =
     document
       .elementFromPoint(position.x, position.y)
       ?.closest('[data-id]')
       ?.getAttribute('data-id') ?? undefined;
-  if (!key) return;
+  if (!key) return undefined;
   const [row, col] = key.split('-').map((value) => +value) as [number, number];
   return { row, col };
 };

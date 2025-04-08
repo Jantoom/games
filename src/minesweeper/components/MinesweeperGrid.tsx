@@ -20,10 +20,10 @@ const MinesweeperGrid: React.FC = () => {
     bombs,
     flags,
     isFlagMode,
-    flagOnClick,
-    flagOnDoubleClick,
-    flagOnLongClick,
-    flagOnRightClick,
+    optFlagOnClick,
+    optFlagOnDoubleClick,
+    optFlagOnLongClick,
+    optFlagOnRightClick,
     update,
   } = useMinesweeperState();
   // Grid transform
@@ -208,7 +208,7 @@ const MinesweeperGrid: React.FC = () => {
         clearTimeout(longClickTimeout.current);
         longClickTimeout.current = setTimeout(
           (pos) => {
-            tryUpdate(pos.start, mousePos.current, flagOnLongClick);
+            tryUpdate(pos.start, mousePos.current, optFlagOnLongClick);
             longClickTimeout.current = undefined;
           },
           250,
@@ -225,7 +225,7 @@ const MinesweeperGrid: React.FC = () => {
           longClickTimeout.current = undefined;
           clickTimeout.current = setTimeout(
             (pos) => {
-              tryUpdate(pos.start, pos.finish, flagOnClick);
+              tryUpdate(pos.start, pos.finish, optFlagOnClick);
               clickTimeout.current = undefined;
             },
             250,
@@ -241,7 +241,7 @@ const MinesweeperGrid: React.FC = () => {
         tryUpdate(
           { ...currClickPos.current },
           { x: event.clientX, y: event.clientY },
-          flagOnDoubleClick,
+          optFlagOnDoubleClick,
         );
         clearTimeout(clickTimeout.current);
         clickTimeout.current = undefined;
@@ -252,7 +252,7 @@ const MinesweeperGrid: React.FC = () => {
         tryUpdate(
           { ...currClickPos.current },
           { x: event.clientX, y: event.clientY },
-          flagOnRightClick,
+          optFlagOnRightClick,
         );
         clearTimeout(clickTimeout.current);
         clickTimeout.current = undefined;

@@ -1,6 +1,6 @@
-import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
 import React from 'react';
+import { cn } from '@/lib/utils';
 
 interface GameHeaderProps {
   className?: string;
@@ -23,7 +23,7 @@ const GameHeader: React.FC<GameHeaderProps> = ({ className, children }) => {
       <div className="absolute inset-0 rounded-b-full bg-secondary opacity-50" />
       <div
         className={cn(
-          'relative flex h-full w-full items-center justify-evenly p-2',
+          'relative flex h-full w-full items-center justify-evenly px-8 py-2',
           className,
         )}
       >

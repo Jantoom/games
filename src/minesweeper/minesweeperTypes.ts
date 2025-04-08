@@ -6,7 +6,8 @@ export type HistoryEntry = {
 };
 export type LeaderboardEntry = {
   difficulty: Difficulty;
-  time: number;
-  seed: number;
+  hints: number;
+  score: string;
+  seed: string;
   date: string;
 };

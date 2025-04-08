@@ -17,9 +17,7 @@ const App = () => {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <AnimatePresence
-        mode="wait"
-      >
+      <AnimatePresence mode="wait">
         {element && cloneElement(element, { key: pathname })}
       </AnimatePresence>
     </QueryClientProvider>

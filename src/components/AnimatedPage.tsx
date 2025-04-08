@@ -7,7 +7,7 @@ interface AnimatedPageProps {
 }
 
 const AnimatedPage: React.FC<AnimatedPageProps> = ({ depth, children }) => {
-  let direction = depth === 1 ? 1 : -1;
+  const direction = depth === 1 ? 1 : -1;
 
   return (
     <motion.div

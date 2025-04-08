@@ -25,6 +25,18 @@ export const shuffle = <T>(array: T[]): T[] => {
   return arr;
 };
 
+export const getGamesData = () =>
+  JSON.parse(localStorage.getItem(`jantoom-games`) ?? '{}');
+
+export const saveGameData = (gamesData: object, gameData: object) =>
+  localStorage.setItem(
+    'jantoom-games',
+    JSON.stringify({
+      ...gamesData,
+      ...gameData,
+    }),
+  );
+
 declare global {
   /* eslint-disable unused-imports/no-unused-vars */
   interface Array<T> {

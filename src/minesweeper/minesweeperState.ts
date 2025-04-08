@@ -1,6 +1,7 @@
 import seedrandom from 'seedrandom';
 import { create, ExtractState } from 'zustand';
 import { combine } from 'zustand/middleware';
+import { formatTime, getGamesData, saveGameData } from '@/lib/utils';
 import {
   Difficulty,
   Grid,
@@ -20,7 +21,7 @@ type MinesweeperState = ExtractState<typeof useMinesweeperState>;
 export const useMinesweeperState = create(
   combine(
     {
-      seed: 0,
+      seed: '',
       isActive: false,
       time: 0,
       difficulty: 'easy' as Difficulty,
@@ -31,10 +32,11 @@ export const useMinesweeperState = create(
       flags: new Set<string>(),
       history: [] as HistoryEntry[],
       isFlagMode: false,
-      flagOnClick: false,
-      flagOnDoubleClick: true,
-      flagOnLongClick: true,
-      flagOnRightClick: true,
+      optFlagOnClick: false,
+      optFlagOnDoubleClick: true,
+      optFlagOnLongClick: true,
+      optFlagOnRightClick: true,
+      hintsUsed: 0,
       leaderboard: [] as LeaderboardEntry[],
     },
     (set) => ({
@@ -44,8 +46,8 @@ export const useMinesweeperState = create(
           | ((state: MinesweeperState) => Partial<MinesweeperState>),
       ) => set(newState),
       reset: (difficulty: Difficulty) => {
-        const newSeed = Math.random();
-        seedrandom(`${newSeed}`, { global: true });
+        const newSeed = `${Math.random()}`;
+        seedrandom(newSeed, { global: true });
         const { dimensions, numBombs, puzzle, bombs } =
           generateMinesweeper(difficulty);
 
@@ -60,6 +62,7 @@ export const useMinesweeperState = create(
           bombs: new Set(bombs),
           flags: new Set(),
           history: [],
+          hintsUsed: 0,
         });
       },
       update: (row: number, col: number, isFlagMode: boolean) => {
@@ -100,23 +103,26 @@ export const useMinesweeperState = create(
       },
       stop: (win: boolean) => {
         set((prevState) => {
-          const prevLeaderboard = JSON.parse(
-            localStorage.getItem('minesweeper-leaderboard') ?? '[]',
-          ) as LeaderboardEntry[];
-          const newEntry: LeaderboardEntry = {
-            seed: prevState.seed,
-            time: prevState.time,
-            difficulty: prevState.difficulty,
-            date: new Date().toISOString(),
-          };
-          const newLeaderboard = [...prevLeaderboard, newEntry];
-          newLeaderboard.sort((a, b) => a.time - b.time);
-          localStorage.setItem(
-            'minesweeper-leaderboard',
-            JSON.stringify(newLeaderboard),
-          );
-
           if (win) {
+            const gameData = getGamesData();
+            const prevLeaderboard = (gameData['minesweeper']?.leaderboard ??
+              []) as LeaderboardEntry[];
+            const newEntry: LeaderboardEntry = {
+              seed: prevState.seed,
+              hints: prevState.hintsUsed,
+              score: formatTime(prevState.time),
+              difficulty: prevState.difficulty,
+              date: new Date().toISOString(),
+            };
+            const newLeaderboard = [...prevLeaderboard, newEntry];
+            newLeaderboard.sort((a, b) => a.score.localeCompare(b.score));
+            saveGameData(gameData, {
+              minesweeper: {
+                ...gameData['minesweeper'],
+                leaderboard: newLeaderboard,
+              },
+            });
+
             const newGrid = prevState.grid.map((array, row) =>
               array.map((number_, col) => {
                 if (

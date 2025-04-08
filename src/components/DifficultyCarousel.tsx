@@ -1,13 +1,13 @@
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { cn } from '@/lib/utils';
+import { Button } from './ui/button';
 import {
   Carousel,
   CarouselApi,
   CarouselContent,
   CarouselItem,
 } from './ui/carousel';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { Button } from './ui/button';
-import { cn } from '@/lib/utils';
 
 interface DifficultyCarouselProps<T extends string> {
   className?: string;
@@ -22,19 +22,20 @@ const DifficultyCarousel = <T extends string>({
   difficulties,
   reset,
 }: DifficultyCarouselProps<T>) => {
-  const [api, setApi] = useState<CarouselApi>(undefined);
+  const [api, setApi] = useState<CarouselApi>();
+  const [isInitialised, setIsInitialised] = useState(false);
 
   useEffect(() => {
     if (!api) return;
-    api.scrollTo(
-      difficulties.findIndex((diff) => diff === difficulty),
-      true,
-    );
+    if (!isInitialised) {
+      api.scrollTo(difficulties.indexOf(difficulty), true);
 
-    api.on('select', () => {
-      reset(difficulties[api.selectedScrollSnap()]);
-    });
-  }, [api]);
+      api.on('select', () => {
+        reset(difficulties[api.selectedScrollSnap()]);
+      });
+      setIsInitialised(true);
+    }
+  }, [api, isInitialised, difficulty, difficulties, reset]);
 
   return (
     <Carousel
@@ -43,22 +44,21 @@ const DifficultyCarousel = <T extends string>({
         align: 'start',
         loop: true,
       }}
-      className={cn('flex h-full min-w-32 flex-row items-center', className)}
+      className={cn('flex min-w-32 flex-row items-center', className)}
     >
       <Button
         variant="ghost"
-        className="h-12 aspect-square rounded-full p-0 hover:bg-secondary"
+        className="h-12 w-8 rounded-full p-0 hover:bg-secondary"
         onClick={() => api.scrollPrev()}
       >
         <ChevronLeft />
       </Button>
       <CarouselContent className="">
         {difficulties.map((diff, index) => (
-          <CarouselItem>
+          <CarouselItem key={index}>
             <Button
-              key={index}
-              variant='ghost'
-              className="w-full rounded-full text-center text-base hover:bg-secondary pb-2"
+              variant="ghost"
+              className="w-full rounded-full pb-2 text-center text-base hover:bg-secondary"
               onClick={() => reset(diff)}
             >
               {diff[0].toUpperCase() + diff.slice(1)}
@@ -68,7 +68,7 @@ const DifficultyCarousel = <T extends string>({
       </CarouselContent>
       <Button
         variant="ghost"
-        className="h-12 aspect-square rounded-full p-0 hover:bg-secondary"
+        className="h-12 w-8 rounded-full p-0 hover:bg-secondary"
         onClick={() => api.scrollNext()}
       >
         <ChevronRight />

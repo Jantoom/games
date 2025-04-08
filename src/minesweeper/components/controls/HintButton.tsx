@@ -15,14 +15,7 @@ import { getHintCells } from '../../minesweeperLib';
 import { useMinesweeperState } from '../../minesweeperState';
 
 const HintButton: React.FC = () => {
-  const isActive = useMinesweeperState((state) => state.isActive);
-  const grid = useMinesweeperState((state) => state.grid);
-  const bombs = useMinesweeperState((state) => state.bombs);
-  const update = useMinesweeperState((state) => state.update) as (
-    row: number,
-    col: number,
-    isFlagMode: boolean,
-  ) => void;
+  const { isActive, grid, bombs, update, setState } = useMinesweeperState();
   const [isHintOpen, setIsHintOpen] = useState(false);
 
   const getHint = () => {
@@ -31,6 +24,7 @@ const HintButton: React.FC = () => {
       const targetCell =
         targetCells[Math.floor(Math.random() * targetCells.length)];
       if (targetCell) {
+        setState((prevState) => ({ hintsUsed: prevState.hintsUsed + 1 }));
         update(targetCell.row, targetCell.col, false);
       }
     }

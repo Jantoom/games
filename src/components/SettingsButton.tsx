@@ -27,7 +27,7 @@ const SettingsButton = ({ children }: PropsWithChildren) => {
           <DialogTitle className="text-center">Settings</DialogTitle>
         </DialogHeader>
         <DialogDescription />
-        { children }
+        {children}
       </DialogContent>
     </Dialog>
   );

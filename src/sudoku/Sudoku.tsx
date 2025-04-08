@@ -1,5 +1,11 @@
 import React, { useEffect } from 'react';
 import AnimatedPage from '@/components/AnimatedPage';
+import BackToMenuButton from '@/components/BackToMenuButton';
+import GameFooter from '@/components/GameFooter';
+import GameHeader from '@/components/GameHeader';
+import NavHeader from '@/components/NavHeader';
+import SettingsButton from '@/components/SettingsButton';
+import ThemeButton from '@/components/ThemeButton';
 import DifficultyCarousel from '../components/DifficultyCarousel';
 import HintsButton from './components/controls/HintsButton';
 import LeaderboardButton from './components/controls/LeaderboardButton';
@@ -12,12 +18,6 @@ import TimerText from './components/TimerText';
 import { isSolved } from './sudokuLib';
 import { useSudokuState } from './sudokuState';
 import { difficulties } from './sudokuTypes';
-import BackToMenuButton from '@/components/BackToMenuButton';
-import SettingsButton from '@/components/SettingsButton';
-import ThemeButton from '@/components/ThemeButton';
-import NavHeader from '@/components/NavHeader';
-import GameHeader from '@/components/GameHeader';
-import GameFooter from '@/components/GameFooter';
 
 const Sudoku: React.FC = () => {
   const { difficulty, grid, reset, stop } = useSudokuState();
