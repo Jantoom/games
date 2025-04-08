@@ -36,7 +36,7 @@ export const useMinesweeperState = create(
       optFlagOnDoubleClick: true,
       optFlagOnLongClick: true,
       optFlagOnRightClick: true,
-      hintsUsed: 0,
+      usedHints: 0,
       leaderboard: [] as LeaderboardEntry[],
     },
     (set) => ({
@@ -62,7 +62,7 @@ export const useMinesweeperState = create(
           bombs: new Set(bombs),
           flags: new Set(),
           history: [],
-          hintsUsed: 0,
+          usedHints: 0,
         });
       },
       update: (row: number, col: number, isFlagMode: boolean) => {
@@ -104,21 +104,21 @@ export const useMinesweeperState = create(
       stop: (win: boolean) => {
         set((prevState) => {
           if (win) {
-            const gameData = getGamesData();
-            const prevLeaderboard = (gameData['minesweeper']?.leaderboard ??
+            const gamesData = getGamesData();
+            const prevLeaderboard = (gamesData['minesweeper']?.leaderboard ??
               []) as LeaderboardEntry[];
             const newEntry: LeaderboardEntry = {
               seed: prevState.seed,
-              hints: prevState.hintsUsed,
-              score: formatTime(prevState.time),
               difficulty: prevState.difficulty,
+              score: formatTime(prevState.time),
+              hints: prevState.usedHints,
               date: new Date().toISOString(),
             };
             const newLeaderboard = [...prevLeaderboard, newEntry];
             newLeaderboard.sort((a, b) => a.score.localeCompare(b.score));
-            saveGameData(gameData, {
+            saveGameData(gamesData, {
               minesweeper: {
-                ...gameData['minesweeper'],
+                ...gamesData['minesweeper'],
                 leaderboard: newLeaderboard,
               },
             });

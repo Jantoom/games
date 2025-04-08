@@ -9,13 +9,14 @@ import {
   Notes,
 } from '@/sudoku/sudokuTypes';
 import { generateSudoku, getRelatedCells, toCellKeys } from './sudokuLib';
+import { formatTime, getGamesData, saveGameData } from '@/lib/utils';
 
 type SudokuState = ExtractState<typeof useSudokuState>;
 
 export const useSudokuState = create(
   combine(
     {
-      seed: 0,
+      seed: '',
       isActive: false,
       time: 0,
       difficulty: 'easy' as Difficulty,
@@ -27,6 +28,12 @@ export const useSudokuState = create(
       errors: [] as string[],
       selectedNumber: -1,
       isPencilMode: false,
+      optHighlightSame: false,
+      optRemainingCounts: false,
+      optAutoRemove: false,
+      usedHighlightSame: false,
+      usedRemainingCounts: false,
+      usedAutoRemove: false,
       leaderboard: [] as LeaderboardEntry[],
     },
     (set) => ({
@@ -36,8 +43,8 @@ export const useSudokuState = create(
           | ((state: SudokuState) => Partial<SudokuState>),
       ) => set(state),
       reset: (difficulty: Difficulty) => {
-        const newSeed = Math.random();
-        seedrandom(`${newSeed}`, { global: true });
+        const newSeed = `${Math.random()}`;
+        seedrandom(newSeed, { global: true });
         const { puzzle, solution } = generateSudoku(difficulty);
 
         set({
@@ -60,6 +67,9 @@ export const useSudokuState = create(
           errors: [],
           selectedNumber: -1,
           isPencilMode: false,
+          usedHighlightSame: false,
+          usedRemainingCounts: false,
+          usedAutoRemove: false,
         });
       },
       restart: () => {
@@ -93,7 +103,9 @@ export const useSudokuState = create(
           const newNotes = { ...prevState.notes };
           for (const key of isPencilMode
             ? [`${row}-${col}`]
-            : toCellKeys(getRelatedCells(row, col))) {
+            : prevState.optAutoRemove
+              ? toCellKeys(getRelatedCells(row, col))
+              : []) {
             newNotes[key] = new Set(prevState.notes[key]);
             if (newNotes[key].has(number_)) {
               newNotes[key].delete(number_);
@@ -137,21 +149,28 @@ export const useSudokuState = create(
       },
       stop: () => {
         set((prevState) => {
-          const prevLeaderboard = JSON.parse(
-            localStorage.getItem('sudoku-leaderboard') ?? '[]',
-          ) as LeaderboardEntry[];
+          const gamesData = getGamesData();
+          const prevLeaderboard = (gamesData['sudoku']?.leaderboard ??
+            []) as LeaderboardEntry[];
           const newEntry: LeaderboardEntry = {
             seed: prevState.seed,
-            time: prevState.time,
             difficulty: prevState.difficulty,
+            score: formatTime(prevState.time),
+            hints: [
+              prevState.usedHighlightSame || prevState.optHighlightSame,
+              prevState.usedRemainingCounts || prevState.optRemainingCounts,
+              prevState.usedAutoRemove || prevState.optAutoRemove,
+            ],
             date: new Date().toISOString(),
           };
           const newLeaderboard = [...prevLeaderboard, newEntry];
-          newLeaderboard.sort((a, b) => a.time - b.time);
-          localStorage.setItem(
-            'sudoku-leaderboard',
-            JSON.stringify(newLeaderboard),
-          );
+          newLeaderboard.sort((a, b) => a.score.localeCompare(b.score));
+          saveGameData(gamesData, {
+            sudoku: {
+              ...gamesData['sudoku'],
+              leaderboard: newLeaderboard,
+            },
+          });
 
           return { isActive: false, selectedNumber: undefined };
         });

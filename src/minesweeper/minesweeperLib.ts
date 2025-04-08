@@ -24,7 +24,7 @@ export const generateMinesweeper = (
   }[difficulty];
 
   numberBombs = {
-    easy: 1,
+    easy: 12,
     medium: 36,
     hard: 72,
   }[difficulty];

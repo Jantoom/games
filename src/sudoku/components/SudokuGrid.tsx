@@ -11,6 +11,7 @@ const SudokuGrid: React.FC = () => {
     errors,
     selectedNumber,
     isPencilMode,
+    optHighlightSame,
     update,
   } = useSudokuState();
 
@@ -61,7 +62,7 @@ const SudokuGrid: React.FC = () => {
             num={number_}
             isOriginal={originalGrid[row][col] !== 0}
             isHighlighted={
-              selectedNumber !== -1 &&
+              optHighlightSame && selectedNumber !== -1 &&
               (number_ === selectedNumber ||
                 notes[`${row}-${col}`].has(selectedNumber))
             }

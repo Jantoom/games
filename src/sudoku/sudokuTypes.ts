@@ -8,8 +8,9 @@ export type HistoryEntry = {
   notes: Notes;
 };
 export type LeaderboardEntry = {
+  seed: string;
   difficulty: Difficulty;
-  time: number;
-  seed: number;
+  score: string;
+  hints: boolean[];
   date: string;
 };

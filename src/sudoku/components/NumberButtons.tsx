@@ -1,11 +1,16 @@
 import { Eraser } from 'lucide-react';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { getMatchingCells } from '../sudokuLib';
 import { useSudokuState } from '../sudokuState';
 
 const NumberButtons: React.FC = () => {
-  const { isActive, grid, selectedNumber, setState } = useSudokuState();
+  const { isActive, grid, selectedNumber, optRemainingCounts, setState } =
+    useSudokuState();
+
+  useEffect(() => {
+    if (optRemainingCounts) setState({ usedRemainingCounts: true });
+  }, [optRemainingCounts, setState]);
 
   return (
     <div className="grid w-2/3 grid-cols-5 grid-rows-2 justify-items-center gap-[clamp(min(0.8vh,1.5vw),1.5vw,0.5em)]">
@@ -36,7 +41,7 @@ const NumberButtons: React.FC = () => {
                   {number_}
                 </span>
                 <span className="absolute pt-[65%] text-[min(2.5vw,1.25vh)] font-medium">
-                  {remainingCount || ''}
+                  {(optRemainingCounts && remainingCount) || ''}
                 </span>
               </>
             ) : (

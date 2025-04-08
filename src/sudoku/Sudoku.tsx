@@ -4,11 +4,9 @@ import BackToMenuButton from '@/components/BackToMenuButton';
 import GameFooter from '@/components/GameFooter';
 import GameHeader from '@/components/GameHeader';
 import NavHeader from '@/components/NavHeader';
-import SettingsButton from '@/components/SettingsButton';
 import ThemeButton from '@/components/ThemeButton';
 import DifficultyCarousel from '../components/DifficultyCarousel';
 import HintsButton from './components/controls/HintsButton';
-import LeaderboardButton from './components/controls/LeaderboardButton';
 import PencilButton from './components/controls/PencilButton';
 import RestartButton from './components/controls/RestartButton';
 import UndoButton from './components/controls/UndoButton';
@@ -18,9 +16,11 @@ import TimerText from './components/TimerText';
 import { isSolved } from './sudokuLib';
 import { useSudokuState } from './sudokuState';
 import { difficulties } from './sudokuTypes';
+import LeaderboardButton from '@/components/LeaderboardButton';
+import SudokuSettingsButton from './components/controls/SudokuSettingsButton';
 
 const Sudoku: React.FC = () => {
-  const { difficulty, grid, reset, stop } = useSudokuState();
+  const { seed, isActive, difficulty, grid, reset, stop } = useSudokuState();
 
   useEffect(() => {
     reset('easy');
@@ -36,9 +36,15 @@ const Sudoku: React.FC = () => {
         <NavHeader>
           <BackToMenuButton />
           <div className="flex h-full w-full justify-end">
-            <LeaderboardButton />
+            <LeaderboardButton
+              game="sudoku"
+              seed={seed}
+              shouldOpen={isActive && isSolved(grid)}
+              difficulty={difficulty}
+              difficulties={[...difficulties]}
+            />
             <ThemeButton />
-            <SettingsButton />
+            <SudokuSettingsButton />
           </div>
         </NavHeader>
         <GameHeader>

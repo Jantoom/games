@@ -24,7 +24,7 @@ const HintButton: React.FC = () => {
       const targetCell =
         targetCells[Math.floor(Math.random() * targetCells.length)];
       if (targetCell) {
-        setState((prevState) => ({ hintsUsed: prevState.hintsUsed + 1 }));
+        setState((prevState) => ({ usedHints: prevState.usedHints + 1 }));
         update(targetCell.row, targetCell.col, false);
       }
     }

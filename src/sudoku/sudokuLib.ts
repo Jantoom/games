@@ -52,7 +52,7 @@ export const generateSudoku = (
 
   // Then remove numbers based on difficulty
   const numberToRemove = {
-    easy: 35,
+    easy: 1,
     medium: 45,
     hard: 55,
   }[difficulty];
