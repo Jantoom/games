@@ -12,10 +12,10 @@ const ControlButton = forwardRef<HTMLButtonElement, ControlButtonProps>(
     <Button
       ref={ref}
       variant={isSelected ? 'default' : 'ghost'}
-      className={`aspect-square h-full rounded-full hover:bg-secondary ${isSelected ? 'text-background' : ''} ${className}`}
+      className={`aspect-square h-full rounded-full hover:bg-secondary ${isSelected ? 'bg-primary' : ''} ${className}`}
       {...props}
     >
-      {Icon === undefined ? <></> : <Icon />}
+      {Icon === undefined ? <></> : <Icon className="stroke-foreground" />}
     </Button>
   ),
 );

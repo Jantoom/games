@@ -28,7 +28,7 @@ const TimerText: React.FC<{ className?: string }> = ({ className }) => {
   }, [isActive, setState]);
 
   return (
-    <span className={cn('justify-self-center text-3xl font-medium', className)}>
+    <span className={cn('font-medium', className)}>
       {formatTime(time)}
     </span>
   );

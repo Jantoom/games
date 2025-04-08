@@ -13,6 +13,7 @@ import MinesweeperCell from './MinesweeperCell';
 
 const MinesweeperGrid: React.FC = () => {
   const {
+    seed,
     dimensions,
     isActive,
     grid,
@@ -299,7 +300,8 @@ const MinesweeperGrid: React.FC = () => {
     dimensions[0] > 0 && (
       <div
         {...binds()}
-        className="flex h-full flex-col justify-center"
+        key={seed}
+        className="flex h-full w-full items-center"
         style={{
           touchAction: 'none',
           userSelect: 'none',
@@ -309,14 +311,14 @@ const MinesweeperGrid: React.FC = () => {
       >
         <div
           ref={gridContainerRef}
-          className="flex h-[85vh] w-[95vw] flex-col items-center justify-center overflow-hidden"
+          className="relative flex h-[95%] w-full flex-col items-center justify-center overflow-hidden"
         >
           <animated.div
             ref={gridRef}
             onMouseMove={(event) => {
               mousePos.current = { x: event.clientX, y: event.clientY };
             }}
-            className={`relative grid`}
+            className={`absolute grid`}
             style={{
               gridTemplateColumns: `repeat(${dimensions[1]},minmax(0,1fr))`,
               height: dimensions[0] * svgFactor,

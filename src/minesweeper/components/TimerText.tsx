@@ -1,8 +1,8 @@
 import React, { useEffect, useRef } from 'react';
-import { formatTime } from '@/lib/utils';
+import { cn, formatTime } from '@/lib/utils';
 import { useMinesweeperState } from '../minesweeperState';
 
-const TimerText: React.FC = () => {
+const TimerText: React.FC<{ className?: string }> = ({ className }) => {
   const { isActive, time, setState } = useMinesweeperState();
   const timerRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
@@ -27,7 +27,11 @@ const TimerText: React.FC = () => {
     };
   }, [isActive, setState]);
 
-  return <span className="pl-1 text-2xl font-medium">{formatTime(time)}</span>;
+  return (
+    <span className={cn('font-medium', className)}>
+      {formatTime(time)}
+    </span>
+  );
 };
 
 export default TimerText;

@@ -4,14 +4,21 @@ import FlagButton from './components/controls/FlagButton';
 import HintButton from './components/controls/HintButton';
 import LeaderboardButton from './components/controls/LeaderboardButton';
 import OptionsButton from './components/controls/OptionsButton';
-import DifficultyButtons from './components/DifficultyButtons';
 import MinesweeperGrid from './components/MinesweeperGrid';
 import TimerText from './components/TimerText';
 import { isSolved } from './minesweeperLib';
 import { useMinesweeperState } from './minesweeperState';
+import NavHeader from '@/components/NavHeader';
+import BackToMenuButton from '@/components/BackToMenuButton';
+import ThemeButton from '@/components/ThemeButton';
+import SettingsButton from '@/components/SettingsButton';
+import GameHeader from '@/components/GameHeader';
+import DifficultyCarousel from '@/components/DifficultyCarousel';
+import { difficulties } from './minesweeperTypes';
+import GameFooter from '@/components/GameFooter';
 
 const Minesweeper: React.FC = () => {
-  const { seed, bombs, flags, reset, stop } = useMinesweeperState();
+  const { difficulty, bombs, flags, reset, stop } = useMinesweeperState();
 
   useEffect(() => {
     reset('easy');
@@ -25,21 +32,31 @@ const Minesweeper: React.FC = () => {
 
   return (
     <AnimatedPage depth={1}>
-      <div key={seed} className="flex h-svh flex-col items-center py-8">
-        <div className="flex h-full flex-col items-center justify-between">
-          <div className="flex w-full items-center justify-between">
-            <TimerText />
-            <DifficultyButtons reset={reset} />
-          </div>
-          <MinesweeperGrid />
-          <div className="flex w-full justify-evenly">
-            <HintButton />
-            <FlagButton />
-            <LeaderboardButton />
-            <OptionsButton />
-          </div>
+      <NavHeader>
+        <BackToMenuButton />
+        <div className="flex h-full w-full justify-end">
+          <LeaderboardButton />
+          <ThemeButton />
+          <SettingsButton />
         </div>
+      </NavHeader>
+      <GameHeader>
+        <TimerText className="w-2/5 text-center text-2xl" />
+        <DifficultyCarousel
+          className="h-full w-2/5"
+          difficulty={difficulty}
+          difficulties={[...difficulties]}
+          reset={reset}
+        />
+      </GameHeader>
+      <div className="flex h-full w-full flex-col items-center justify-evenly">
+        <MinesweeperGrid />
       </div>
+      <GameFooter>
+        <HintButton />
+        <FlagButton />
+        <OptionsButton />
+      </GameFooter>
     </AnimatedPage>
   );
 };

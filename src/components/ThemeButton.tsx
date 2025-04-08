@@ -13,7 +13,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Themes } from '@/lib/styles';
-import { useGlobalState } from '../globalState';
+import { useGlobalState } from '@/menu/globalState';
 
 const ThemeButton: React.FC = () => {
   const [isThemeOpen, setIsThemeOpen] = useState(false);

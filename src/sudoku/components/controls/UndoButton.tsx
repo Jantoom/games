@@ -12,7 +12,6 @@ const UndoButton: React.FC = () => {
       Icon={Undo}
       onClick={undo}
       disabled={history.length === 0 || !isActive}
-      className="aspect-square h-auto w-[10%] rounded-full active:bg-primary active:text-background"
     />
   );
 };

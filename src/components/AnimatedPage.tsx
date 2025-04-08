@@ -16,7 +16,11 @@ const AnimatedPage: React.FC<AnimatedPageProps> = ({ depth, children }) => {
       exit={{ opacity: 0, x: 100 * direction }}
       transition={{ duration: 0.5, ease: 'easeInOut' }}
     >
-      {children}
+      <div className="flex justify-center">
+        <div className="flex h-svh w-[50vh] max-w-[95vw] flex-col items-center">
+          {children}
+        </div>
+      </div>
     </motion.div>
   );
 };
