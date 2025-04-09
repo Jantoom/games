@@ -1,8 +1,8 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import React from 'react';
-import { CellNotes } from '../sudokuTypes';
+import { CellNotes } from '@/sudoku/types';
 
-interface SudokuCellProps {
+interface CellProps {
   num: number;
   isOriginal: boolean;
   isHighlighted: boolean;
@@ -11,7 +11,7 @@ interface SudokuCellProps {
   onClick: () => void;
 }
 
-const SudokuCell: React.FC<SudokuCellProps> = ({
+const Cell: React.FC<CellProps> = ({
   num,
   isOriginal,
   isHighlighted,
@@ -110,4 +110,4 @@ const SudokuCell: React.FC<SudokuCellProps> = ({
   );
 };
 
-export default SudokuCell;
+export default Cell;

@@ -11,7 +11,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { useSudokuState } from '../../sudokuState';
+import { useSudokuState } from '@/sudoku/state';
 
 const RestartButton: React.FC = () => {
   const { isActive, restart } = useSudokuState();

@@ -1,8 +1,8 @@
 import { Eraser } from 'lucide-react';
 import React, { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { getMatchingCells } from '../sudokuLib';
-import { useSudokuState } from '../sudokuState';
+import { useSudokuState } from '@/sudoku/state';
+import { getMatchingCells } from '@/sudoku/utils';
 
 const NumberButtons: React.FC = () => {
   const { isActive, grid, selectedNumber, optRemainingCounts, setState } =

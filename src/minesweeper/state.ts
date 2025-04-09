@@ -7,14 +7,14 @@ import {
   Grid,
   HistoryEntry,
   LeaderboardEntry,
-} from '@/minesweeper/minesweeperTypes';
+} from '@/minesweeper/types';
 import {
   generateMinesweeper,
   getAdjacentCells,
   getAdjacentSafeCells,
   getSafeCells,
   toCellCoords,
-} from './minesweeperLib';
+} from '@/minesweeper/utils';
 
 type MinesweeperState = ExtractState<typeof useMinesweeperState>;
 
@@ -146,7 +146,7 @@ export const useMinesweeperState = create(
             ] as string[])) {
               newGrid[row][col] = -1;
             }
-            return { isActive: false, grid: newGrid };
+            return { isActive: false, isFlagMode: false, grid: newGrid };
           }
         });
       },

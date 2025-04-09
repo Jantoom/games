@@ -1,4 +1,4 @@
-import { Difficulty, Grid } from './minesweeperTypes';
+import { Difficulty, Grid } from '@/minesweeper/types';
 
 let cellCoords: { row: number; col: number }[] = Array.from({
   length: 9,

@@ -1,5 +1,5 @@
 import { shuffle } from '@/lib/utils';
-import { Difficulty, Grid, Notes } from './sudokuTypes';
+import { Difficulty, Grid, Notes } from '@/sudoku/types';
 
 const cellCoords: { row: number; col: number }[] = Array.from({
   length: 9,
@@ -52,7 +52,7 @@ export const generateSudoku = (
 
   // Then remove numbers based on difficulty
   const numberToRemove = {
-    easy: 1,
+    easy: 35,
     medium: 45,
     hard: 55,
   }[difficulty];

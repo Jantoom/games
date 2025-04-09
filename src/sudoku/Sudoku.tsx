@@ -1,26 +1,27 @@
 import React, { useEffect } from 'react';
 import AnimatedPage from '@/components/AnimatedPage';
 import BackToMenuButton from '@/components/BackToMenuButton';
+import DifficultyCarousel from '@/components/DifficultyCarousel';
 import GameFooter from '@/components/GameFooter';
 import GameHeader from '@/components/GameHeader';
+import LeaderboardButton from '@/components/LeaderboardButton';
 import NavHeader from '@/components/NavHeader';
 import ThemeButton from '@/components/ThemeButton';
-import DifficultyCarousel from '../components/DifficultyCarousel';
-import HintsButton from './components/controls/HintsButton';
-import PencilButton from './components/controls/PencilButton';
-import RestartButton from './components/controls/RestartButton';
-import UndoButton from './components/controls/UndoButton';
-import NumberButtons from './components/NumberButtons';
-import SudokuGrid from './components/SudokuGrid';
-import TimerText from './components/TimerText';
-import { isSolved } from './sudokuLib';
-import { useSudokuState } from './sudokuState';
-import { difficulties } from './sudokuTypes';
-import LeaderboardButton from '@/components/LeaderboardButton';
-import SudokuSettingsButton from './components/controls/SudokuSettingsButton';
+import TimerText from '@/components/TimerText';
+import HintsButton from '@/sudoku/components/controls/HintsButton';
+import PencilButton from '@/sudoku/components/controls/PencilButton';
+import RestartButton from '@/sudoku/components/controls/RestartButton';
+import SettingsButton from '@/sudoku/components/controls/SettingsButton';
+import UndoButton from '@/sudoku/components/controls/UndoButton';
+import Grid from '@/sudoku/components/game/Grid';
+import NumberButtons from '@/sudoku/components/game/NumberButtons';
+import { useSudokuState } from '@/sudoku/state';
+import { difficulties } from '@/sudoku/types';
+import { isSolved } from './utils';
 
 const Sudoku: React.FC = () => {
-  const { seed, isActive, difficulty, grid, reset, stop } = useSudokuState();
+  const { seed, isActive, difficulty, grid, reset, stop, setState } =
+    useSudokuState();
 
   useEffect(() => {
     reset('easy');
@@ -44,11 +45,15 @@ const Sudoku: React.FC = () => {
               difficulties={[...difficulties]}
             />
             <ThemeButton />
-            <SudokuSettingsButton />
+            <SettingsButton />
           </div>
         </NavHeader>
         <GameHeader>
-          <TimerText className="w-2/5 text-center text-2xl" />
+          <TimerText
+            className="w-2/5 text-center text-2xl"
+            isActive={isActive}
+            set={setState}
+          />
           <DifficultyCarousel
             className="h-full w-2/5"
             difficulty={difficulty}
@@ -57,7 +62,7 @@ const Sudoku: React.FC = () => {
           />
         </GameHeader>
         <div className="flex h-full w-full flex-col items-center justify-evenly">
-          <SudokuGrid />
+          <Grid />
           <NumberButtons />
         </div>
         <GameFooter>

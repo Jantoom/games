@@ -1,9 +1,9 @@
-import SettingsButton from '@/components/SettingsButton';
+import GenericSettingsButton from '@/components/SettingsButton';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { useMinesweeperState } from '../../minesweeperState';
+import { useMinesweeperState } from '@/minesweeper/state';
 
-const MinesweeperSettingsButton: React.FC = () => {
+const SettingsButton: React.FC = () => {
   const {
     optFlagOnClick,
     optFlagOnDoubleClick,
@@ -13,7 +13,7 @@ const MinesweeperSettingsButton: React.FC = () => {
   } = useMinesweeperState();
 
   return (
-    <SettingsButton>
+    <GenericSettingsButton>
       <Label className="-mb-2 text-center text-base">Flag Behaviour</Label>
       <div className="grid w-[100%] grid-cols-2 items-center justify-items-center gap-2 p-2">
         <Label>Click</Label>
@@ -58,8 +58,8 @@ const MinesweeperSettingsButton: React.FC = () => {
             className={`data-[state=checked]:bg-primary data-[state=unchecked]:bg-secondary`}
           />
         </div> */}
-    </SettingsButton>
+    </GenericSettingsButton>
   );
 };
 
-export default MinesweeperSettingsButton;
+export default SettingsButton;

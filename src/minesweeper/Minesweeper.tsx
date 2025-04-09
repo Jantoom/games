@@ -8,17 +8,17 @@ import GameHeader from '@/components/GameHeader';
 import LeaderboardButton from '@/components/LeaderboardButton';
 import NavHeader from '@/components/NavHeader';
 import ThemeButton from '@/components/ThemeButton';
-import FlagButton from './components/controls/FlagButton';
-import HintButton from './components/controls/HintButton';
-import MinesweeperSettingsButton from './components/controls/MinesweeperSettingsButton';
-import MinesweeperGrid from './components/MinesweeperGrid';
-import TimerText from './components/TimerText';
-import { isSolved } from './minesweeperLib';
-import { useMinesweeperState } from './minesweeperState';
-import { difficulties } from './minesweeperTypes';
+import TimerText from '@/components/TimerText';
+import FlagButton from '@/minesweeper/components/controls/FlagButton';
+import HintButton from '@/minesweeper/components/controls/HintButton';
+import SettingsButton from '@/minesweeper/components/controls/SettingsButton';
+import Grid from '@/minesweeper/components/game/Grid';
+import { useMinesweeperState } from '@/minesweeper/state';
+import { difficulties } from '@/minesweeper/types';
+import { isSolved } from '@/minesweeper/utils';
 
 const Minesweeper: React.FC = () => {
-  const { seed, isActive, difficulty, bombs, flags, reset, stop } =
+  const { seed, isActive, difficulty, bombs, flags, reset, stop, setState } =
     useMinesweeperState();
 
   useEffect(() => {
@@ -44,11 +44,15 @@ const Minesweeper: React.FC = () => {
             difficulties={[...difficulties]}
           />
           <ThemeButton />
-          <MinesweeperSettingsButton />
+          <SettingsButton />
         </div>
       </NavHeader>
       <GameHeader>
-        <TimerText className="w-full text-center text-2xl" />
+        <TimerText
+          className="w-full text-center text-2xl"
+          isActive={isActive}
+          set={setState}
+        />
         <div className="flex w-full items-center justify-center gap-x-1">
           <Bomb />
           <span className="pb-0.5 text-center text-2xl font-semibold">
@@ -63,7 +67,7 @@ const Minesweeper: React.FC = () => {
         />
       </GameHeader>
       <div className="flex h-full w-full flex-col items-center justify-evenly">
-        <MinesweeperGrid />
+        <Grid />
       </div>
       <GameFooter>
         <HintButton />

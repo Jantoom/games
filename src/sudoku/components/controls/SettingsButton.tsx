@@ -1,24 +1,22 @@
-import SettingsButton from '@/components/SettingsButton';
+import GenericSettingsButton from '@/components/SettingsButton';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { useSudokuState } from '../../sudokuState';
+import { useSudokuState } from '@/sudoku/state';
 
-const SudokuSettingsButton: React.FC = () => {
-  const {
-    optHighlightSame,
-    optRemainingCounts,
-    optAutoRemove,
-    setState,
-  } = useSudokuState();
+const SettingsButton: React.FC = () => {
+  const { optHighlightSame, optRemainingCounts, optAutoRemove, setState } =
+    useSudokuState();
 
   return (
-    <SettingsButton>
+    <GenericSettingsButton>
       <Label className="-mb-2 text-center text-base">Assists</Label>
       <div className="grid w-[100%] grid-cols-2 items-center justify-items-center gap-2 p-2">
         <Label>Highlight same numbers</Label>
         <Switch
           checked={optHighlightSame}
-          onCheckedChange={() => setState({ optHighlightSame: !optHighlightSame })}
+          onCheckedChange={() =>
+            setState({ optHighlightSame: !optHighlightSame })
+          }
           className={`data-[state=checked]:bg-primary data-[state=unchecked]:bg-secondary`}
         />
         <Label>Show remaining number counts</Label>
@@ -32,9 +30,7 @@ const SudokuSettingsButton: React.FC = () => {
         <Label>Automatically remove notes</Label>
         <Switch
           checked={optAutoRemove}
-          onCheckedChange={() =>
-            setState({ optAutoRemove: !optAutoRemove })
-          }
+          onCheckedChange={() => setState({ optAutoRemove: !optAutoRemove })}
           className={`data-[state=checked]:bg-primary data-[state=unchecked]:bg-secondary`}
         />
       </div>
@@ -49,8 +45,8 @@ const SudokuSettingsButton: React.FC = () => {
             className={`data-[state=checked]:bg-primary data-[state=unchecked]:bg-secondary`}
           />
         </div> */}
-    </SettingsButton>
+    </GenericSettingsButton>
   );
 };
 
-export default SudokuSettingsButton;
+export default SettingsButton;

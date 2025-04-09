@@ -7,11 +7,14 @@ import {
 } from '@use-gesture/react';
 import { clamp } from 'framer-motion';
 import React, { useEffect, useRef } from 'react';
-import { getCellFromPosition, positionCellsAreEqual } from '../minesweeperLib';
-import { useMinesweeperState } from '../minesweeperState';
-import MinesweeperCell from './MinesweeperCell';
+import { useMinesweeperState } from '@/minesweeper/state';
+import {
+  getCellFromPosition,
+  positionCellsAreEqual,
+} from '@/minesweeper/utils';
+import Cell from './Cell';
 
-const MinesweeperGrid: React.FC = () => {
+const Grid: React.FC = () => {
   const {
     seed,
     dimensions,
@@ -373,7 +376,7 @@ const MinesweeperGrid: React.FC = () => {
 
             {grid.map((array, row) =>
               array.map((number_, col) => (
-                <MinesweeperCell
+                <Cell
                   key={`${row}-${col}`}
                   id={`${row}-${col}`}
                   num={number_}
@@ -391,4 +394,4 @@ const MinesweeperGrid: React.FC = () => {
   );
 };
 
-export default MinesweeperGrid;
+export default Grid;

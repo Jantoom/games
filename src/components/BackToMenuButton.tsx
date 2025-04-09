@@ -1,8 +1,8 @@
 import { ChevronLeft } from 'lucide-react';
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
-import { Label } from './ui/label';
 
 const BackToMenuButton: React.FC<{ className?: string }> = ({ className }) => {
   return (

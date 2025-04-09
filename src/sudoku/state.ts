@@ -1,15 +1,15 @@
 import seedrandom from 'seedrandom';
 import { create, ExtractState } from 'zustand';
 import { combine } from 'zustand/middleware';
+import { formatTime, getGamesData, saveGameData } from '@/lib/utils';
 import {
   Difficulty,
   Grid,
   HistoryEntry,
   LeaderboardEntry,
   Notes,
-} from '@/sudoku/sudokuTypes';
-import { generateSudoku, getRelatedCells, toCellKeys } from './sudokuLib';
-import { formatTime, getGamesData, saveGameData } from '@/lib/utils';
+} from '@/sudoku/types';
+import { generateSudoku, getRelatedCells, toCellKeys } from '@/sudoku/utils';
 
 type SudokuState = ExtractState<typeof useSudokuState>;
 
@@ -172,7 +172,11 @@ export const useSudokuState = create(
             },
           });
 
-          return { isActive: false, selectedNumber: undefined };
+          return {
+            isActive: false,
+            isPencilMode: false,
+            selectedNumber: undefined,
+          };
         });
       },
     }),

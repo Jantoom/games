@@ -12,14 +12,14 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import { useSudokuState } from '@/sudoku/state';
 import {
   getAutoNotes,
   getConflictCells,
   getHintCells,
   getMismatchCells,
   toCellKeys,
-} from '../../sudokuLib';
-import { useSudokuState } from '../../sudokuState';
+} from '@/sudoku/utils';
 
 const HintsButton: React.FC = () => {
   const { isActive, solvedGrid, grid, notes, update, setState } =

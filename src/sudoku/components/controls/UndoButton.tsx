@@ -1,7 +1,7 @@
 import { Undo } from 'lucide-react';
 import React from 'react';
 import ControlButton from '@/components/ControlButton';
-import { useSudokuState } from '../../sudokuState';
+import { useSudokuState } from '@/sudoku/state';
 
 const UndoButton: React.FC = () => {
   const { isActive, history, undo } = useSudokuState();

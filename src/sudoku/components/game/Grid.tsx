@@ -1,7 +1,7 @@
-import { useSudokuState } from '../sudokuState';
-import SudokuCell from './SudokuCell';
+import Cell from '@/sudoku/components/game/Cell';
+import { useSudokuState } from '../../state';
 
-const SudokuGrid: React.FC = () => {
+const Grid: React.FC = () => {
   const {
     seed,
     isActive,
@@ -57,12 +57,13 @@ const SudokuGrid: React.FC = () => {
       </svg>
       {grid.map((array, row) =>
         array.map((number_, col) => (
-          <SudokuCell
+          <Cell
             key={`${row}-${col}`}
             num={number_}
             isOriginal={originalGrid[row][col] !== 0}
             isHighlighted={
-              optHighlightSame && selectedNumber !== -1 &&
+              optHighlightSame &&
+              selectedNumber !== -1 &&
               (number_ === selectedNumber ||
                 notes[`${row}-${col}`].has(selectedNumber))
             }
@@ -81,4 +82,4 @@ const SudokuGrid: React.FC = () => {
   );
 };
 
-export default SudokuGrid;
+export default Grid;

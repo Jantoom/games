@@ -3,6 +3,12 @@ import { useCallback, useEffect, useState } from 'react';
 import ControlButton from '@/components/ControlButton';
 import { Button } from '@/components/ui/button';
 import {
+  Carousel,
+  CarouselApi,
+  CarouselContent,
+  CarouselItem,
+} from '@/components/ui/carousel';
+import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -10,13 +16,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { getGamesData, saveGameData } from '@/lib/utils';
-import {
-  Carousel,
-  CarouselApi,
-  CarouselContent,
-  CarouselItem,
-} from './ui/carousel';
 import {
   Table,
   TableBody,
@@ -24,7 +23,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from './ui/table';
+} from '@/components/ui/table';
+import { getGamesData, saveGameData } from '@/lib/utils';
 
 interface LeaderboardButtonProps<T extends string> {
   game: string;

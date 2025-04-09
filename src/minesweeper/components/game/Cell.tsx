@@ -2,21 +2,16 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Bomb, Flag } from 'lucide-react';
 import React from 'react';
 import { Themes } from '@/lib/styles';
-import { useGlobalState } from '../../menu/globalState';
+import { useGlobalState } from '@/menu/globalState';
 
-interface MinesweeperCellProps {
+interface CellProps {
   id: string;
   num: number;
   isFlagged: boolean;
   isExploded: boolean;
 }
 
-const MinesweeperCell: React.FC<MinesweeperCellProps> = ({
-  id,
-  num,
-  isFlagged,
-  isExploded,
-}) => {
+const Cell: React.FC<CellProps> = ({ id, num, isFlagged, isExploded }) => {
   const { theme } = useGlobalState();
   const randomDelay = Math.random() * 0.1;
 
@@ -73,4 +68,4 @@ const MinesweeperCell: React.FC<MinesweeperCellProps> = ({
   );
 };
 
-export default MinesweeperCell;
+export default Cell;

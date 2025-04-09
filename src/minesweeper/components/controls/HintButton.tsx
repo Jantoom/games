@@ -11,8 +11,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { getHintCells } from '../../minesweeperLib';
-import { useMinesweeperState } from '../../minesweeperState';
+import { useMinesweeperState } from '@/minesweeper/state';
+import { getHintCells } from '@/minesweeper/utils';
 
 const HintButton: React.FC = () => {
   const { isActive, grid, bombs, update, setState } = useMinesweeperState();

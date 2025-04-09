@@ -1,6 +1,6 @@
 import { Settings } from 'lucide-react';
 import { PropsWithChildren, useState } from 'react';
-import ControlButton from './ControlButton';
+import ControlButton from '@/components/ControlButton';
 import {
   Dialog,
   DialogContent,
