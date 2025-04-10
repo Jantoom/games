@@ -8,6 +8,7 @@ interface BodyProps {
 const Body: React.FC<BodyProps> = ({ children }) => {
   return (
     <motion.div
+      layout
       key="body"
       initial={{ scale: 0.85 }}
       animate={{ scale: 1 }}

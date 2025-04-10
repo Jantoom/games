@@ -5,12 +5,12 @@ import { useSudokuState } from '@/sudoku/state';
 import { getMatchingCells } from '@/sudoku/utils';
 
 const NumberButtons: React.FC = () => {
-  const { isActive, grid, selectedNumber, optAssistRemainingCounts, setState } =
+  const { isActive, grid, selectedNumber, optRemainingCounts, setState } =
     useSudokuState();
 
   useEffect(() => {
-    if (optAssistRemainingCounts) setState({ usedRemainingCounts: true });
-  }, [optAssistRemainingCounts, setState]);
+    if (optRemainingCounts) setState({ usedRemainingCounts: true });
+  }, [optRemainingCounts, setState]);
 
   return (
     <div className="grid max-w-full grid-cols-5 grid-rows-2 justify-items-center gap-2">
@@ -40,7 +40,7 @@ const NumberButtons: React.FC = () => {
                   {num}
                 </span>
                 <span className="absolute pt-[4svh] text-[1.25svh] font-medium">
-                  {(optAssistRemainingCounts && remainingCount) || ''}
+                  {(optRemainingCounts && remainingCount) || ''}
                 </span>
               </>
             ) : (

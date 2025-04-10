@@ -23,9 +23,10 @@ export type SudokuState = {
   errors: string[];
   selectedNumber: number;
   isPencilMode: boolean;
-  optAssistHighlightSame: boolean;
-  optAssistRemainingCounts: boolean;
-  optAssistAutoRemove: boolean;
+  optHighlightSame: boolean;
+  optRemainingCounts: boolean;
+  optAutoRemove: boolean;
+  optShowTime: boolean;
   usedHighlightSame: boolean;
   usedRemainingCounts: boolean;
   usedAutoRemove: boolean;
@@ -60,9 +61,10 @@ export const useSudokuState = create<SudokuState>((set) => ({
   errors: [] as string[],
   selectedNumber: -1,
   isPencilMode: false,
-  optAssistHighlightSame: false,
-  optAssistRemainingCounts: false,
-  optAssistAutoRemove: false,
+  optHighlightSame: false,
+  optRemainingCounts: false,
+  optAutoRemove: false,
+  optShowTime: true,
   usedHighlightSame: false,
   usedRemainingCounts: false,
   usedAutoRemove: false,
@@ -124,7 +126,7 @@ export const useSudokuState = create<SudokuState>((set) => ({
       const newNotes = { ...prevState.notes };
       for (const key of isPencilMode
         ? [`${row}-${col}`]
-        : prevState.optAssistAutoRemove
+        : prevState.optAutoRemove
           ? toCellKeys(getRelatedCells(row, col))
           : []) {
         newNotes[key] = new Set(prevState.notes[key]);
@@ -178,9 +180,9 @@ export const useSudokuState = create<SudokuState>((set) => ({
         difficulty: prevState.difficulty,
         score: formatTime(prevState.time),
         hints: [
-          prevState.usedHighlightSame || prevState.optAssistHighlightSame,
-          prevState.usedRemainingCounts || prevState.optAssistRemainingCounts,
-          prevState.usedAutoRemove || prevState.optAssistAutoRemove,
+          prevState.usedHighlightSame || prevState.optHighlightSame,
+          prevState.usedRemainingCounts || prevState.optRemainingCounts,
+          prevState.usedAutoRemove || prevState.optAutoRemove,
         ],
         date: new Date().toISOString(),
       };

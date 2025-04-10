@@ -35,15 +35,16 @@ const Header: React.FC<HeaderProps> = ({ settings, children }) => {
           title="Settings"
           isOpen={isSettingsOpen}
           setIsOpen={setIsSettingsOpen}
-          className='relative'
+          className="relative"
         >
           {settings}
         </DialogButton>
       </motion.div>
-      <AnimatePresence propagate>
+      <AnimatePresence propagate mode="popLayout">
         {children && (
           <motion.div
             key="subheader"
+            layout
             initial={{ y: -100 }}
             animate={{ y: 0 }}
             exit={{ y: -100 }}

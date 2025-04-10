@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import AnimatedPage from '../components/containers/AnimatedPage';
 import Footer from '../components/containers/Footer';
 import Header from '../components/containers/Header';
-import TimerText from '../components/elements/TimerText';
+import TimerText from '../components/generics/TimerText';
 import FlagButton from '@/minesweeper/components/controls/FlagButton';
 import HintButton from '@/minesweeper/components/controls/HintButton';
 import Grid from '@/minesweeper/components/game/Grid';

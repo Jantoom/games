@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import AnimatedPage from '../components/containers/AnimatedPage';
 import Footer from '../components/containers/Footer';
 import Header from '../components/containers/Header';
-import TimerText from '../components/elements/TimerText';
+import TimerText from '../components/generics/TimerText';
 import HintsButton from '@/sudoku/components/controls/HintsButton';
 import PencilButton from '@/sudoku/components/controls/PencilButton';
 import RestartButton from '@/sudoku/components/controls/RestartButton';
@@ -15,7 +15,8 @@ import Settings from '@/sudoku/components/Settings';
 import Body from '@/components/containers/Body';
 
 const Sudoku: React.FC = () => {
-  const { isActive, grid, reset, stop, setState } = useSudokuState();
+  const { isActive, grid, optShowTime, reset, stop, setState } =
+    useSudokuState();
 
   useEffect(() => {
     reset('easy');
@@ -29,7 +30,9 @@ const Sudoku: React.FC = () => {
     grid.length > 0 && (
       <AnimatedPage depth={1}>
         <Header settings={<Settings />}>
-          <TimerText isActive={isActive} set={setState} />
+          {optShowTime && (
+            <TimerText isActive={isActive} set={setState} />
+          )}
         </Header>
         <Body>
           <Grid />

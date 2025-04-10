@@ -13,7 +13,7 @@ const Grid: React.FC = () => {
     errors,
     selectedNumber,
     isPencilMode,
-    optAssistHighlightSame,
+    optHighlightSame,
     update,
   } = useSudokuState();
 
@@ -187,7 +187,7 @@ const Grid: React.FC = () => {
               num={number_}
               isOriginal={originalGrid[row][col] !== 0}
               isHighlighted={
-                optAssistHighlightSame &&
+                optHighlightSame &&
                 selectedNumber !== -1 &&
                 (number_ === selectedNumber ||
                   notes[`${row}-${col}`].has(selectedNumber))
