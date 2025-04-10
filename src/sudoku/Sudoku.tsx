@@ -11,7 +11,8 @@ import Grid from '@/sudoku/components/game/Grid';
 import NumberButtons from '@/sudoku/components/game/NumberButtons';
 import { useSudokuState } from '@/sudoku/state';
 import { isSolved } from './utils';
-import Settings from '@/minesweeper/components/Settings';
+import Settings from '@/sudoku/components/Settings';
+import Body from '@/components/containers/Body';
 
 const Sudoku: React.FC = () => {
   const { isActive, grid, reset, stop, setState } = useSudokuState();
@@ -28,16 +29,12 @@ const Sudoku: React.FC = () => {
     grid.length > 0 && (
       <AnimatedPage depth={1}>
         <Header settings={<Settings />}>
-          <TimerText
-            className="w-full text-center text-2xl"
-            isActive={isActive}
-            set={setState}
-          />
+          <TimerText isActive={isActive} set={setState} />
         </Header>
-        <div className="flex flex-grow w-full flex-col items-center justify-evenly">
+        <Body>
           <Grid />
           <NumberButtons />
-        </div>
+        </Body>
         <Footer>
           <RestartButton />
           <HintsButton />

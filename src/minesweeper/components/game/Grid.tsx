@@ -32,7 +32,7 @@ const Grid: React.FC = () => {
   // Grid transform
   const gridRef = useRef<HTMLDivElement | null>(null);
   const gridContainerRef = useRef<HTMLDivElement | null>(null);
-  const svgFactor = 30;
+  const factor = 30;
   const [{ x, y, top, bottom, left, right }, posApi] = useSpring(() => ({
     x: 0,
     y: 0,
@@ -324,8 +324,8 @@ const Grid: React.FC = () => {
             className={`absolute grid`}
             style={{
               gridTemplateColumns: `repeat(${dimensions[1]},minmax(0,1fr))`,
-              height: dimensions[0] * svgFactor,
-              width: dimensions[1] * svgFactor,
+              height: dimensions[0] * factor,
+              width: dimensions[1] * factor,
               x,
               y,
               scale,
@@ -333,23 +333,23 @@ const Grid: React.FC = () => {
           >
             <animated.svg
               className="pointer-events-none absolute inset-0"
-              viewBox={`0 0 ${dimensions[1] * svgFactor} ${dimensions[0] * svgFactor}`}
+              viewBox={`0 0 ${dimensions[1] * factor} ${dimensions[0] * factor}`}
               style={{ opacity: opacity }}
             >
               <defs>
                 <line
                   id="hline"
-                  x1={`${svgFactor / 6}`}
-                  y1={`${svgFactor}`}
-                  x2={`${(svgFactor / 6) * 5}`}
-                  y2={`${svgFactor}`}
+                  x1={`${factor / 6}`}
+                  y1={`${factor}`}
+                  x2={`${(factor / 6) * 5}`}
+                  y2={`${factor}`}
                 />
                 <line
                   id="vline"
-                  x1={`${svgFactor}`}
-                  y1={`${svgFactor / 6}`}
-                  x2={`${svgFactor}`}
-                  y2={`${(svgFactor / 6) * 5}`}
+                  x1={`${factor}`}
+                  y1={`${factor / 6}`}
+                  x2={`${factor}`}
+                  y2={`${(factor / 6) * 5}`}
                 />
               </defs>
               <g className="stroke-primary stroke-[0.5]">
@@ -358,7 +358,7 @@ const Grid: React.FC = () => {
                     <use
                       key={`hline ${row}-${col}`}
                       href="#hline"
-                      transform={`translate(${col * svgFactor} ${row * svgFactor})`}
+                      transform={`translate(${col * factor} ${row * factor})`}
                     />
                   )),
                 )}
@@ -367,7 +367,7 @@ const Grid: React.FC = () => {
                     <use
                       key={`vline ${row}-${col}`}
                       href="#vline"
-                      transform={`translate(${col * svgFactor} ${row * svgFactor})`}
+                      transform={`translate(${col * factor} ${row * factor})`}
                     />
                   )),
                 )}

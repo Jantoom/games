@@ -8,32 +8,24 @@ interface ControlButtonProps extends ButtonProps {
   isSelected: boolean;
 }
 
-const ControlButton: React.FC<ControlButtonProps> = ({
-  Icon,
-  isSelected,
-  onClick,
-  className,
-  ...props
-}) => {
-  return (
-    <Button
-      variant={isSelected ? 'default' : 'ghost'}
-      onClick={onClick}
-      className={cn(
-        `h-full rounded-full hover:bg-secondary py-0 ${isSelected ? 'bg-primary' : ''}`,
-        className,
-      )}
-      {...props}
-    >
-      {Icon !== undefined && (
-        <Icon
-          className="stroke-foreground"
-          style={{ height: '100%' }}
-        />
-      )}
-    </Button>
-  );
-};
+const ControlButton = React.forwardRef<HTMLButtonElement, ControlButtonProps>(
+  ({ Icon, isSelected, onClick, className, ...props }, ref) => {
+    return (
+      <Button
+        ref={ref}
+        variant={isSelected ? 'default' : 'ghost'}
+        onClick={onClick}
+        className={cn(
+          `h-full rounded-full py-0 hover:bg-secondary ${isSelected ? 'bg-primary' : ''}`,
+          className,
+        )}
+        {...props}
+      >
+        {Icon !== undefined && <Icon className="h-1/2 stroke-foreground" />}
+      </Button>
+    );
+  },
+);
 ControlButton.displayName = 'ControlButton';
 
 export default ControlButton;

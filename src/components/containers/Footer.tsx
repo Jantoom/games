@@ -1,16 +1,14 @@
 import { motion } from 'framer-motion';
 import React from 'react';
-import { cn } from '@/lib/utils';
 
 interface FooterProps {
-  className?: string;
   children: React.ReactNode;
 }
 
-const Footer: React.FC<FooterProps> = ({ className, children }) => {
+const Footer: React.FC<FooterProps> = ({ children }) => {
   return (
     <motion.div
-      key="cell"
+      key="footer"
       initial={{ y: 100 }}
       animate={{ y: 0 }}
       exit={{ y: 100 }}
@@ -18,15 +16,10 @@ const Footer: React.FC<FooterProps> = ({ className, children }) => {
         duration: 0.5,
         ease: 'easeInOut',
       }}
-      className="flex relative h-[6svh] w-full justify-center"
+      className="relative flex h-[6svh] w-screen justify-between px-2"
     >
-      <div className="absolute inset-y-0 w-screen rounded-t-[40px] bg-secondary brightness-95" />
-      <div
-        className={cn(
-          'relative flex h-full w-full items-center justify-evenly px-2',
-          className,
-        )}
-      >
+      <div className="absolute inset-0 rounded-t-[40px] bg-secondary brightness-95" />
+      <div className="relative flex h-full w-full items-center justify-evenly">
         {children}
       </div>
     </motion.div>

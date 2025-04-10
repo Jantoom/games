@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { cn, formatTime } from '@/lib/utils';
+import { Label } from '../ui/label';
 
 interface TimerTextProps<T extends { time: number }> {
   className?: string;
@@ -38,7 +39,7 @@ const TimerText = <T extends { time: number }>({
   }, [isActive, set]);
 
   return (
-    <span className={cn('font-medium', className)}>{formatTime(time)}</span>
+    <Label className={cn('font-medium w-full text-center text-[3svh]', className)}>{formatTime(time)}</Label>
   );
 };
 

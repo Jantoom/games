@@ -19,8 +19,8 @@ const BackButton: React.FC<BackButtonProps> = ({ className, cleanup }) => {
       )}
       onClick={cleanup}
     >
-      <ChevronLeft />
-      <Label className="cursor-pointer">Back</Label>
+      <ChevronLeft className="h-1/2 stroke-foreground" />
+      <Label className="cursor-pointer text-[2svh] leading-none">Back</Label>
     </Link>
   );
 };

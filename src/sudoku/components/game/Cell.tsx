@@ -19,7 +19,7 @@ const Cell: React.FC<CellProps> = ({
   notes,
   onClick,
 }) => {
-  const randomDelay = Math.random() * 0.1;
+  const randomDelay = Math.random() * 0.2;
   return (
     <div
       className={`aspect-square h-full w-full p-[10%] ${isOriginal ? '' : 'cursor-pointer'}`}
@@ -32,7 +32,7 @@ const Cell: React.FC<CellProps> = ({
         transition={{
           duration: 0.5,
           ease: 'easeInOut',
-          delay: randomDelay * 2,
+          delay: randomDelay,
         }}
         className={`relative flex h-full w-full items-center justify-center`}
       >
@@ -77,14 +77,14 @@ const Cell: React.FC<CellProps> = ({
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.3, ease: 'easeInOut' }}
-                className="absolute flex w-[70%] flex-wrap justify-center gap-y-[0.1vh]"
+                className="absolute flex w-[70%] flex-wrap justify-center gap-y-[1.5px]"
               >
                 {Array.from({ length: 9 }).map(
                   (_, index) =>
                     notes.has(index + 1) && (
                       <span
                         key={index}
-                        className={`w-1/3 select-none text-center text-[min(2.25vw,1.125vh)] font-medium leading-none transition-colors ${isHighlighted ? 'text-background' : 'text-primary'}`}
+                        className={`w-1/3 select-none text-center text-xs font-medium leading-none transition-colors ${isHighlighted ? 'text-background' : 'text-primary'}`}
                       >
                         {index + 1}
                       </span>
@@ -99,7 +99,7 @@ const Cell: React.FC<CellProps> = ({
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3, ease: 'easeInOut' }}
-              className={`absolute select-none text-[min(4vw,2vh)] font-medium transition-colors ${isHighlighted || isFlagged ? 'text-background' : isOriginal ? 'text-border' : 'text-primary'}`}
+              className={`absolute select-none text-2xl font-medium transition-colors ${isHighlighted || isFlagged ? 'text-background' : isOriginal ? 'text-border' : 'text-primary'}`}
             >
               {num ?? ''}
             </motion.span>
