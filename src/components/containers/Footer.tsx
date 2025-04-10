@@ -2,12 +2,12 @@ import { motion } from 'framer-motion';
 import React from 'react';
 import { cn } from '@/lib/utils';
 
-interface GameFooterProps {
+interface FooterProps {
   className?: string;
   children: React.ReactNode;
 }
 
-const GameFooter: React.FC<GameFooterProps> = ({ className, children }) => {
+const Footer: React.FC<FooterProps> = ({ className, children }) => {
   return (
     <motion.div
       key="cell"
@@ -18,12 +18,12 @@ const GameFooter: React.FC<GameFooterProps> = ({ className, children }) => {
         duration: 0.5,
         ease: 'easeInOut',
       }}
-      className="relative h-[8%] w-full"
+      className="flex relative h-[6svh] w-full justify-center"
     >
-      <div className="absolute inset-0 rounded-t-full bg-secondary opacity-50" />
+      <div className="absolute inset-y-0 w-screen rounded-t-[40px] bg-secondary brightness-95" />
       <div
         className={cn(
-          'relative flex h-full w-full items-center justify-evenly p-2',
+          'relative flex h-full w-full items-center justify-evenly px-2',
           className,
         )}
       >
@@ -33,4 +33,4 @@ const GameFooter: React.FC<GameFooterProps> = ({ className, children }) => {
   );
 };
 
-export default GameFooter;
+export default Footer;

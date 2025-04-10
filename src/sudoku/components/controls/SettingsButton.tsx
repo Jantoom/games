@@ -1,14 +1,23 @@
-import GenericSettingsButton from '@/components/SettingsButton';
+import DialogButton from '@/components/generics/DialogButton';
+
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { useSudokuState } from '@/sudoku/state';
+import { Settings } from 'lucide-react';
+import { useState } from 'react';
 
 const SettingsButton: React.FC = () => {
   const { optHighlightSame, optRemainingCounts, optAutoRemove, setState } =
     useSudokuState();
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   return (
-    <GenericSettingsButton>
+    <DialogButton
+      Icon={Settings}
+      title="Settings"
+      isOpen={isSettingsOpen}
+      setIsOpen={setIsSettingsOpen}
+    >
       <Label className="-mb-2 text-center text-base">Assists</Label>
       <div className="grid w-[100%] grid-cols-2 items-center justify-items-center gap-2 p-2">
         <Label>Highlight same numbers</Label>
@@ -45,7 +54,7 @@ const SettingsButton: React.FC = () => {
             className={`data-[state=checked]:bg-primary data-[state=unchecked]:bg-secondary`}
           />
         </div> */}
-    </GenericSettingsButton>
+    </DialogButton>
   );
 };
 

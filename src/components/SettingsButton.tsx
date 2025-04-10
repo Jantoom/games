@@ -1,6 +1,6 @@
 import { Settings } from 'lucide-react';
-import { PropsWithChildren, useState } from 'react';
-import ControlButton from '@/components/ControlButton';
+import React, { useState } from 'react';
+import ControlButton from './generics/ControlButton';
 import {
   Dialog,
   DialogContent,
@@ -9,8 +9,17 @@ import {
   DialogTitle,
   DialogTrigger,
 } from './ui/dialog';
+import { cn } from '@/lib/utils';
 
-const SettingsButton = ({ children }: PropsWithChildren) => {
+interface SettingsButtonsProps {
+  children: React.ReactNode;
+  className?: string;
+}
+
+const SettingsButton: React.FC<SettingsButtonsProps> = ({
+  className,
+  children,
+}) => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   return (
@@ -20,9 +29,10 @@ const SettingsButton = ({ children }: PropsWithChildren) => {
           isSelected={isSettingsOpen}
           Icon={Settings}
           onClick={() => setIsSettingsOpen(true)}
+          className={cn(className, 'relative')}
         />
       </DialogTrigger>
-      <DialogContent className="max-w-[90%] border-border">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle className="text-center">Settings</DialogTitle>
         </DialogHeader>

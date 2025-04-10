@@ -7,7 +7,7 @@ import {
   CarouselApi,
   CarouselContent,
   CarouselItem,
-} from './ui/carousel';
+} from '../ui/carousel';
 
 interface DifficultyCarouselProps<T extends string> {
   className?: string;

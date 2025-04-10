@@ -1,6 +1,6 @@
 import React from 'react';
 import Menu from '@/menu/Menu';
-import Minesweeper from '@/minesweeper/Minesweeper';
+import Minesweeper from '@/minesweeper/MinesweeperGame';
 import Sudoku from '@/sudoku/Sudoku';
 
 const Page = {

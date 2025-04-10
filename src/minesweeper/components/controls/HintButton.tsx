@@ -1,18 +1,11 @@
-import { DialogDescription } from '@radix-ui/react-dialog';
 import { Lightbulb } from 'lucide-react';
 import { useState } from 'react';
-import ControlButton from '@/components/ControlButton';
+
 import { Button } from '@/components/ui/button';
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
+import { DialogClose } from '@/components/ui/dialog';
 import { useMinesweeperState } from '@/minesweeper/state';
 import { getHintCells } from '@/minesweeper/utils';
+import DialogButton from '@/components/generics/DialogButton';
 
 const HintButton: React.FC = () => {
   const { isActive, grid, bombs, update, setState } = useMinesweeperState();
@@ -31,41 +24,31 @@ const HintButton: React.FC = () => {
   };
 
   return (
-    <Dialog open={isHintOpen} onOpenChange={setIsHintOpen}>
-      <DialogTrigger asChild>
-        <ControlButton
-          isSelected={isHintOpen}
-          Icon={Lightbulb}
-          onClick={() => setIsHintOpen(true)}
-          disabled={!isActive}
-        />
-      </DialogTrigger>
-      <DialogContent className="max-w-[90%] border-border [&>button:last-child]:hidden">
-        <DialogHeader>
-          <DialogTitle className="text-center">
-            Are you sure you want a hint?
-          </DialogTitle>
-          <DialogDescription />
-        </DialogHeader>
-        <DialogClose asChild>
-          <Button
-            onClick={getHint}
-            variant="outline"
-            className="w-full border border-border hover:bg-secondary"
-          >
-            Yes
-          </Button>
-        </DialogClose>
-        <DialogClose asChild>
-          <Button
-            variant="outline"
-            className="w-full border border-border hover:bg-secondary"
-          >
-            No
-          </Button>
-        </DialogClose>
-      </DialogContent>
-    </Dialog>
+    <DialogButton
+      Icon={Lightbulb}
+      title="Are you sure you want a hint?"
+      isOpen={isHintOpen}
+      setIsOpen={setIsHintOpen}
+      disabled={!isActive}
+    >
+      <DialogClose asChild>
+        <Button
+          onClick={getHint}
+          variant="outline"
+          className="w-full border border-border hover:bg-secondary"
+        >
+          Yes
+        </Button>
+      </DialogClose>
+      <DialogClose asChild>
+        <Button
+          variant="outline"
+          className="w-full border border-border hover:bg-secondary"
+        >
+          No
+        </Button>
+      </DialogClose>
+    </DialogButton>
   );
 };
 

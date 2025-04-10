@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import AnimatedPage from '@/components/AnimatedPage';
-import ThemeButton from '@/components/ThemeButton';
+import AnimatedPage from '../components/containers/AnimatedPage';
+import ThemeButton from '../components/elements/ThemeButton';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';

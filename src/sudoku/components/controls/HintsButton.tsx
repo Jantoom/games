@@ -1,17 +1,8 @@
-import { DialogDescription } from '@radix-ui/react-dialog';
 import { Lightbulb } from 'lucide-react';
 import React, { useCallback, useRef, useState } from 'react';
-import ControlButton from '@/components/ControlButton';
+
 import { Button } from '@/components/ui/button';
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
+import { DialogClose } from '@/components/ui/dialog';
 import { useSudokuState } from '@/sudoku/state';
 import {
   getAutoNotes,
@@ -20,6 +11,7 @@ import {
   getMismatchCells,
   toCellKeys,
 } from '@/sudoku/utils';
+import DialogButton from '@/components/generics/DialogButton';
 
 const HintsButton: React.FC = () => {
   const { isActive, solvedGrid, grid, notes, update, setState } =
@@ -70,68 +62,50 @@ const HintsButton: React.FC = () => {
     }));
 
   return (
-    <Dialog open={isHintsOpen} onOpenChange={setIsHintsOpen}>
-      <DialogTrigger asChild>
-        <ControlButton
-          isSelected={isHintsOpen}
-          Icon={Lightbulb}
-          onClick={() => setIsHintsOpen(true)}
-          disabled={!isActive}
-        />
-      </DialogTrigger>
-      <DialogContent className="max-w-[90%] border-border [&>button:last-child]:hidden">
-        <DialogHeader>
-          <DialogTitle className="text-center">Hints</DialogTitle>
-        </DialogHeader>
-        <DialogDescription />
-        <DialogClose asChild>
-          <Button
-            onClick={getHint}
-            variant="outline"
-            className="w-full border border-border hover:bg-secondary"
-          >
-            Get Hint
-          </Button>
-        </DialogClose>
-        <DialogClose asChild>
-          <Button
-            onClick={showMismatches}
-            variant="outline"
-            className="w-full border border-border hover:bg-secondary"
-          >
-            Show Mismatches
-          </Button>
-        </DialogClose>
-        <DialogClose asChild>
-          <Button
-            onClick={validateGrid}
-            variant="outline"
-            className="w-full border border-border hover:bg-secondary"
-          >
-            Validate Grid
-          </Button>
-        </DialogClose>
-        <DialogClose asChild>
-          <Button
-            onClick={addAutoNotes}
-            variant="outline"
-            className="w-full border border-border hover:bg-secondary"
-          >
-            Add Auto Notes
-          </Button>
-        </DialogClose>
-        <DialogFooter>
-          <DialogClose asChild>
-            <Button
-              variant="outline"
-              className="w-full border border-border hover:bg-secondary"
-            >
-              Close
-            </Button>
-          </DialogClose>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+    <DialogButton
+      Icon={Lightbulb}
+      title="Hints"
+      isOpen={isHintsOpen}
+      setIsOpen={setIsHintsOpen}
+      disabled={!isActive}
+    >
+      <DialogClose asChild>
+        <Button
+          onClick={getHint}
+          variant="outline"
+          className="w-full border border-border hover:bg-secondary"
+        >
+          Get Hint
+        </Button>
+      </DialogClose>
+      <DialogClose asChild>
+        <Button
+          onClick={showMismatches}
+          variant="outline"
+          className="w-full border border-border hover:bg-secondary"
+        >
+          Show Mismatches
+        </Button>
+      </DialogClose>
+      <DialogClose asChild>
+        <Button
+          onClick={validateGrid}
+          variant="outline"
+          className="w-full border border-border hover:bg-secondary"
+        >
+          Validate Grid
+        </Button>
+      </DialogClose>
+      <DialogClose asChild>
+        <Button
+          onClick={addAutoNotes}
+          variant="outline"
+          className="w-full border border-border hover:bg-secondary"
+        >
+          Add Auto Notes
+        </Button>
+      </DialogClose>
+    </DialogButton>
   );
 };
 

@@ -18,7 +18,7 @@ const Grid: React.FC = () => {
   return (
     <div
       key={seed}
-      className="relative grid aspect-square w-full max-w-[50vh] grid-cols-9"
+      className="relative grid aspect-square w-full max-w-[60svh] grid-cols-9"
     >
       <svg className="pointer-events-none absolute" viewBox="0 0 1350 1350">
         <defs>

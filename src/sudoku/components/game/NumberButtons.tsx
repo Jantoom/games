@@ -13,39 +13,37 @@ const NumberButtons: React.FC = () => {
   }, [optRemainingCounts, setState]);
 
   return (
-    <div className="grid w-2/3 grid-cols-5 grid-rows-2 justify-items-center gap-[clamp(min(0.8vh,1.5vw),1.5vw,0.5em)]">
-      {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((number_) => {
-        const isSelected = selectedNumber === number_;
+    <div className="grid grid-cols-5 grid-rows-2 justify-items-center gap-2 max-w-full">
+      {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => {
+        const isSelected = selectedNumber === num;
         const remainingCount = Math.max(
-          9 - getMatchingCells(grid, number_).length,
+          9 - getMatchingCells(grid, num).length,
           0,
         );
         return (
           <Button
-            key={number_}
+            key={num}
             variant="outline"
             onClick={() =>
               setState((prevState) => ({
                 selectedNumber:
-                  (isActive &&
-                    prevState.selectedNumber !== number_ &&
-                    number_) ||
+                  (isActive && prevState.selectedNumber !== num && num) ||
                   undefined,
               }))
             }
-            className={`relative aspect-square h-full w-full rounded-full hover:bg-secondary ${isSelected ? 'bg-primary text-background' : ''}`}
+            className={`relative aspect-square h-[6svh] w-[6svh] max-w-full max-h-full rounded-full py-0 hover:bg-secondary ${isSelected ? 'bg-primary text-background' : ''}`}
           >
-            {number_ ? (
+            {num ? (
               <>
-                <span className="text-[min(5vw,2.5vh)] font-medium">
-                  {number_}
+                <span className="text-[2.5svh] font-medium leading-none">
+                  {num}
                 </span>
-                <span className="absolute pt-[65%] text-[min(2.5vw,1.25vh)] font-medium">
+                <span className="absolute pt-[65%] text-[1.25svh] font-medium">
                   {(optRemainingCounts && remainingCount) || ''}
                 </span>
               </>
             ) : (
-              <Eraser className="h-full w-full" />
+              <Eraser className="h-1/2" />
             )}
           </Button>
         );
