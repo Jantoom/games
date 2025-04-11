@@ -5,7 +5,17 @@ import { Switch } from '../ui/switch';
 const SettingsContainer: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  return <div className="flex flex-col gap-y-6">{children}</div>;
+  return (
+    <div
+      className="flex max-h-[60svh] min-h-[20svh] touch-pan-y flex-col gap-y-6 overflow-auto px-2"
+      style={{
+        msOverflowStyle: 'none',
+        scrollbarWidth: 'none',
+      }}
+    >
+      {children}
+    </div>
+  );
 };
 
 const SettingsGroup: React.FC<{ title: string; children: React.ReactNode }> = ({
@@ -23,14 +33,14 @@ const SettingsGroup: React.FC<{ title: string; children: React.ReactNode }> = ({
 const SettingsSwitch: React.FC<{
   name: string;
   active: boolean;
-  switchActive: () => void;
-}> = ({ name, active, switchActive }) => {
+  change: () => void;
+}> = ({ name, active, change }) => {
   return (
     <>
       <Label className="font-normal">{name}</Label>
       <Switch
         checked={active}
-        onCheckedChange={switchActive}
+        onCheckedChange={change}
         className={`data-[state=checked]:bg-primary data-[state=unchecked]:bg-secondary`}
       />
     </>

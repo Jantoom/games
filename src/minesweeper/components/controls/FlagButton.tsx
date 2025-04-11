@@ -4,15 +4,15 @@ import ControlButton from '../../../components/generics/ControlButton';
 import { useMinesweeperState } from '@/minesweeper/state';
 
 const FlagButton: React.FC = () => {
-  const { isActive, isFlagMode, setState } = useMinesweeperState();
+  const { status, flagMode, setState } = useMinesweeperState();
   return (
     <ControlButton
-      isSelected={isFlagMode}
+      isSelected={flagMode}
       Icon={Flag}
       onClick={() =>
-        setState((prevState) => ({ isFlagMode: !prevState.isFlagMode }))
+        setState((prev) => ({ flagMode: !prev.flagMode }))
       }
-      disabled={!isActive}
+      disabled={status !== 'play'}
     />
   );
 };

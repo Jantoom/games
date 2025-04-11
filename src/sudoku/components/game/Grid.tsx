@@ -6,14 +6,14 @@ import { animated, useSpring } from '@react-spring/web';
 const Grid: React.FC = () => {
   const {
     seed,
-    isActive,
+    status,
     originalGrid,
     grid,
     notes,
     errors,
     selectedNumber,
-    isPencilMode,
-    optHighlightSame,
+    pencilMode,
+    optAssistHighlight,
     update,
   } = useSudokuState();
 
@@ -181,24 +181,24 @@ const Grid: React.FC = () => {
           </g>
         </svg>
         {grid.map((array, row) =>
-          array.map((number_, col) => (
+          array.map((num, col) => (
             <Cell
               key={`${row}-${col}`}
-              num={number_}
-              isOriginal={originalGrid[row][col] !== 0}
-              isHighlighted={
-                optHighlightSame &&
-                selectedNumber !== -1 &&
-                (number_ === selectedNumber ||
+              num={num}
+              original={originalGrid[row][col] !== 0}
+              highlighted={
+                optAssistHighlight &&
+                selectedNumber !== undefined &&
+                (num === selectedNumber ||
                   notes[`${row}-${col}`].has(selectedNumber))
               }
-              isFlagged={errors.includes(`${row}-${col}`)}
+              flagged={errors.includes(`${row}-${col}`)}
               notes={notes[`${row}-${col}`]}
               onClick={() =>
-                isActive &&
-                selectedNumber !== -1 &&
+                status === 'play' &&
+                selectedNumber !== undefined &&
                 !originalGrid[row][col] &&
-                update(row, col, selectedNumber, isPencilMode)
+                update(row, col, selectedNumber, pencilMode)
               }
             />
           )),

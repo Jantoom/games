@@ -4,14 +4,14 @@ import ControlButton from '../../../components/generics/ControlButton';
 import { useSudokuState } from '@/sudoku/state';
 
 const UndoButton: React.FC = () => {
-  const { isActive, history, undo } = useSudokuState();
+  const { status, history, undo } = useSudokuState();
 
   return (
     <ControlButton
       isSelected={false}
       Icon={Undo}
       onClick={undo}
-      disabled={history.length === 0 || !isActive}
+      disabled={history.length === 0 || status !== 'play'}
     />
   );
 };

@@ -7,9 +7,9 @@ import { useSudokuState } from '@/sudoku/state';
 
 const Settings: React.FC = () => {
   const {
-    optHighlightSame,
-    optRemainingCounts,
-    optAutoRemove,
+    optAssistHighlight,
+    optAssistRemaining,
+    optAssistAutoRemove,
     optShowTime,
     setState,
   } = useSudokuState();
@@ -19,22 +19,22 @@ const Settings: React.FC = () => {
       <SettingsGroup title="Assists">
         <SettingsSwitch
           name="Highlight same numbers"
-          active={optHighlightSame}
+          active={optAssistHighlight}
           change={() =>
-            setState((s) => ({ optHighlightSame: !s.optHighlightSame }))
+            setState((s) => ({ optAssistHighlight: !s.optAssistHighlight }))
           }
         />
         <SettingsSwitch
           name="Show remaining number counts"
-          active={optRemainingCounts}
+          active={optAssistRemaining}
           change={() =>
-            setState((s) => ({ optRemainingCounts: !s.optRemainingCounts }))
+            setState((s) => ({ optAssistRemaining: !s.optAssistRemaining }))
           }
         />
         <SettingsSwitch
           name="Automatically remove notes"
-          active={optAutoRemove}
-          change={() => setState((s) => ({ optAutoRemove: !s.optAutoRemove }))}
+          active={optAssistAutoRemove}
+          change={() => setState((s) => ({ optAssistAutoRemove: !s.optAssistAutoRemove }))}
         />
       </SettingsGroup>
       <SettingsGroup title="Appearance">

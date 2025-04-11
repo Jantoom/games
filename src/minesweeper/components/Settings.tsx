@@ -1,5 +1,9 @@
-import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
+import ThemeButton from '@/components/elements/ThemeButton';
+import {
+  SettingsContainer,
+  SettingsGroup,
+  SettingsSwitch,
+} from '@/components/generics/Settings';
 import { useMinesweeperState } from '@/minesweeper/state';
 
 const Settings: React.FC = () => {
@@ -8,56 +12,61 @@ const Settings: React.FC = () => {
     optFlagOnDoubleClick,
     optFlagOnLongClick,
     optFlagOnRightClick,
+    optShowRemainingBombs,
+    optShowTime,
     setState,
   } = useMinesweeperState();
 
   return (
-    <>
-      <Label className="-mb-2 text-center text-base">Flag Behaviour</Label>
-      <div className="grid w-[100%] grid-cols-2 items-center justify-items-center gap-2 p-2">
-        <Label>Click</Label>
-        <Switch
-          checked={optFlagOnClick}
-          onCheckedChange={() => setState({ optFlagOnClick: !optFlagOnClick })}
-          className={`data-[state=checked]:bg-primary data-[state=unchecked]:bg-secondary`}
-        />
-        <Label>Double click</Label>
-        <Switch
-          checked={optFlagOnDoubleClick}
-          onCheckedChange={() =>
-            setState({ optFlagOnDoubleClick: !optFlagOnDoubleClick })
+    <SettingsContainer>
+      <SettingsGroup title="Flags">
+        <SettingsSwitch
+          name="Click"
+          active={optFlagOnClick}
+          change={() =>
+            setState((s) => ({ optFlagOnClick: !s.optFlagOnClick }))
           }
-          className={`data-[state=checked]:bg-primary data-[state=unchecked]:bg-secondary`}
         />
-        <Label>Right click</Label>
-        <Switch
-          checked={optFlagOnRightClick}
-          onCheckedChange={() =>
-            setState({ optFlagOnRightClick: !optFlagOnRightClick })
+        <SettingsSwitch
+          name="Double click"
+          active={optFlagOnDoubleClick}
+          change={() =>
+            setState((s) => ({ optFlagOnDoubleClick: !s.optFlagOnDoubleClick }))
           }
-          className={`data-[state=checked]:bg-primary data-[state=unchecked]:bg-secondary`}
         />
-        <Label>Hold</Label>
-        <Switch
-          checked={optFlagOnLongClick}
-          onCheckedChange={() =>
-            setState({ optFlagOnLongClick: !optFlagOnLongClick })
+        <SettingsSwitch
+          name="Right click"
+          active={optFlagOnRightClick}
+          change={() =>
+            setState((s) => ({ optFlagOnRightClick: !s.optFlagOnRightClick }))
           }
-          className={`data-[state=checked]:bg-primary data-[state=unchecked]:bg-secondary`}
         />
-      </div>
-      {/* <Label className="text-base -mb-2">Interface</Label>
-        <div className="grid grid-cols-2 gap-2 w-[100%] justify-items-center items-center p-2">
-          <Label>Show toggle flag button</Label>
-          <Switch
-            checked={optFlagOnLongClick}
-            onCheckedChange={() =>
-              setState({ optFlagOnLongClick: !optFlagOnLongClick })
-            }
-            className={`data-[state=checked]:bg-primary data-[state=unchecked]:bg-secondary`}
-          />
-        </div> */}
-    </>
+        <SettingsSwitch
+          name="Hold"
+          active={optFlagOnLongClick}
+          change={() =>
+            setState((s) => ({ optFlagOnLongClick: !s.optFlagOnLongClick }))
+          }
+        />
+      </SettingsGroup>
+      <SettingsGroup title="Appearance">
+        <SettingsSwitch
+          name="Show remaining bombs"
+          active={optShowRemainingBombs}
+          change={() =>
+            setState((s) => ({
+              optShowRemainingBombs: !s.optShowRemainingBombs,
+            }))
+          }
+        />
+        <SettingsSwitch
+          name="Show time"
+          active={optShowTime}
+          change={() => setState((s) => ({ optShowTime: !s.optShowTime }))}
+        />
+      </SettingsGroup>
+      <ThemeButton />
+    </SettingsContainer>
   );
 };
 

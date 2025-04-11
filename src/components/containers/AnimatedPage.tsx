@@ -19,6 +19,8 @@ const AnimatedPage: React.FC<AnimatedPageProps> = ({ depth, children }) => {
 
   return (
     <motion.div
+      layout
+      key="page"
       initial={{ opacity: 0, x: 100 * direction }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: 100 * direction }}

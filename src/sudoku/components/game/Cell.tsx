@@ -4,25 +4,25 @@ import { CellNotes } from '@/sudoku/types';
 
 interface CellProps {
   num: number;
-  isOriginal: boolean;
-  isHighlighted: boolean;
-  isFlagged: boolean;
+  original: boolean;
+  highlighted: boolean;
+  flagged: boolean;
   notes: CellNotes | undefined;
   onClick: () => void;
 }
 
 const Cell: React.FC<CellProps> = ({
   num,
-  isOriginal,
-  isHighlighted,
-  isFlagged,
+  original,
+  highlighted,
+  flagged,
   notes,
   onClick,
 }) => {
   const randomDelay = Math.random() * 0.2;
   return (
     <div
-      className={`aspect-square h-full w-full p-[10%] ${isOriginal ? '' : 'cursor-pointer'}`}
+      className={`aspect-square h-full w-full p-[10%] ${original ? '' : 'cursor-pointer'}`}
       onClick={onClick}
     >
       <motion.div
@@ -37,13 +37,13 @@ const Cell: React.FC<CellProps> = ({
         className={`relative flex h-full w-full items-center justify-center`}
       >
         <AnimatePresence mode="sync">
-          {isOriginal && (
+          {original && (
             <div
               key="original"
               className={`absolute inset-0 rounded-full bg-secondary`}
             />
           )}
-          {isHighlighted && (
+          {highlighted && (
             <motion.div
               key="highlight"
               initial={{ scale: 0 }}
@@ -57,7 +57,7 @@ const Cell: React.FC<CellProps> = ({
               className={`absolute inset-0 rounded-full bg-primary`}
             />
           )}
-          {isFlagged && (
+          {flagged && (
             <motion.div
               key="flag"
               initial={{ opacity: 0 }}
@@ -84,7 +84,7 @@ const Cell: React.FC<CellProps> = ({
                     notes.has(index + 1) && (
                       <span
                         key={index}
-                        className={`w-1/3 select-none text-center text-xs font-medium leading-none transition-colors ${isHighlighted ? 'text-background' : 'text-primary'}`}
+                        className={`w-1/3 select-none text-center text-xs font-medium leading-none transition-colors ${highlighted ? 'text-background' : 'text-primary'}`}
                       >
                         {index + 1}
                       </span>
@@ -99,7 +99,7 @@ const Cell: React.FC<CellProps> = ({
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3, ease: 'easeInOut' }}
-              className={`absolute select-none text-2xl font-medium transition-colors ${isHighlighted || isFlagged ? 'text-background' : isOriginal ? 'text-border' : 'text-primary'}`}
+              className={`absolute select-none text-2xl font-medium transition-colors ${highlighted || flagged ? 'text-background' : original ? 'text-border' : 'text-primary'}`}
             >
               {num ?? ''}
             </motion.span>

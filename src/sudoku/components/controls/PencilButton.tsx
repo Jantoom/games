@@ -4,17 +4,17 @@ import ControlButton from '../../../components/generics/ControlButton';
 import { useSudokuState } from '@/sudoku/state';
 
 const PencilButton: React.FC = () => {
-  const { isActive, isPencilMode, setState } = useSudokuState();
+  const { status, pencilMode, setState } = useSudokuState();
   return (
     <ControlButton
-      isSelected={isPencilMode}
+      isSelected={pencilMode}
       Icon={Pencil}
       onClick={() =>
-        setState((prevState) => ({
-          isPencilMode: !prevState.isPencilMode,
+        setState((prev) => ({
+          pencilMode: !prev.pencilMode,
         }))
       }
-      disabled={!isActive}
+      disabled={status !== 'play'}
     />
   );
 };

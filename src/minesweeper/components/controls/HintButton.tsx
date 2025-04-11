@@ -8,7 +8,7 @@ import { getHintCells } from '@/minesweeper/utils';
 import DialogButton from '@/components/generics/DialogButton';
 
 const HintButton: React.FC = () => {
-  const { isActive, grid, bombs, update, setState } = useMinesweeperState();
+  const { status, grid, bombs, update, setState } = useMinesweeperState();
   const [isHintOpen, setIsHintOpen] = useState(false);
 
   const getHint = () => {
@@ -17,7 +17,7 @@ const HintButton: React.FC = () => {
       const targetCell =
         targetCells[Math.floor(Math.random() * targetCells.length)];
       if (targetCell) {
-        setState((prevState) => ({ usedHints: prevState.usedHints + 1 }));
+        setState((prev) => ({ usedHints: prev.usedHints + 1 }));
         update(targetCell.row, targetCell.col, false);
       }
     }
@@ -29,7 +29,7 @@ const HintButton: React.FC = () => {
       title="Are you sure you want a hint?"
       isOpen={isHintOpen}
       setIsOpen={setIsHintOpen}
-      disabled={!isActive}
+      disabled={status !== 'play'}
     >
       <DialogClose asChild>
         <Button

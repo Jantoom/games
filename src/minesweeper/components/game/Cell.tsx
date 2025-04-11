@@ -7,11 +7,11 @@ import { useGlobalState } from '@/menu/globalState';
 interface CellProps {
   id: string;
   num: number;
-  isFlagged: boolean;
+  flagged: boolean;
   isExploded: boolean;
 }
 
-const Cell: React.FC<CellProps> = ({ id, num, isFlagged, isExploded }) => {
+const Cell: React.FC<CellProps> = ({ id, num, flagged, isExploded }) => {
   const { theme } = useGlobalState();
   const randomDelay = Math.random() * 0.1;
 
@@ -29,12 +29,12 @@ const Cell: React.FC<CellProps> = ({ id, num, isFlagged, isExploded }) => {
           ease: 'easeInOut',
           delay: randomDelay * 2,
         }}
-        className={`relative flex h-full w-full items-center justify-center ${(num === undefined && !isFlagged) || isExploded ? 'bg-secondary' : ''}`}
+        className={`relative flex h-full w-full items-center justify-center ${(num === undefined && !flagged) || isExploded ? 'bg-secondary' : ''}`}
       >
         <AnimatePresence mode="sync">
-          {isFlagged || isExploded ? (
+          {flagged || isExploded ? (
             <motion.div
-              key={`${isFlagged}${isExploded}`}
+              key={`${flagged}${isExploded}`}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}

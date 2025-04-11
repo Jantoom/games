@@ -14,7 +14,7 @@ import {
 import DialogButton from '@/components/generics/DialogButton';
 
 const HintsButton: React.FC = () => {
-  const { isActive, solvedGrid, grid, notes, update, setState } =
+  const { status, solvedGrid, grid, notes, update, setState } =
     useSudokuState();
   const [isHintsOpen, setIsHintsOpen] = useState(false);
   const errorBlinkerRef = useRef<NodeJS.Timeout | undefined>(undefined);
@@ -27,8 +27,8 @@ const HintsButton: React.FC = () => {
       }
       let count = 0;
       errorBlinkerRef.current = setInterval(() => {
-        setState((prevState) => ({
-          errors: prevState.errors.length > 0 ? [] : cells,
+        setState((prev) => ({
+          errors: prev.errors.length > 0 ? [] : cells,
         }));
         count++;
         if (count >= 6) clearInterval(errorBlinkerRef.current);
@@ -57,8 +57,8 @@ const HintsButton: React.FC = () => {
   const validateGrid = () =>
     showErrorAnimation(toCellKeys(getMismatchCells(grid, solvedGrid)));
   const addAutoNotes = () =>
-    setState((prevState) => ({
-      notes: { ...prevState.notes, ...getAutoNotes(prevState.grid) },
+    setState((prev) => ({
+      notes: { ...prev.notes, ...getAutoNotes(prev.grid) },
     }));
 
   return (
@@ -67,7 +67,7 @@ const HintsButton: React.FC = () => {
       title="Hints"
       isOpen={isHintsOpen}
       setIsOpen={setIsHintsOpen}
-      disabled={!isActive}
+      disabled={status !== 'play'}
     >
       <DialogClose asChild>
         <Button

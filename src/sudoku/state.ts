@@ -9,10 +9,11 @@ import {
   Notes,
 } from '@/sudoku/types';
 import { generateSudoku, getRelatedCells, toCellKeys } from '@/sudoku/utils';
+import { GameStatus } from '@/lib/types';
 
 export type SudokuState = {
+  status: GameStatus;
   seed: string;
-  isActive: boolean;
   time: number;
   difficulty: Difficulty;
   originalGrid: Grid;
@@ -22,35 +23,31 @@ export type SudokuState = {
   history: HistoryEntry[];
   errors: string[];
   selectedNumber: number;
-  isPencilMode: boolean;
-  optHighlightSame: boolean;
-  optRemainingCounts: boolean;
-  optAutoRemove: boolean;
+  pencilMode: boolean;
+  optAssistHighlight: boolean;
+  optAssistRemaining: boolean;
+  optAssistAutoRemove: boolean;
   optShowTime: boolean;
-  usedHighlightSame: boolean;
-  usedRemainingCounts: boolean;
-  usedAutoRemove: boolean;
+  usedAssistHighlight: boolean;
+  usedAssistRemaining: boolean;
+  usedAssistAutoRemove: boolean;
   leaderboard: LeaderboardEntry[];
   setState: (
     newState:
       | Partial<SudokuState>
       | ((state: SudokuState) => Partial<SudokuState>),
   ) => void;
-  reset: (difficulty: Difficulty) => void;
+  tick: () => number;
+  reset: (difficulty?: Difficulty) => void;
   restart: () => void;
-  update: (
-    row: number,
-    col: number,
-    num: number,
-    isPencilMode: boolean,
-  ) => void;
+  update: (row: number, col: number, num: number, pencilMode: boolean) => void;
   undo: () => void;
   stop: (win: boolean) => void;
 };
 
 export const useSudokuState = create<SudokuState>((set) => ({
+  status: undefined,
   seed: '',
-  isActive: false,
   time: 0,
   difficulty: 'easy' as Difficulty,
   originalGrid: [] as Grid,
@@ -59,30 +56,38 @@ export const useSudokuState = create<SudokuState>((set) => ({
   notes: {} as Notes,
   history: [] as HistoryEntry[],
   errors: [] as string[],
-  selectedNumber: -1,
-  isPencilMode: false,
-  optHighlightSame: false,
-  optRemainingCounts: false,
-  optAutoRemove: false,
+  selectedNumber: undefined,
+  pencilMode: false,
+  optAssistHighlight: false,
+  optAssistRemaining: false,
+  optAssistAutoRemove: false,
   optShowTime: true,
-  usedHighlightSame: false,
-  usedRemainingCounts: false,
-  usedAutoRemove: false,
+  usedAssistHighlight: false,
+  usedAssistRemaining: false,
+  usedAssistAutoRemove: false,
   leaderboard: [] as LeaderboardEntry[],
   setState: (state) => set(state),
-  reset: (difficulty: Difficulty) => {
+  tick: () => {
+    let time: number = undefined;
+    set((prev) => {
+      time = prev.time + 1;
+      return { time };
+    });
+    return time;
+  },
+  reset: (difficulty = 'easy') => {
     const newSeed = `${Math.random()}`;
     seedrandom(newSeed, { global: true });
     const { puzzle, solution } = generateSudoku(difficulty);
 
     set({
+      status: 'play',
       seed: newSeed,
-      isActive: true,
       time: 0,
       difficulty: difficulty,
       originalGrid: puzzle.map((row) => [...row]),
-      solvedGrid: solution.map((row) => [...row]),
-      grid: puzzle.map((row) => [...row]),
+      solvedGrid: solution,
+      grid: puzzle,
       notes: Object.fromEntries(
         Array.from({ length: 9 }).flatMap((_, row) =>
           Array.from({ length: 9 }).map((_, col) => [
@@ -93,16 +98,16 @@ export const useSudokuState = create<SudokuState>((set) => ({
       ),
       history: [],
       errors: [],
-      selectedNumber: -1,
-      isPencilMode: false,
-      usedHighlightSame: false,
-      usedRemainingCounts: false,
-      usedAutoRemove: false,
+      selectedNumber: undefined,
+      pencilMode: false,
+      usedAssistHighlight: false,
+      usedAssistRemaining: false,
+      usedAssistAutoRemove: false,
     });
   },
   restart: () => {
-    set((prevState) => ({
-      grid: prevState.originalGrid.map((row) => [...row]),
+    set((prev) => ({
+      grid: prev.originalGrid.map((row) => [...row]),
       notes: Object.fromEntries(
         Array.from({ length: 9 }).flatMap((_, row) =>
           Array.from({ length: 9 }).map((_, col) => [
@@ -113,37 +118,20 @@ export const useSudokuState = create<SudokuState>((set) => ({
       ),
       history: [],
       errors: [],
-      selectedNumber: -1,
-      isPencilMode: false,
+      selectedNumber: undefined,
+      pencilMode: false,
     }));
   },
-  update: (row, col, num, isPencilMode) => {
-    set((prevState) => {
-      const newGrid = prevState.grid.map((r) => [...r]);
-      newGrid[row][col] =
-        isPencilMode || prevState.grid[row][col] === num ? 0 : num;
-
-      const newNotes = { ...prevState.notes };
-      for (const key of isPencilMode
-        ? [`${row}-${col}`]
-        : prevState.optAutoRemove
-          ? toCellKeys(getRelatedCells(row, col))
-          : []) {
-        newNotes[key] = new Set(prevState.notes[key]);
-        if (newNotes[key].has(num)) {
-          newNotes[key].delete(num);
-        } else if (isPencilMode) {
-          newNotes[key].add(num);
-        }
-      }
-      if (!isPencilMode) newNotes[`${row}-${col}`] = new Set();
+  update: (row, col, num, pencilMode) => {
+    set((prev) => {
+      if (prev.status !== 'play') return {};
 
       const newHistory = [
-        ...prevState.history,
+        ...prev.history,
         {
-          grid: prevState.grid.map((row) => [...row]),
+          grid: prev.grid.map((row) => [...row]),
           notes: Object.fromEntries(
-            Object.entries(prevState.notes).map(([key, value]) => [
+            Object.entries(prev.notes).map(([key, value]) => [
               key,
               new Set(value),
             ]),
@@ -151,38 +139,63 @@ export const useSudokuState = create<SudokuState>((set) => ({
         },
       ];
 
+      const newNotes = { ...prev.notes };
+      if (num === 0) {
+        newNotes[`${row}-${col}`] = new Set();
+      } else {
+        const affectedCells = pencilMode
+          ? [`${row}-${col}`]
+          : prev.optAssistAutoRemove
+            ? toCellKeys(getRelatedCells(row, col))
+            : [];
+        for (const key of affectedCells) {
+          newNotes[key] = new Set(prev.notes[key]);
+          if (newNotes[key].has(num)) {
+            newNotes[key].delete(num);
+          } else if (pencilMode) {
+            newNotes[key].add(num);
+          }
+        }
+      }
+
+      const newGrid = prev.grid.map((r) => [...r]);
+      newGrid[row][col] = prev.grid[row][col] !== num && !pencilMode ? num : 0;
+
       return { grid: newGrid, notes: newNotes, history: newHistory };
     });
   },
   undo: () => {
-    set((prevState) => {
-      const lastStep = prevState.history.at(-1);
-      if (lastStep === undefined) return {};
-      return {
-        grid: lastStep.grid.map((row) => [...row]),
-        notes: Object.fromEntries(
-          Object.entries(lastStep.notes).map(([key, value]) => [
-            key,
-            new Set(value),
-          ]),
-        ),
-        history: prevState.history.slice(0, -1),
-      };
+    set((prev) => {
+      if (prev.status !== 'play') return {};
+
+      const lastStep = prev.history.at(-1);
+      return lastStep === undefined
+        ? {}
+        : {
+            grid: lastStep.grid.map((row) => [...row]),
+            notes: Object.fromEntries(
+              Object.entries(lastStep.notes).map(([key, value]) => [
+                key,
+                new Set(value),
+              ]),
+            ),
+            history: prev.history.slice(0, -1),
+          };
     });
   },
   stop: () => {
-    set((prevState) => {
+    set((prev) => {
       const gamesData = getGamesData();
       const prevLeaderboard = (gamesData['sudoku']?.leaderboard ??
         []) as LeaderboardEntry[];
       const newEntry: LeaderboardEntry = {
-        seed: prevState.seed,
-        difficulty: prevState.difficulty,
-        score: formatTime(prevState.time),
+        seed: prev.seed,
+        difficulty: prev.difficulty,
+        score: formatTime(prev.time),
         hints: [
-          prevState.usedHighlightSame || prevState.optHighlightSame,
-          prevState.usedRemainingCounts || prevState.optRemainingCounts,
-          prevState.usedAutoRemove || prevState.optAutoRemove,
+          prev.usedAssistHighlight || prev.optAssistHighlight,
+          prev.usedAssistRemaining || prev.optAssistRemaining,
+          prev.usedAssistAutoRemove || prev.optAssistAutoRemove,
         ],
         date: new Date().toISOString(),
       };
@@ -196,8 +209,8 @@ export const useSudokuState = create<SudokuState>((set) => ({
       });
 
       return {
-        isActive: false,
-        isPencilMode: false,
+        status: 'finished',
+        pencilMode: false,
         selectedNumber: undefined,
       };
     });

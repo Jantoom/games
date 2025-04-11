@@ -18,11 +18,11 @@ const Grid: React.FC = () => {
   const {
     seed,
     dimensions,
-    isActive,
+    status,
     grid,
     bombs,
     flags,
-    isFlagMode,
+    flagMode,
     optFlagOnClick,
     optFlagOnDoubleClick,
     optFlagOnLongClick,
@@ -132,7 +132,7 @@ const Grid: React.FC = () => {
       Math.abs(startPos.y - finishPos.y) < 20 &&
       positionCellsAreEqual(startPos, finishPos)
     ) {
-      update(updateCell.row, updateCell.col, flagCheck || isFlagMode);
+      update(updateCell.row, updateCell.col, flagCheck || flagMode);
     }
   };
 
@@ -289,7 +289,7 @@ const Grid: React.FC = () => {
   }, [dimensions, scaleApi]);
 
   useEffect(() => {
-    if (!isActive) {
+    if (status === 'finished') {
       void scaleApi.start({
         scale: min.get(),
         opacity: Math.min(1, max.get() - (max.get() - min.get()) - 1),
@@ -297,7 +297,7 @@ const Grid: React.FC = () => {
       });
       void posApi.start({ x: 0, y: 0, config: config.slow });
     }
-  }, [isActive, scaleApi, posApi, min, max]);
+  }, [status, scaleApi, posApi, min, max]);
 
   return (
     dimensions[0] > 0 && (
@@ -375,14 +375,14 @@ const Grid: React.FC = () => {
             </animated.svg>
 
             {grid.map((array, row) =>
-              array.map((number_, col) => (
+              array.map((num, col) => (
                 <Cell
                   key={`${row}-${col}`}
                   id={`${row}-${col}`}
-                  num={number_}
-                  isFlagged={flags.has(`${row}-${col}`)}
+                  num={num}
+                  flagged={flags.has(`${row}-${col}`)}
                   isExploded={
-                    bombs.has(`${row}-${col}`) && number_ != undefined
+                    bombs.has(`${row}-${col}`) && num != undefined
                   }
                 />
               )),

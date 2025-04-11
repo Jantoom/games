@@ -15,9 +15,9 @@ const fillGrid = (grid: Grid): boolean => {
   const { row, col } = emptyCell;
   const nums = shuffle([1, 2, 3, 4, 5, 6, 7, 8, 9]);
 
-  for (const number_ of nums) {
-    if (isValidCell(grid, row, col, number_)) {
-      grid[row][col] = number_;
+  for (const num of nums) {
+    if (isValidCell(grid, row, col, num)) {
+      grid[row][col] = num;
       if (fillGrid(grid)) return true;
       grid[row][col] = 0;
     }
@@ -30,10 +30,10 @@ const isValidCell = (
   grid: Grid,
   row: number,
   col: number,
-  number_: number,
+  num: number,
 ): boolean =>
   [{ row, col }, ...getRelatedCells(row, col)].every(
-    ({ row, col }) => grid[row][col] !== number_,
+    ({ row, col }) => grid[row][col] !== num,
   );
 
 const toUniqueCells = (
@@ -76,9 +76,9 @@ export const isSolved = (grid: Grid): boolean =>
 
 export const getMatchingCells = (
   grid: Grid,
-  number_: number,
+  num: number,
 ): { row: number; col: number }[] =>
-  cellCoords.filter(({ row, col }) => grid[row][col] === number_);
+  cellCoords.filter(({ row, col }) => grid[row][col] === num);
 
 export const getRelatedCells = (
   row: number,
@@ -134,8 +134,8 @@ export const getAutoNotes = (grid: Grid): Notes =>
     .map(({ row, col }): [string, Set<number>] => [
       `${row}-${col}`,
       new Set(
-        [1, 2, 3, 4, 5, 6, 7, 8, 9].filter((number_) =>
-          isValidCell(grid, row, col, number_),
+        [1, 2, 3, 4, 5, 6, 7, 8, 9].filter((num) =>
+          isValidCell(grid, row, col, num),
         ),
       ),
     ])

@@ -14,10 +14,11 @@ import {
   getSafeCells,
   toCellCoords,
 } from '@/minesweeper/utils';
+import { GameStatus } from '@/lib/types';
 
 export type MinesweeperState = {
+  status: GameStatus;
   seed: string;
-  isActive: boolean;
   time: number;
   difficulty: Difficulty;
   dimensions: [number, number];
@@ -26,11 +27,13 @@ export type MinesweeperState = {
   bombs: Set<string>;
   flags: Set<string>;
   history: HistoryEntry[];
-  isFlagMode: boolean;
+  flagMode: boolean;
   optFlagOnClick: boolean;
   optFlagOnDoubleClick: boolean;
   optFlagOnLongClick: boolean;
   optFlagOnRightClick: boolean;
+  optShowRemainingBombs: boolean;
+  optShowTime: boolean;
   usedHints: number;
   leaderboard: LeaderboardEntry[];
   setState: (
@@ -38,69 +41,78 @@ export type MinesweeperState = {
       | Partial<MinesweeperState>
       | ((state: MinesweeperState) => Partial<MinesweeperState>),
   ) => void;
-  reset: (difficulty: Difficulty) => void;
-  update: (row: number, col: number, isFlagMode: boolean) => void;
+  tick: () => number;
+  reset: (difficulty?: Difficulty) => void;
+  update: (row: number, col: number, flagMode: boolean) => void;
   stop: (win: boolean) => void;
 };
 
 export const useMinesweeperState = create<MinesweeperState>((set) => ({
+  status: undefined,
   seed: '',
-  isActive: false,
   time: 0,
-  difficulty: 'easy' as Difficulty,
-  dimensions: [0, 0] as [number, number],
+  difficulty: 'easy',
+  dimensions: [0, 0],
   numBombs: 0,
-  grid: [] as Grid,
-  bombs: new Set<string>(),
-  flags: new Set<string>(),
-  history: [] as HistoryEntry[],
-  isFlagMode: false,
+  grid: [],
+  bombs: new Set(),
+  flags: new Set(),
+  history: [],
+  flagMode: false,
   optFlagOnClick: false,
   optFlagOnDoubleClick: true,
   optFlagOnLongClick: true,
   optFlagOnRightClick: true,
+  optShowRemainingBombs: true,
+  optShowTime: true,
   usedHints: 0,
-  leaderboard: [] as LeaderboardEntry[],
-
-  setState: (
-    newState:
-      | Partial<MinesweeperState>
-      | ((state: MinesweeperState) => Partial<MinesweeperState>),
-  ) => set(newState),
-  reset: (difficulty: Difficulty) => {
+  leaderboard: [],
+  setState: (newState) => set(newState),
+  tick: () => {
+    let time: number = undefined;
+    set((prev) => {
+      time = prev.time + 1;
+      return { time };
+    });
+    return time;
+  },
+  reset: (difficulty = 'easy') => {
     const newSeed = `${Math.random()}`;
+    console.log(difficulty)
     seedrandom(newSeed, { global: true });
     const { dimensions, numBombs, puzzle, bombs } =
       generateMinesweeper(difficulty);
 
     set({
+      status: 'play',
       seed: newSeed,
-      isActive: true,
       time: 0,
       difficulty: difficulty,
       dimensions: dimensions,
       numBombs: numBombs,
-      grid: puzzle.map((row) => [...row]),
-      bombs: new Set(bombs),
+      grid: puzzle,
+      bombs: bombs,
       flags: new Set(),
       history: [],
       usedHints: 0,
     });
   },
-  update: (row: number, col: number, isFlagMode: boolean) => {
-    set((prevState) => {
-      if (!prevState.isActive) return {};
+  update: (row, col, flagMode) => {
+    set((prev) => {
+      if (prev.status !== 'play') return {};
 
       const newHistory = [
-        ...prevState.history,
+        ...prev.history,
         {
-          grid: prevState.grid.map((row) => [...row]),
-          flags: new Set(prevState.flags),
+          grid: prev.grid.map((row) => [...row]),
+          flags: new Set(prev.flags),
         },
       ];
 
-      const newFlags = new Set(prevState.flags);
-      if (isFlagMode && prevState.grid[row][col] === undefined) {
+      const newFlags = new Set(prev.flags);
+      if (flagMode) {
+        if (prev.grid[row][col] != undefined) return {};
+
         if (newFlags.has(`${row}-${col}`)) {
           newFlags.delete(`${row}-${col}`);
         } else {
@@ -109,31 +121,37 @@ export const useMinesweeperState = create<MinesweeperState>((set) => ({
         return { flags: newFlags, history: newHistory };
       }
 
-      const newGrid = prevState.grid.map((r) => [...r]);
-      const safeCells = getSafeCells(prevState.bombs, row, col);
-      if (safeCells.length === 0) {
-        prevState.stop(false);
-        return {};
-      }
-      for (const { row, col, adjacentBombs } of safeCells) {
-        newGrid[row][col] = adjacentBombs;
-        newFlags.delete(`${row}-${col}`);
+      const newGrid = prev.grid.map((r) => [...r]);
+      const safeCells = getSafeCells(prev.bombs, row, col);
+      if (safeCells.length !== 0) {
+        for (const { row, col, adjacentBombs } of safeCells) {
+          newGrid[row][col] = adjacentBombs;
+          newFlags.delete(`${row}-${col}`);
+        }
+        return { grid: newGrid, flags: newFlags, history: newHistory };
       }
 
-      return { grid: newGrid, flags: newFlags, history: newHistory };
+      prev.stop(false);
+      return {};
     });
   },
-  stop: (win: boolean) => {
-    set((prevState) => {
-      if (win) {
+  stop: (win) => {
+    set((prev) => {
+      let newGrid: Grid = undefined;
+      if (!win) {
+        newGrid = prev.grid.map((r) => [...r]);
+        for (const { row, col } of toCellCoords([...prev.bombs] as string[])) {
+          newGrid[row][col] = -1;
+        }
+      } else {
         const gamesData = getGamesData();
         const prevLeaderboard = (gamesData['minesweeper']?.leaderboard ??
           []) as LeaderboardEntry[];
         const newEntry: LeaderboardEntry = {
-          seed: prevState.seed,
-          difficulty: prevState.difficulty,
-          score: formatTime(prevState.time),
-          hints: prevState.usedHints,
+          seed: prev.seed,
+          difficulty: prev.difficulty,
+          score: formatTime(prev.time),
+          hints: prev.usedHints,
           date: new Date().toISOString(),
         };
         const newLeaderboard = [...prevLeaderboard, newEntry];
@@ -145,28 +163,19 @@ export const useMinesweeperState = create<MinesweeperState>((set) => ({
           },
         });
 
-        const newGrid = prevState.grid.map((array, row) =>
-          array.map((number_, col) => {
-            if (number_ != undefined || prevState.flags.has(`${row}-${col}`))
-              return number_;
+        newGrid = prev.grid.map((array, row) =>
+          array.map((num, col) => {
+            if (num != undefined || prev.flags.has(`${row}-${col}`)) return num;
             const adjacentCells = getAdjacentCells(row, col);
             return (
               adjacentCells.length -
-              getAdjacentSafeCells(prevState.bombs, adjacentCells).length
+              getAdjacentSafeCells(prev.bombs, adjacentCells).length
             );
           }),
         );
-
-        return { isActive: false, grid: newGrid };
-      } else {
-        const newGrid = prevState.grid.map((r) => [...r]);
-        for (const { row, col } of toCellCoords([
-          ...prevState.bombs,
-        ] as string[])) {
-          newGrid[row][col] = -1;
-        }
-        return { isActive: false, isFlagMode: false, grid: newGrid };
       }
+
+      return { status: 'finished', flagMode: false, grid: newGrid };
     });
   },
 }));
