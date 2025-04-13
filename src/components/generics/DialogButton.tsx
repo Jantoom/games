@@ -1,5 +1,6 @@
 import { LucideProps } from 'lucide-react';
 import React from 'react';
+import ControlButton from '@/components/generics/ControlButton';
 import {
   Dialog,
   DialogContent,
@@ -8,7 +9,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import ControlButton from '@/components/generics/ControlButton';
 import { ButtonProps } from '../ui/button';
 
 interface DialogButtonProps extends ButtonProps {
@@ -27,6 +27,7 @@ const DialogButton: React.FC<DialogButtonProps> = ({
   title,
   className,
   children,
+  ...props
 }) => {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -36,6 +37,7 @@ const DialogButton: React.FC<DialogButtonProps> = ({
           isSelected={isOpen}
           onClick={() => setIsOpen((prev) => !prev)}
           className={className}
+          {...props}
         />
       </DialogTrigger>
       <DialogContent>

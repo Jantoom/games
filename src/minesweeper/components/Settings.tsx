@@ -1,4 +1,3 @@
-import ThemeButton from '@/components/elements/ThemeButton';
 import {
   SettingsContainer,
   SettingsGroup,
@@ -65,7 +64,6 @@ const Settings: React.FC = () => {
           change={() => setState((s) => ({ optShowTime: !s.optShowTime }))}
         />
       </SettingsGroup>
-      <ThemeButton />
     </SettingsContainer>
   );
 };

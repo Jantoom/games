@@ -1,5 +1,6 @@
 import seedrandom from 'seedrandom';
 import { create } from 'zustand';
+import { GameStatus, SerializableSet } from '@/lib/types';
 import { formatTime, getGamesData, saveGameData } from '@/lib/utils';
 import {
   Difficulty,
@@ -14,7 +15,6 @@ import {
   getSafeCells,
   toCellCoords,
 } from '@/minesweeper/utils';
-import { GameStatus } from '@/lib/types';
 
 export type MinesweeperState = {
   status: GameStatus;
@@ -24,8 +24,8 @@ export type MinesweeperState = {
   dimensions: [number, number];
   numBombs: number;
   grid: Grid;
-  bombs: Set<string>;
-  flags: Set<string>;
+  bombs: SerializableSet<string>;
+  flags: SerializableSet<string>;
   history: HistoryEntry[];
   flagMode: boolean;
   optFlagOnClick: boolean;
@@ -41,22 +41,47 @@ export type MinesweeperState = {
       | Partial<MinesweeperState>
       | ((state: MinesweeperState) => Partial<MinesweeperState>),
   ) => void;
+  wipe: () => void;
+  read: () => MinesweeperState | undefined;
+  save: () => void;
   tick: () => number;
-  reset: (difficulty?: Difficulty) => void;
+  reset: (difficulty?: Difficulty, state?: MinesweeperState) => void;
   update: (row: number, col: number, flagMode: boolean) => void;
   stop: (win: boolean) => void;
 };
 
-export const useMinesweeperState = create<MinesweeperState>((set) => ({
-  status: undefined,
+const baseMinesweeperState: Partial<MinesweeperState> = {
+  status: 'setup',
   seed: '',
   time: 0,
   difficulty: 'easy',
   dimensions: [0, 0],
   numBombs: 0,
   grid: [],
-  bombs: new Set(),
-  flags: new Set(),
+  bombs: new SerializableSet(),
+  flags: new SerializableSet(),
+  history: [],
+  flagMode: false,
+  optFlagOnClick: false,
+  optFlagOnDoubleClick: true,
+  optFlagOnLongClick: true,
+  optFlagOnRightClick: true,
+  optShowRemainingBombs: true,
+  optShowTime: true,
+  usedHints: 0,
+  leaderboard: [],
+};
+
+export const useMinesweeperState = create<MinesweeperState>((set) => ({
+  status: 'setup',
+  seed: '',
+  time: 0,
+  difficulty: 'easy',
+  dimensions: [0, 0],
+  numBombs: 0,
+  grid: [],
+  bombs: new SerializableSet(),
+  flags: new SerializableSet(),
   history: [],
   flagMode: false,
   optFlagOnClick: false,
@@ -68,33 +93,63 @@ export const useMinesweeperState = create<MinesweeperState>((set) => ({
   usedHints: 0,
   leaderboard: [],
   setState: (newState) => set(newState),
+  wipe: () => {
+    set(baseMinesweeperState);
+  },
+  read: () => {
+    return (getGamesData()['minesweeper'] as MinesweeperState) ?? undefined;
+  },
+  save: () => {
+    set((prev) => {
+      const gamesData = getGamesData();
+      const { setState, read, save, tick, reset, update, stop, ...saveData } =
+        prev;
+
+      saveGameData(gamesData, {
+        minesweeper: saveData,
+      });
+
+      return {};
+    });
+  },
   tick: () => {
-    let time: number = undefined;
+    let time: number;
     set((prev) => {
       time = prev.time + 1;
       return { time };
     });
     return time;
   },
-  reset: (difficulty = 'easy') => {
-    const newSeed = `${Math.random()}`;
-    console.log(difficulty)
-    seedrandom(newSeed, { global: true });
-    const { dimensions, numBombs, puzzle, bombs } =
-      generateMinesweeper(difficulty);
+  reset: (difficulty, state) => {
+    set((prev) => {
+      const newSeed = `${Math.random()}`;
+      seedrandom(newSeed, { global: true });
+      const { dimensions, numBombs, puzzle, bombs } = generateMinesweeper(
+        difficulty ?? state?.difficulty ?? prev.difficulty,
+      );
 
-    set({
-      status: 'play',
-      seed: newSeed,
-      time: 0,
-      difficulty: difficulty,
-      dimensions: dimensions,
-      numBombs: numBombs,
-      grid: puzzle,
-      bombs: bombs,
-      flags: new Set(),
-      history: [],
-      usedHints: 0,
+      const resetState = {
+        status: 'play',
+        seed: newSeed,
+        time: 0,
+        difficulty: difficulty ?? state?.difficulty ?? prev.difficulty,
+        dimensions: dimensions,
+        numBombs: numBombs,
+        grid: puzzle,
+        bombs: bombs,
+        flags: new SerializableSet(),
+        history: [],
+        usedHints: 0,
+      } as Partial<MinesweeperState>;
+
+      if (state) {
+        return {
+          ...resetState,
+          ...state,
+        };
+      } else {
+        return resetState;
+      }
     });
   },
   update: (row, col, flagMode) => {
@@ -105,11 +160,11 @@ export const useMinesweeperState = create<MinesweeperState>((set) => ({
         ...prev.history,
         {
           grid: prev.grid.map((row) => [...row]),
-          flags: new Set(prev.flags),
+          flags: new SerializableSet(prev.flags),
         },
       ];
 
-      const newFlags = new Set(prev.flags);
+      const newFlags = new SerializableSet(prev.flags);
       if (flagMode) {
         if (prev.grid[row][col] != undefined) return {};
 
@@ -123,7 +178,7 @@ export const useMinesweeperState = create<MinesweeperState>((set) => ({
 
       const newGrid = prev.grid.map((r) => [...r]);
       const safeCells = getSafeCells(prev.bombs, row, col);
-      if (safeCells.length !== 0) {
+      if (safeCells.length > 0) {
         for (const { row, col, adjacentBombs } of safeCells) {
           newGrid[row][col] = adjacentBombs;
           newFlags.delete(`${row}-${col}`);
@@ -137,32 +192,20 @@ export const useMinesweeperState = create<MinesweeperState>((set) => ({
   },
   stop: (win) => {
     set((prev) => {
-      let newGrid: Grid = undefined;
-      if (!win) {
-        newGrid = prev.grid.map((r) => [...r]);
-        for (const { row, col } of toCellCoords([...prev.bombs] as string[])) {
-          newGrid[row][col] = -1;
-        }
-      } else {
-        const gamesData = getGamesData();
-        const prevLeaderboard = (gamesData['minesweeper']?.leaderboard ??
-          []) as LeaderboardEntry[];
-        const newEntry: LeaderboardEntry = {
+      let newGrid: Grid;
+      let newLeaderboard: LeaderboardEntry[] = [...prev.leaderboard];
+      if (win) {
+        // Add the current game to the leaderboard
+        newLeaderboard.push({
           seed: prev.seed,
           difficulty: prev.difficulty,
           score: formatTime(prev.time),
           hints: prev.usedHints,
           date: new Date().toISOString(),
-        };
-        const newLeaderboard = [...prevLeaderboard, newEntry];
-        newLeaderboard.sort((a, b) => a.score.localeCompare(b.score));
-        saveGameData(gamesData, {
-          minesweeper: {
-            ...gamesData['minesweeper'],
-            leaderboard: newLeaderboard,
-          },
         });
+        newLeaderboard.sort((a, b) => a.score.localeCompare(b.score));
 
+        // Reveal remaining cells
         newGrid = prev.grid.map((array, row) =>
           array.map((num, col) => {
             if (num != undefined || prev.flags.has(`${row}-${col}`)) return num;
@@ -173,9 +216,28 @@ export const useMinesweeperState = create<MinesweeperState>((set) => ({
             );
           }),
         );
+      } else {
+        // Reveal all bombs
+        newGrid = prev.grid.map((r) => [...r]);
+        for (const { row, col } of toCellCoords([...prev.bombs] as string[])) {
+          newGrid[row][col] = -1;
+        }
       }
 
-      return { status: 'finished', flagMode: false, grid: newGrid };
+      const newState: MinesweeperState = {
+        ...prev,
+        status: 'finished',
+        flagMode: false,
+        grid: newGrid,
+        leaderboard: newLeaderboard,
+      };
+
+      // Sort the leaderboard by score and save to local storage
+      saveGameData(getGamesData(), {
+        minesweeper: newState,
+      });
+
+      return newState;
     });
   },
 }));

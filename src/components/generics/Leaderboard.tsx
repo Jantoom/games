@@ -19,8 +19,8 @@ import { getGamesData, saveGameData } from '@/lib/utils';
 
 interface LeaderboardProps<T extends string> {
   game: string;
-  shouldOpen: boolean;
-  seed: string;
+  shouldOpen?: boolean;
+  seed?: string;
   difficulty: T;
   difficulties: T[];
 }
@@ -36,8 +36,8 @@ const Leaderboard = <
   },
 >({
   game,
-  shouldOpen,
-  seed,
+  shouldOpen = false,
+  seed = '',
   difficulty,
   difficulties,
 }: LeaderboardProps<T>) => {
@@ -113,20 +113,20 @@ const Leaderboard = <
                 }}
               >
                 <Table className="border-separate border-spacing-0">
-                  <TableHeader className="sticky top-0">
+                  <TableHeader className="sticky top-0 w-full bg-background">
                     <TableRow>
-                      <TableHead className="border-b border-border bg-background px-2">
+                      <TableHead className="border-b border-border px-0">
                         Score
                       </TableHead>
                       {leaderboard[0]?.hints !== undefined && (
-                        <TableHead className="border-b border-border bg-background px-2 text-center">
+                        <TableHead className="border-b border-border px-0 text-center">
                           Hints used
                         </TableHead>
                       )}
-                      <TableHead className="border-b border-border bg-background px-2 text-center">
+                      <TableHead className="border-b border-border px-0 text-center">
                         Date
                       </TableHead>
-                      <TableHead className="border-b border-border bg-background px-2 text-center">
+                      <TableHead className="border-b border-border px-0 text-end">
                         Delete
                       </TableHead>
                     </TableRow>
@@ -141,11 +141,11 @@ const Leaderboard = <
                             key={index}
                             className={`text-sm font-medium ${isCurrent ? 'text-primary' : ''}`}
                           >
-                            <TableCell className="px-2">
+                            <TableCell className="px-0">
                               {entry.score}
                             </TableCell>
                             {entry.hints !== undefined && (
-                              <TableCell className="px-2 text-center">
+                              <TableCell className="px-0 text-center">
                                 {typeof entry.hints === 'number' ? (
                                   entry.hints
                                 ) : (
@@ -160,14 +160,14 @@ const Leaderboard = <
                                 )}
                               </TableCell>
                             )}
-                            <TableCell className="px-2 text-center">
+                            <TableCell className="px-0 text-center">
                               {new Date(entry.date).toLocaleDateString()}
                             </TableCell>
-                            <TableCell className="px-2 text-end">
+                            <TableCell className="px-0 text-end">
                               <Button
                                 variant="ghost"
                                 onClick={() => deleteEntry(index)}
-                                className="rounded-full hover:bg-secondary"
+                                className="rounded-full px-0 hover:bg-secondary"
                               >
                                 <Trash />
                               </Button>

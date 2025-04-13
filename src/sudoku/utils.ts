@@ -1,3 +1,4 @@
+import { SerializableSet } from '@/lib/types';
 import { shuffle } from '@/lib/utils';
 import { Difficulty, Grid, Notes } from '@/sudoku/types';
 
@@ -39,7 +40,7 @@ const isValidCell = (
 const toUniqueCells = (
   cells: { row: number; col: number }[],
 ): { row: number; col: number }[] =>
-  toCellCoords([...new Set(toCellKeys(cells))] as string[]);
+  toCellCoords([...new SerializableSet(toCellKeys(cells))] as string[]);
 
 export const generateSudoku = (
   difficulty: Difficulty,
@@ -131,9 +132,9 @@ export const getMismatchCells = (
 export const getAutoNotes = (grid: Grid): Notes =>
   cellCoords
     .filter(({ row, col }) => grid[row][col] === 0)
-    .map(({ row, col }): [string, Set<number>] => [
+    .map(({ row, col }): [string, SerializableSet<number>] => [
       `${row}-${col}`,
-      new Set(
+      new SerializableSet(
         [1, 2, 3, 4, 5, 6, 7, 8, 9].filter((num) =>
           isValidCell(grid, row, col, num),
         ),

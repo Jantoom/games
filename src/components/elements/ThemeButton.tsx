@@ -3,12 +3,12 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { DialogClose } from '@/components/ui/dialog';
 import { Themes } from '@/lib/styles';
-import { useGlobalState } from '@/menu/globalState';
+import { useGamesState } from '../../lib/state';
 import DialogButton from '../generics/DialogButton';
 
 const ThemeButton: React.FC = () => {
   const [isThemeOpen, setIsThemeOpen] = useState(false);
-  const { theme, setTheme } = useGlobalState();
+  const { theme, setTheme } = useGamesState();
 
   return (
     <DialogButton

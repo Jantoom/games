@@ -2,7 +2,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Bomb, Flag } from 'lucide-react';
 import React from 'react';
 import { Themes } from '@/lib/styles';
-import { useGlobalState } from '@/menu/globalState';
+import { useGamesState } from '../../../lib/state';
 
 interface CellProps {
   id: string;
@@ -12,13 +12,13 @@ interface CellProps {
 }
 
 const Cell: React.FC<CellProps> = ({ id, num, flagged, isExploded }) => {
-  const { theme } = useGlobalState();
+  const { theme } = useGamesState();
   const randomDelay = Math.random() * 0.1;
 
   return (
     <div
       data-id={`${id}`}
-      className={`aspect-square w-full ${num === undefined ? 'cursor-pointer' : ''}`}
+      className={`aspect-square w-full ${num == undefined ? 'cursor-pointer' : ''}`}
     >
       <motion.div
         key="cell"
@@ -29,7 +29,7 @@ const Cell: React.FC<CellProps> = ({ id, num, flagged, isExploded }) => {
           ease: 'easeInOut',
           delay: randomDelay * 2,
         }}
-        className={`relative flex h-full w-full items-center justify-center ${(num === undefined && !flagged) || isExploded ? 'bg-secondary' : ''}`}
+        className={`relative flex h-full w-full items-center justify-center ${(num == undefined && !flagged) || isExploded ? 'bg-secondary' : ''}`}
       >
         <AnimatePresence mode="sync">
           {flagged || isExploded ? (

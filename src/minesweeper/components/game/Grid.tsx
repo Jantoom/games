@@ -16,9 +16,9 @@ import Cell from './Cell';
 
 const Grid: React.FC = () => {
   const {
+    status,
     seed,
     dimensions,
-    status,
     grid,
     bombs,
     flags,
@@ -289,7 +289,7 @@ const Grid: React.FC = () => {
   }, [dimensions, scaleApi]);
 
   useEffect(() => {
-    if (status === 'finished') {
+    if (status === 'finished' && min.get() !== 0) {
       void scaleApi.start({
         scale: min.get(),
         opacity: Math.min(1, max.get() - (max.get() - min.get()) - 1),
@@ -381,9 +381,7 @@ const Grid: React.FC = () => {
                   id={`${row}-${col}`}
                   num={num}
                   flagged={flags.has(`${row}-${col}`)}
-                  isExploded={
-                    bombs.has(`${row}-${col}`) && num != undefined
-                  }
+                  isExploded={bombs.has(`${row}-${col}`) && num != undefined}
                 />
               )),
             )}

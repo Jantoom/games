@@ -4,12 +4,13 @@ import { Label } from '../ui/label';
 
 interface TimerTextProps {
   className?: string;
+  initial: number;
   active: boolean;
   tick: () => number;
 }
-const TimerText: React.FC<TimerTextProps> = ({ className, active, tick }) => {
+const TimerText: React.FC<TimerTextProps> = ({ className, initial, active, tick }) => {
   const timerRef = useRef<NodeJS.Timeout | undefined>(undefined);
-  const [time, setTime] = useState(0);
+  const [time, setTime] = useState(initial);
 
   useEffect(() => {
     if (active) {

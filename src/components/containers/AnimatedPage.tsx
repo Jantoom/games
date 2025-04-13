@@ -1,13 +1,16 @@
-import { motion } from 'framer-motion';
+import { useGamesState } from '@/lib/state';
+import { PageDepth } from '@/lib/types';
+import { motion, useIsPresent } from 'framer-motion';
 import React, { useEffect } from 'react';
 
 interface AnimatedPageProps {
-  depth: number;
+  pageDepth: PageDepth;
   children: React.ReactNode;
 }
 
-const AnimatedPage: React.FC<AnimatedPageProps> = ({ depth, children }) => {
-  const direction = depth === 1 ? 1 : -1;
+const AnimatedPage: React.FC<AnimatedPageProps> = ({ pageDepth, children }) => {
+  const { navDirection, setState } = useGamesState();
+  const isPresent = useIsPresent();
 
   useEffect(() => {
     document.body.style.overflow = 'hidden';
@@ -15,15 +18,32 @@ const AnimatedPage: React.FC<AnimatedPageProps> = ({ depth, children }) => {
     return () => {
       document.body.style.overflow = 'auto';
     };
-  }, []);
+  }, [pageDepth, setState]);
 
   return (
     <motion.div
-      layout
-      key="page"
-      initial={{ opacity: 0, x: 100 * direction }}
+      key={pageDepth}
+      initial={{
+        opacity: 0,
+        x: isPresent
+          ? navDirection === 'left'
+            ? -100
+            : 100
+          : navDirection === 'left'
+            ? 100
+            : -100,
+      }}
       animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: 100 * direction }}
+      exit={{
+        opacity: 0,
+        x: isPresent
+          ? navDirection === 'left'
+            ? -100
+            : 100
+          : navDirection === 'left'
+            ? 100
+            : -100,
+      }}
       transition={{ duration: 0.5, ease: 'easeInOut' }}
       className="flex h-svh flex-col items-center px-[2.5vw]"
     >

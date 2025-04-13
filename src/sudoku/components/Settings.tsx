@@ -1,9 +1,9 @@
+import { useSudokuState } from '@/sudoku/state';
 import {
   SettingsContainer,
   SettingsGroup,
   SettingsSwitch,
 } from '../../components/generics/Settings';
-import { useSudokuState } from '@/sudoku/state';
 
 const Settings: React.FC = () => {
   const {
@@ -34,7 +34,9 @@ const Settings: React.FC = () => {
         <SettingsSwitch
           name="Automatically remove notes"
           active={optAssistAutoRemove}
-          change={() => setState((s) => ({ optAssistAutoRemove: !s.optAssistAutoRemove }))}
+          change={() =>
+            setState((s) => ({ optAssistAutoRemove: !s.optAssistAutoRemove }))
+          }
         />
       </SettingsGroup>
       <SettingsGroup title="Appearance">

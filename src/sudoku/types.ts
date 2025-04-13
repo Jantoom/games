@@ -1,7 +1,9 @@
+import { SerializableSet } from "@/lib/types";
+
 export const difficulties = ['easy', 'medium', 'hard'] as const;
 export type Difficulty = (typeof difficulties)[number];
 export type Grid = number[][];
-export type CellNotes = Set<number>;
+export type CellNotes = SerializableSet<number>;
 export type Notes = { [cell: string]: CellNotes };
 export type HistoryEntry = {
   grid: Grid;

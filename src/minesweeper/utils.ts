@@ -1,3 +1,4 @@
+import { SerializableSet } from '@/lib/types';
 import { Difficulty, Grid } from '@/minesweeper/types';
 
 let cellCoords: { row: number; col: number }[] = Array.from({
@@ -14,7 +15,7 @@ export const generateMinesweeper = (
   dimensions: [number, number];
   numBombs: number;
   puzzle: Grid;
-  bombs: Set<string>;
+  bombs: SerializableSet<string>;
 } => {
   // First, prepare based on difficulty
   dimensions = {
@@ -38,7 +39,7 @@ export const generateMinesweeper = (
     Array.from({ length: dimensions.col }),
   ) as Grid;
 
-  const bombs = new Set<string>();
+  const bombs = new SerializableSet<string>();
 
   let count = 0;
   while (count < numberBombs) {
@@ -58,7 +59,7 @@ export const generateMinesweeper = (
   };
 };
 
-export const isSolved = (bombs: Set<string>, flags: Set<string>): boolean =>
+export const isSolved = (bombs: SerializableSet<string>, flags: SerializableSet<string>): boolean =>
   bombs.size > 0 &&
   bombs.size === flags.size &&
   ([...bombs] as string[]).every((bomb) => flags.has(bomb));
@@ -90,13 +91,13 @@ export const getAdjacentCells = (
     );
 
 export const getAdjacentSafeCells = (
-  bombs: Set<string>,
+  bombs: SerializableSet<string>,
   adjacentCells: { row: number; col: number }[],
 ): { row: number; col: number }[] =>
   toCellCoords(toCellKeys(adjacentCells).filter((key) => !bombs.has(key)));
 
 export const getSafeCells = (
-  bombs: Set<string>,
+  bombs: SerializableSet<string>,
   row: number,
   col: number,
 ): { row: number; col: number; adjacentBombs: number }[] => {
@@ -104,7 +105,7 @@ export const getSafeCells = (
 
   const result: { row: number; col: number; adjacentBombs: number }[] = [];
   const queue: { row: number; col: number }[] = [{ row, col }];
-  const visited = new Set<string>();
+  const visited = new SerializableSet<string>();
 
   while (queue.length > 0) {
     const { row, col } = queue.shift() as { row: number; col: number };
@@ -133,7 +134,7 @@ export const getSafeCells = (
 
 export const getHintCells = (
   grid: Grid,
-  bombs: Set<string>,
+  bombs: SerializableSet<string>,
 ): { row: number; col: number }[] =>
   cellCoords.filter(
     ({ row, col }) =>

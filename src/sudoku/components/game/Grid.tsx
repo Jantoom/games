@@ -1,7 +1,7 @@
+import { animated, useSpring } from '@react-spring/web';
+import { useCallback, useEffect, useRef } from 'react';
 import Cell from '@/sudoku/components/game/Cell';
 import { useSudokuState } from '../../state';
-import { useCallback, useEffect, useRef } from 'react';
-import { animated, useSpring } from '@react-spring/web';
 
 const Grid: React.FC = () => {
   const {

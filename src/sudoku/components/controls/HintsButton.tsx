@@ -1,6 +1,6 @@
 import { Lightbulb } from 'lucide-react';
 import React, { useCallback, useRef, useState } from 'react';
-
+import DialogButton from '@/components/generics/DialogButton';
 import { Button } from '@/components/ui/button';
 import { DialogClose } from '@/components/ui/dialog';
 import { useSudokuState } from '@/sudoku/state';
@@ -11,7 +11,6 @@ import {
   getMismatchCells,
   toCellKeys,
 } from '@/sudoku/utils';
-import DialogButton from '@/components/generics/DialogButton';
 
 const HintsButton: React.FC = () => {
   const { status, solvedGrid, grid, notes, update, setState } =

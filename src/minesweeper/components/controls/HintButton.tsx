@@ -1,11 +1,10 @@
 import { Lightbulb } from 'lucide-react';
 import { useState } from 'react';
-
+import DialogButton from '@/components/generics/DialogButton';
 import { Button } from '@/components/ui/button';
 import { DialogClose } from '@/components/ui/dialog';
 import { useMinesweeperState } from '@/minesweeper/state';
 import { getHintCells } from '@/minesweeper/utils';
-import DialogButton from '@/components/generics/DialogButton';
 
 const HintButton: React.FC = () => {
   const { status, grid, bombs, update, setState } = useMinesweeperState();

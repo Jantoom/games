@@ -1,5 +1,6 @@
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import { SerializableSet } from './types';
 
 /**
  *
@@ -25,8 +26,48 @@ export const shuffle = <T>(array: T[]): T[] => {
   return arr;
 };
 
-export const getGamesData = () =>
-  JSON.parse(localStorage.getItem(`jantoom-games`) ?? '{}');
+export const addUrlSubpath = (url: string, param: string) => {
+  return url + param;
+};
+
+export const swapLastUrlSubpath = (url: string, param: string) => {
+  const segments = url.split('/');
+  segments[segments.length - 1] = param.startsWith('/')
+    ? param.slice(1)
+    : param;
+  return segments.join('/');
+};
+
+export const goToUrlSubpath = (url: string, index: number) => {
+  return url.split('/').slice(0, index).join('/');
+};
+
+export const getPageDepthFromUrl = (url: string) => {
+  const token = url.split('/')[-1];
+  switch (token) {
+    case 'play':
+      return 2;
+    case 'create':
+      return 1;
+    default:
+      return 0;
+  }
+};
+
+export const getGamesData = () => {
+  const regex = /\d\-\d/;
+  const shouldBeSet = (key: string) => regex.test(key) || key === 'bombs' || key === 'flags';
+
+  return JSON.parse(
+    localStorage.getItem(`jantoom-games`) ?? '{}',
+    (key, value) => {
+      if (value && shouldBeSet(key)) {
+        return new SerializableSet(Array.from(value));
+      }
+      return value;
+    },
+  );
+};
 
 export const saveGameData = (gamesData: object, gameData: object) =>
   localStorage.setItem(

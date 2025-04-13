@@ -1,5 +1,6 @@
 import seedrandom from 'seedrandom';
 import { create } from 'zustand';
+import { GameStatus, SerializableSet } from '@/lib/types';
 import { formatTime, getGamesData, saveGameData } from '@/lib/utils';
 import {
   Difficulty,
@@ -9,7 +10,6 @@ import {
   Notes,
 } from '@/sudoku/types';
 import { generateSudoku, getRelatedCells, toCellKeys } from '@/sudoku/utils';
-import { GameStatus } from '@/lib/types';
 
 export type SudokuState = {
   status: GameStatus;
@@ -37,25 +37,28 @@ export type SudokuState = {
       | Partial<SudokuState>
       | ((state: SudokuState) => Partial<SudokuState>),
   ) => void;
+  wipe: () => void;
+  read: () => SudokuState | undefined;
+  save: () => void;
   tick: () => number;
-  reset: (difficulty?: Difficulty) => void;
+  reset: (difficulty?: Difficulty, state?: SudokuState) => void;
   restart: () => void;
   update: (row: number, col: number, num: number, pencilMode: boolean) => void;
   undo: () => void;
   stop: (win: boolean) => void;
 };
 
-export const useSudokuState = create<SudokuState>((set) => ({
-  status: undefined,
+const baseSudokuState: Partial<SudokuState> = {
+  status: 'setup',
   seed: '',
   time: 0,
-  difficulty: 'easy' as Difficulty,
-  originalGrid: [] as Grid,
-  solvedGrid: [] as Grid,
-  grid: [] as Grid,
-  notes: {} as Notes,
-  history: [] as HistoryEntry[],
-  errors: [] as string[],
+  difficulty: 'easy',
+  originalGrid: [],
+  solvedGrid: [],
+  grid: [],
+  notes: {},
+  history: [],
+  errors: [],
   selectedNumber: undefined,
   pencilMode: false,
   optAssistHighlight: false,
@@ -65,44 +68,109 @@ export const useSudokuState = create<SudokuState>((set) => ({
   usedAssistHighlight: false,
   usedAssistRemaining: false,
   usedAssistAutoRemove: false,
-  leaderboard: [] as LeaderboardEntry[],
+  leaderboard: [],
+};
+
+export const useSudokuState = create<SudokuState>((set) => ({
+  status: 'setup',
+  seed: '',
+  time: 0,
+  difficulty: 'easy',
+  originalGrid: [],
+  solvedGrid: [],
+  grid: [],
+  notes: {},
+  history: [],
+  errors: [],
+  selectedNumber: undefined,
+  pencilMode: false,
+  optAssistHighlight: false,
+  optAssistRemaining: false,
+  optAssistAutoRemove: false,
+  optShowTime: true,
+  usedAssistHighlight: false,
+  usedAssistRemaining: false,
+  usedAssistAutoRemove: false,
+  leaderboard: [],
   setState: (state) => set(state),
+  wipe: () => {
+    set(baseSudokuState);
+  },
+  read: () => {
+    return (getGamesData()['sudoku'] as SudokuState) ?? undefined;
+  },
+  save: () => {
+    set((prev) => {
+      const gamesData = getGamesData();
+      const {
+        setState,
+        read,
+        save,
+        tick,
+        reset,
+        restart,
+        update,
+        undo,
+        stop,
+        ...saveData
+      } = prev;
+
+      saveGameData(gamesData, {
+        sudoku: saveData,
+      });
+
+      return {};
+    });
+  },
   tick: () => {
-    let time: number = undefined;
+    let time: number;
     set((prev) => {
       time = prev.time + 1;
       return { time };
     });
     return time;
   },
-  reset: (difficulty = 'easy') => {
-    const newSeed = `${Math.random()}`;
-    seedrandom(newSeed, { global: true });
-    const { puzzle, solution } = generateSudoku(difficulty);
+  reset: (difficulty, state) => {
+    set((prev) => {
+      const newSeed = `${Math.random()}`;
+      seedrandom(newSeed, { global: true });
+      const { puzzle, solution } = generateSudoku(
+        difficulty ?? state?.difficulty ?? prev.difficulty,
+      );
 
-    set({
-      status: 'play',
-      seed: newSeed,
-      time: 0,
-      difficulty: difficulty,
-      originalGrid: puzzle.map((row) => [...row]),
-      solvedGrid: solution,
-      grid: puzzle,
-      notes: Object.fromEntries(
-        Array.from({ length: 9 }).flatMap((_, row) =>
-          Array.from({ length: 9 }).map((_, col) => [
-            `${row}-${col}`,
-            new Set<number>(),
-          ]),
+      const resetState = {
+        status: 'play',
+        seed: newSeed,
+        time: 0,
+        difficulty: difficulty ?? state?.difficulty ?? prev.difficulty,
+        originalGrid: puzzle.map((row) => [...row]),
+        solvedGrid: solution,
+        grid: puzzle,
+        notes: Object.fromEntries(
+          Array.from({ length: 9 }).flatMap((_, row) =>
+            Array.from({ length: 9 }).map((_, col) => [
+              `${row}-${col}`,
+              new SerializableSet<number>(),
+            ]),
+          ),
         ),
-      ),
-      history: [],
-      errors: [],
-      selectedNumber: undefined,
-      pencilMode: false,
-      usedAssistHighlight: false,
-      usedAssistRemaining: false,
-      usedAssistAutoRemove: false,
+        history: [],
+        errors: [],
+        selectedNumber: undefined,
+        pencilMode: false,
+        usedAssistHighlight: false,
+        usedAssistRemaining: false,
+        usedAssistAutoRemove: false,
+      } as Partial<SudokuState>;
+
+      if (state) {
+        return {
+          ...resetState,
+          ...state,
+        };
+      } else {
+        return resetState;
+      }
     });
   },
   restart: () => {
@@ -112,7 +180,7 @@ export const useSudokuState = create<SudokuState>((set) => ({
         Array.from({ length: 9 }).flatMap((_, row) =>
           Array.from({ length: 9 }).map((_, col) => [
             `${row}-${col}`,
-            new Set<number>(),
+            new SerializableSet<number>(),
           ]),
         ),
       ),
@@ -126,6 +194,8 @@ export const useSudokuState = create<SudokuState>((set) => ({
     set((prev) => {
       if (prev.status !== 'play') return {};
 
+      console.log(prev);
+
       const newHistory = [
         ...prev.history,
         {
@@ -133,7 +203,7 @@ export const useSudokuState = create<SudokuState>((set) => ({
           notes: Object.fromEntries(
             Object.entries(prev.notes).map(([key, value]) => [
               key,
-              new Set(value),
+              new SerializableSet(value),
             ]),
           ),
         },
@@ -141,7 +211,7 @@ export const useSudokuState = create<SudokuState>((set) => ({
 
       const newNotes = { ...prev.notes };
       if (num === 0) {
-        newNotes[`${row}-${col}`] = new Set();
+        newNotes[`${row}-${col}`] = new SerializableSet();
       } else {
         const affectedCells = pencilMode
           ? [`${row}-${col}`]
@@ -149,7 +219,7 @@ export const useSudokuState = create<SudokuState>((set) => ({
             ? toCellKeys(getRelatedCells(row, col))
             : [];
         for (const key of affectedCells) {
-          newNotes[key] = new Set(prev.notes[key]);
+          newNotes[key] = new SerializableSet(prev.notes[key]);
           if (newNotes[key].has(num)) {
             newNotes[key].delete(num);
           } else if (pencilMode) {
@@ -176,7 +246,7 @@ export const useSudokuState = create<SudokuState>((set) => ({
             notes: Object.fromEntries(
               Object.entries(lastStep.notes).map(([key, value]) => [
                 key,
-                new Set(value),
+                new SerializableSet(value),
               ]),
             ),
             history: prev.history.slice(0, -1),

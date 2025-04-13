@@ -1,7 +1,7 @@
 import { Pencil } from 'lucide-react';
 import React from 'react';
-import ControlButton from '../../../components/generics/ControlButton';
 import { useSudokuState } from '@/sudoku/state';
+import ControlButton from '../../../components/generics/ControlButton';
 
 const PencilButton: React.FC = () => {
   const { status, pencilMode, setState } = useSudokuState();

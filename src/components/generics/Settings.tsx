@@ -7,7 +7,7 @@ const SettingsContainer: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   return (
     <div
-      className="flex max-h-[60svh] min-h-[20svh] touch-pan-y flex-col gap-y-6 overflow-auto px-2"
+      className="flex max-h-[60svh] min-h-[20svh] w-full touch-pan-y flex-col gap-y-6 overflow-auto px-2"
       style={{
         msOverflowStyle: 'none',
         scrollbarWidth: 'none',
@@ -23,7 +23,7 @@ const SettingsGroup: React.FC<{ title: string; children: React.ReactNode }> = ({
   children,
 }) => {
   return (
-    <div className="grid w-full grid-cols-[1fr_min-content] items-center gap-y-2">
+    <div className="grid w-full grid-cols-[1fr_min-content] items-center gap-2">
       <Label className="col-span-2 text-base">{title}</Label>
       {children}
     </div>

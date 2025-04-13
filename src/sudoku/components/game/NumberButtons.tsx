@@ -44,7 +44,7 @@ const NumberButtons: React.FC = () => {
                 </span>
               </>
             ) : (
-              <Eraser className="h-1/2" />
+              <Eraser className="h-2/5" />
             )}
           </Button>
         );

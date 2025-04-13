@@ -13,14 +13,14 @@ interface DifficultyCarouselProps<T extends string> {
   className?: string;
   difficulty: T;
   difficulties: T[];
-  reset: (difficulty: T) => void;
+  setDifficulty: React.Dispatch<React.SetStateAction<T>>;
 }
 
 const DifficultyCarousel = <T extends string>({
   className,
   difficulty,
   difficulties,
-  reset,
+  setDifficulty,
 }: DifficultyCarouselProps<T>) => {
   const [api, setApi] = useState<CarouselApi>();
   const [isInitialised, setIsInitialised] = useState(false);
@@ -31,11 +31,11 @@ const DifficultyCarousel = <T extends string>({
       api.scrollTo(difficulties.indexOf(difficulty), true);
 
       api.on('select', () => {
-        reset(difficulties[api.selectedScrollSnap()]);
+        setDifficulty(difficulties[api.selectedScrollSnap()]);
       });
       setIsInitialised(true);
     }
-  }, [api, isInitialised, difficulty, difficulties, reset]);
+  }, [api, isInitialised, difficulty, difficulties, setDifficulty]);
 
   return (
     <Carousel
@@ -44,7 +44,7 @@ const DifficultyCarousel = <T extends string>({
         align: 'start',
         loop: true,
       }}
-      className={cn('flex min-w-32 flex-row items-center', className)}
+      className={cn('flex w-full min-w-32 flex-row items-center', className)}
     >
       <Button
         variant="ghost"
@@ -53,13 +53,13 @@ const DifficultyCarousel = <T extends string>({
       >
         <ChevronLeft />
       </Button>
-      <CarouselContent className="">
+      <CarouselContent>
         {difficulties.map((diff, index) => (
           <CarouselItem key={index}>
             <Button
               variant="ghost"
               className="w-full rounded-full pb-2 text-center text-base hover:bg-secondary"
-              onClick={() => reset(diff)}
+              onClick={() => setDifficulty(diff)}
             >
               {diff[0].toUpperCase() + diff.slice(1)}
             </Button>

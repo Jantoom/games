@@ -12,7 +12,7 @@
     "lint": "eslint",
     "fix": "eslint --fix",
     "preview": "vite preview",
-    "deploy": "gh-pages -d dist"
+    "deploy": "cp dist/index.html dist/404.html && gh-pages -d dist"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",

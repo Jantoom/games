@@ -1,7 +1,7 @@
 import React from 'react';
 import Menu from '@/menu/Menu';
-import Minesweeper from '@/minesweeper/Minesweeper';
-import Sudoku from '@/sudoku/Sudoku';
+import { MinesweeperCreate, MinesweeperPlay } from '@/minesweeper/Minesweeper';
+import { SudokuCreate, SudokuPlay } from './sudoku/Sudoku';
 
 const Page = {
   Menu: {
@@ -9,15 +9,25 @@ const Page = {
     path: '/games',
     element: React.createElement(Menu),
   },
-  Sudoku: {
-    name: 'Sudoku',
-    path: '/games/sudoku',
-    element: React.createElement(Sudoku),
+  SudokuCreate: {
+    name: 'SudokuCreate',
+    path: '/games/sudoku/create',
+    element: React.createElement(SudokuCreate),
   },
-  Minesweeper: {
+  SudokuPlay: {
+    name: 'SudokuPlay',
+    path: '/games/sudoku/play',
+    element: React.createElement(SudokuPlay),
+  },
+  MinesweeperCreate: {
     name: 'Minesweeper',
-    path: '/games/minesweeper',
-    element: React.createElement(Minesweeper),
+    path: '/games/minesweeper/create',
+    element: React.createElement(MinesweeperCreate),
+  },
+  MinesweeperPlay: {
+    name: 'Minesweeper',
+    path: '/games/minesweeper/play',
+    element: React.createElement(MinesweeperPlay),
   },
 } as const;
 

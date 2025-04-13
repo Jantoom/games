@@ -1,12 +1,19 @@
 import { create } from 'zustand';
 import { Themes } from '@/lib/styles';
 
-export type GlobalState = {
+export type GamesState = {
+  navDirection: 'left' | 'right';
   theme: string;
   setTheme: (theme: string) => void;
+  setState: (
+    newState:
+      | Partial<GamesState>
+      | ((state: GamesState) => Partial<GamesState>),
+  ) => void;
 };
 
-export const useGlobalState = create<GlobalState>((set) => ({
+export const useGamesState = create<GamesState>((set) => ({
+  navDirection: undefined,
   theme: localStorage.getItem('theme') ?? Object.keys(Themes)[0],
   setTheme: (theme: string) => {
     if (theme in Themes) {
@@ -17,4 +24,5 @@ export const useGlobalState = create<GlobalState>((set) => ({
     }
     set({ theme: theme });
   },
+  setState: (newState) => set(newState),
 }));
