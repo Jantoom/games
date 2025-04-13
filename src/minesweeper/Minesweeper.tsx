@@ -64,7 +64,7 @@ const MinesweeperPlay: React.FC = () => {
     if (status === 'setup') {
       const saveData = read();
       if (!saveData?.status || saveData.status === 'setup') {
-        navigate('/games/sudoku/create');
+        navigate('/games/minesweeper/create');
       } else {
         reset(undefined, saveData);
       }
@@ -96,7 +96,9 @@ const MinesweeperPlay: React.FC = () => {
               </Label>
             </div>
           )}
-          {optShowTime && <TimerText initial={time} active={status === 'play'} tick={tick} />}
+          {optShowTime && (
+            <TimerText initial={time} active={status === 'play'} tick={tick} />
+          )}
         </Header>
         <Body>
           <Grid />
