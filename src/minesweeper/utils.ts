@@ -1,13 +1,22 @@
 import { SerializableSet } from '@/lib/types';
 import { Difficulty, Grid } from '@/minesweeper/types';
 
+const difficultyConfig: Record<
+  Difficulty,
+  { numRows: number; numCols: number; numBombs: number }
+> = {
+  easy: { numRows: 12, numCols: 8, numBombs: 12 },
+  medium: { numRows: 21, numCols: 14, numBombs: 36 },
+  hard: { numRows: 30, numCols: 20, numBombs: 72 },
+};
+
+let config: { numRows: number; numCols: number; numBombs: number } =
+  difficultyConfig.easy;
 let cellCoords: { row: number; col: number }[] = Array.from({
   length: 9,
 }).flatMap((_, row) =>
   Array.from({ length: 9 }).map((_, col) => ({ row, col })),
 );
-let dimensions: { row: number; col: number } = { row: 15, col: 10 };
-let numberBombs: number = 15;
 
 export const generateMinesweeper = (
   difficulty: Difficulty,
@@ -17,50 +26,33 @@ export const generateMinesweeper = (
   puzzle: Grid;
   bombs: SerializableSet<string>;
 } => {
-  // First, prepare based on difficulty
-  dimensions = {
-    easy: { row: 12, col: 8 },
-    medium: { row: 21, col: 14 },
-    hard: { row: 30, col: 20 },
-  }[difficulty];
-
-  numberBombs = {
-    easy: 1,
-    medium: 36,
-    hard: 72,
-  }[difficulty];
-
-  // Then generate grids and add bombs based on difficulty
-  cellCoords = Array.from({ length: dimensions.row }).flatMap((_, row) =>
-    Array.from({ length: dimensions.col }).map((_, col) => ({ row, col })),
+  config = difficultyConfig[difficulty];
+  cellCoords = Array.from({ length: config.numRows }).flatMap((_, row) =>
+    Array.from({ length: config.numCols }).map((_, col) => ({ row, col })),
   );
 
-  const puzzle = Array.from({ length: dimensions.row }).map(() =>
-    Array.from({ length: dimensions.col }),
+  const puzzle = Array.from({ length: config.numRows }).map(() =>
+    Array.from({ length: config.numCols }),
   ) as Grid;
-
   const bombs = new SerializableSet<string>();
-
-  let count = 0;
-  while (count < numberBombs) {
-    const row = Math.floor(Math.random() * dimensions.row);
-    const col = Math.floor(Math.random() * dimensions.col);
-    if (!bombs.has(`${row}-${col}`)) {
-      bombs.add(`${row}-${col}`);
-      count++;
-    }
+  while (bombs.size < config.numBombs) {
+    bombs.add(
+      `${Math.floor(Math.random() * config.numRows)}-${Math.floor(Math.random() * config.numCols)}`,
+    );
   }
 
   return {
-    dimensions: [dimensions.row, dimensions.col],
-    numBombs: numberBombs,
+    dimensions: [config.numRows, config.numCols],
+    numBombs: config.numBombs,
     puzzle,
     bombs,
   };
 };
 
-export const isSolved = (bombs: SerializableSet<string>, flags: SerializableSet<string>): boolean =>
-  bombs.size > 0 &&
+export const isSolved = (
+  bombs: SerializableSet<string>,
+  flags: SerializableSet<string>,
+): boolean =>
   bombs.size === flags.size &&
   ([...bombs] as string[]).every((bomb) => flags.has(bomb));
 
@@ -84,9 +76,9 @@ export const getAdjacentCells = (
     .filter(
       ({ row: y, col: x }) =>
         y > -1 &&
-        y < dimensions.row &&
+        y < config.numRows &&
         x > -1 &&
-        x < dimensions.col &&
+        x < config.numCols &&
         !(row === y && col === x),
     );
 

@@ -8,7 +8,12 @@ interface TimerTextProps {
   active: boolean;
   tick: () => number;
 }
-const TimerText: React.FC<TimerTextProps> = ({ className, initial, active, tick }) => {
+const TimerText: React.FC<TimerTextProps> = ({
+  className,
+  initial,
+  active,
+  tick,
+}) => {
   const timerRef = useRef<NodeJS.Timeout | undefined>(undefined);
   const [time, setTime] = useState(initial);
 

@@ -45,24 +45,28 @@ export const goToUrlSubpath = (url: string, index: number) => {
 export const getPageDepthFromUrl = (url: string) => {
   const token = url.split('/')[-1];
   switch (token) {
-    case 'play':
+    case 'play': {
       return 2;
-    case 'create':
+    }
+    case 'create': {
       return 1;
-    default:
+    }
+    default: {
       return 0;
+    }
   }
 };
 
 export const getGamesData = () => {
   const regex = /\d\-\d/;
-  const shouldBeSet = (key: string) => regex.test(key) || key === 'bombs' || key === 'flags';
+  const shouldBeSet = (key: string) =>
+    regex.test(key) || key === 'bombs' || key === 'flags';
 
   return JSON.parse(
     localStorage.getItem(`jantoom-games`) ?? '{}',
     (key, value) => {
       if (value && shouldBeSet(key)) {
-        return new SerializableSet(Array.from(value));
+        return new SerializableSet([...value]);
       }
       return value;
     },

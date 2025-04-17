@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import AnimatedPage from '@/components/containers/AnimatedPage';
 import Body from '@/components/containers/Body';
 import Footer from '@/components/containers/Footer';
@@ -7,6 +8,7 @@ import LeaderboardButton from '@/components/elements/LeaderboardButton';
 import ThemeButton from '@/components/elements/ThemeButton';
 import { ResetDialog, ResetSetup } from '@/components/generics/Reset';
 import TimerText from '@/components/generics/TimerText';
+import { PageDepth } from '@/lib/types';
 import HintsButton from '@/sudoku/components/controls/HintsButton';
 import PencilButton from '@/sudoku/components/controls/PencilButton';
 import UndoButton from '@/sudoku/components/controls/UndoButton';
@@ -16,8 +18,6 @@ import Settings from '@/sudoku/components/Settings';
 import { useSudokuState } from '@/sudoku/state';
 import { isSolved } from '@/sudoku/utils';
 import { difficulties } from './types';
-import { PageDepth } from '@/lib/types';
-import { useNavigate } from 'react-router-dom';
 
 const SudokuCreate: React.FC = () => {
   const { status, read, reset } = useSudokuState();
@@ -25,7 +25,7 @@ const SudokuCreate: React.FC = () => {
   return (
     <AnimatedPage pageDepth={PageDepth.Create}>
       <Header back="menu" />
-      <Body className="w-[80svw] justify-center gap-y-8">
+      <Body variant="setup">
         <ResetSetup
           status={status}
           read={read}
@@ -58,42 +58,31 @@ const SudokuPlay: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (status !== 'play') {
+    if (status === 'setup') {
       const saveData = read();
-      if (saveData?.status === 'play') {
-        reset(undefined, saveData);
-      } else {
+      if (!saveData?.status || saveData.status === 'setup') {
         navigate('/games/sudoku/create');
+      } else {
+        reset(undefined, saveData);
       }
-    } else if (isSolved(grid)) {
+    } else if (status === 'play' && isSolved(grid)) {
       stop(true);
     }
   }, [status, grid, read, reset, stop]);
 
-  useEffect(() => {
-    const handleBeforeUnload = (_event: BeforeUnloadEvent) => {
-      save();
-    };
-    window.addEventListener('beforeunload', handleBeforeUnload);
-
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-    };
-  }, [save]);
-
   return (
     status !== 'setup' && (
-      <AnimatedPage pageDepth={PageDepth.Play}>
+      <AnimatedPage pageDepth={PageDepth.Play} save={save}>
         <Header back="create" settings={<Settings />}>
           {optShowTime && (
             <TimerText initial={time} active={status === 'play'} tick={tick} />
           )}
         </Header>
-        <Body>
+        <Body variant="play">
           <Grid />
           <NumberButtons />
         </Body>
-        <Footer reset={<ResetDialog reset={reset} restart={() => restart()} />}>
+        <Footer reset={<ResetDialog reset={reset} restart={restart} />}>
           <HintsButton />
           <PencilButton />
           <UndoButton />

@@ -1,9 +1,9 @@
 import { AnimatePresence, motion, useIsPresent } from 'framer-motion';
 import { Settings } from 'lucide-react';
 import React, { useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import BackButton from '../elements/BackButton';
 import DialogButton from '../generics/DialogButton';
-import { useLocation } from 'react-router-dom';
 
 interface HeaderProps {
   back?: 'menu' | 'create' | 'play';

@@ -2,8 +2,8 @@ import { ChevronLeft } from 'lucide-react';
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Label } from '@/components/ui/label';
-import { cn, goToUrlSubpath, swapLastUrlSubpath } from '@/lib/utils';
 import { useGamesState } from '@/lib/state';
+import { cn, goToUrlSubpath, swapLastUrlSubpath } from '@/lib/utils';
 
 interface BackButtonProps {
   back?: 'menu' | 'create' | 'play';

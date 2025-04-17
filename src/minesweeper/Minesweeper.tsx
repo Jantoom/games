@@ -1,5 +1,6 @@
 import { Bomb } from 'lucide-react';
 import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import AnimatedPage from '@/components/containers/AnimatedPage';
 import Body from '@/components/containers/Body';
 import Footer from '@/components/containers/Footer';
@@ -9,6 +10,7 @@ import ThemeButton from '@/components/elements/ThemeButton';
 import { ResetDialog, ResetSetup } from '@/components/generics/Reset';
 import TimerText from '@/components/generics/TimerText';
 import { Label } from '@/components/ui/label';
+import { PageDepth } from '@/lib/types';
 import FlagButton from '@/minesweeper/components/controls/FlagButton';
 import HintButton from '@/minesweeper/components/controls/HintButton';
 import Grid from '@/minesweeper/components/game/Grid';
@@ -16,8 +18,6 @@ import Settings from '@/minesweeper/components/Settings';
 import { useMinesweeperState } from '@/minesweeper/state';
 import { isSolved } from '@/minesweeper/utils';
 import { difficulties } from './types';
-import { PageDepth } from '@/lib/types';
-import { useNavigate } from 'react-router-dom';
 
 const MinesweeperCreate: React.FC = () => {
   const { status, read, reset } = useMinesweeperState();
@@ -25,7 +25,7 @@ const MinesweeperCreate: React.FC = () => {
   return (
     <AnimatedPage pageDepth={PageDepth.Create}>
       <Header back="menu" />
-      <Body className="w-[80svw] justify-center gap-y-8">
+      <Body variant="setup">
         <ResetSetup
           status={status}
           read={read}
@@ -60,6 +60,7 @@ const MinesweeperPlay: React.FC = () => {
     tick,
   } = useMinesweeperState();
   const navigate = useNavigate();
+
   useEffect(() => {
     if (status === 'setup') {
       const saveData = read();
@@ -71,22 +72,11 @@ const MinesweeperPlay: React.FC = () => {
     } else if (status === 'play' && isSolved(bombs, flags)) {
       stop(true);
     }
-  }, [status, bombs, flags, stop]);
-
-  useEffect(() => {
-    const handleBeforeUnload = (_event: BeforeUnloadEvent) => {
-      save();
-    };
-    window.addEventListener('beforeunload', handleBeforeUnload);
-
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-    };
-  }, [save]);
+  }, [status, bombs, flags, reset, stop]);
 
   return (
     status !== 'setup' && (
-      <AnimatedPage pageDepth={PageDepth.Play}>
+      <AnimatedPage pageDepth={PageDepth.Play} save={save}>
         <Header back="create" settings={<Settings />}>
           {optShowRemainingBombs && (
             <div className="flex w-full items-center justify-center gap-x-2">
@@ -100,7 +90,7 @@ const MinesweeperPlay: React.FC = () => {
             <TimerText initial={time} active={status === 'play'} tick={tick} />
           )}
         </Header>
-        <Body>
+        <Body variant="play">
           <Grid />
         </Body>
         <Footer reset={<ResetDialog reset={reset} />}>

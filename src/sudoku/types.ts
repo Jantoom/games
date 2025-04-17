@@ -1,4 +1,4 @@
-import { SerializableSet } from "@/lib/types";
+import { SerializableSet } from '@/lib/types';
 
 export const difficulties = ['easy', 'medium', 'hard'] as const;
 export type Difficulty = (typeof difficulties)[number];

@@ -142,14 +142,12 @@ export const useMinesweeperState = create<MinesweeperState>((set) => ({
         usedHints: 0,
       } as Partial<MinesweeperState>;
 
-      if (state) {
-        return {
-          ...resetState,
-          ...state,
-        };
-      } else {
-        return resetState;
-      }
+      return state
+        ? {
+            ...resetState,
+            ...state,
+          }
+        : resetState;
     });
   },
   update: (row, col, flagMode) => {
@@ -193,7 +191,7 @@ export const useMinesweeperState = create<MinesweeperState>((set) => ({
   stop: (win) => {
     set((prev) => {
       let newGrid: Grid;
-      let newLeaderboard: LeaderboardEntry[] = [...prev.leaderboard];
+      const newLeaderboard: LeaderboardEntry[] = [...prev.leaderboard];
       if (win) {
         // Add the current game to the leaderboard
         newLeaderboard.push({

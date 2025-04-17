@@ -18,7 +18,7 @@ export class SerializableSet<T> extends Set<T> {
     super(iterable);
   }
   toJSON() {
-    return Array.from(this);
+    return [...this];
   }
   static from<T>(array: T[]) {
     return new SerializableSet(array);

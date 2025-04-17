@@ -3,10 +3,10 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
-import AnimatedPage from '../components/containers/AnimatedPage';
-import ThemeButton from '../components/elements/ThemeButton';
 import { useGamesState } from '@/lib/state';
 import { PageDepth } from '@/lib/types';
+import AnimatedPage from '../components/containers/AnimatedPage';
+import ThemeButton from '../components/elements/ThemeButton';
 
 const Menu: React.FC = () => {
   const { setState } = useGamesState();

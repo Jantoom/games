@@ -1,14 +1,19 @@
-import { useGamesState } from '@/lib/state';
-import { PageDepth } from '@/lib/types';
 import { motion, useIsPresent } from 'framer-motion';
 import React, { useEffect } from 'react';
+import { useGamesState } from '@/lib/state';
+import { PageDepth } from '@/lib/types';
 
 interface AnimatedPageProps {
   pageDepth: PageDepth;
+  save?: () => void;
   children: React.ReactNode;
 }
 
-const AnimatedPage: React.FC<AnimatedPageProps> = ({ pageDepth, children }) => {
+const AnimatedPage: React.FC<AnimatedPageProps> = ({
+  pageDepth,
+  save,
+  children,
+}) => {
   const { navDirection, setState } = useGamesState();
   const isPresent = useIsPresent();
 
@@ -19,6 +24,17 @@ const AnimatedPage: React.FC<AnimatedPageProps> = ({ pageDepth, children }) => {
       document.body.style.overflow = 'auto';
     };
   }, [pageDepth, setState]);
+
+  useEffect(() => {
+    const handleBeforeUnload = (_event: BeforeUnloadEvent) => {
+      save();
+    };
+    if (save) window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      if (save) window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [save]);
 
   return (
     <motion.div

@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { DialogClose } from '@/components/ui/dialog';
+import { useGamesState } from '@/lib/state';
 import { cn, swapLastUrlSubpath } from '@/lib/utils';
 import DifficultyCarousel from './DifficultyCarousel';
-import { Link, useLocation } from 'react-router-dom';
-import { useGamesState } from '@/lib/state';
 
 interface ResetDialogProps {
   restart?: () => void;

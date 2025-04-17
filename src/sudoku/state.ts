@@ -163,14 +163,12 @@ export const useSudokuState = create<SudokuState>((set) => ({
         usedAssistAutoRemove: false,
       } as Partial<SudokuState>;
 
-      if (state) {
-        return {
-          ...resetState,
-          ...state,
-        };
-      } else {
-        return resetState;
-      }
+      return state
+        ? {
+            ...resetState,
+            ...state,
+          }
+        : resetState;
     });
   },
   restart: () => {
