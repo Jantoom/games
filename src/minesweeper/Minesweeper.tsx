@@ -72,7 +72,7 @@ const MinesweeperPlay: React.FC = () => {
     } else if (status === 'play' && isSolved(bombs, flags)) {
       stop(true);
     }
-  }, [status, bombs, flags, reset, stop]);
+  }, [status, bombs, flags, read, reset, stop, navigate]);
 
   return (
     status !== 'setup' && (

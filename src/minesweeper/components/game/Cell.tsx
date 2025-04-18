@@ -8,10 +8,10 @@ interface CellProps {
   id: string;
   num: number;
   flagged: boolean;
-  isExploded: boolean;
+  exploded: boolean;
 }
 
-const Cell: React.FC<CellProps> = ({ id, num, flagged, isExploded }) => {
+const Cell: React.FC<CellProps> = ({ id, num, flagged, exploded }) => {
   const { theme } = useGamesState();
   const randomDelay = Math.random() * 0.1;
 
@@ -29,19 +29,19 @@ const Cell: React.FC<CellProps> = ({ id, num, flagged, isExploded }) => {
           ease: 'easeInOut',
           delay: randomDelay * 2,
         }}
-        className={`relative flex h-full w-full items-center justify-center ${(num == undefined && !flagged) || isExploded ? 'bg-secondary' : ''}`}
+        className={`relative flex h-full w-full items-center justify-center ${(num == undefined && !flagged) || exploded ? 'bg-secondary' : ''}`}
       >
         <AnimatePresence mode="sync">
-          {flagged || isExploded ? (
+          {flagged || exploded ? (
             <motion.div
-              key={`${flagged}${isExploded}`}
+              key={`${flagged}${exploded}`}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3, ease: 'easeInOut' }}
               className={`absolute select-none text-lg font-medium text-primary transition-colors`}
             >
-              {isExploded ? (
+              {exploded ? (
                 <Bomb className="stroke-background" fill="black" />
               ) : (
                 <Flag

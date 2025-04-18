@@ -41,35 +41,12 @@ export type MinesweeperState = {
       | Partial<MinesweeperState>
       | ((state: MinesweeperState) => Partial<MinesweeperState>),
   ) => void;
-  wipe: () => void;
   read: () => MinesweeperState | undefined;
   save: () => void;
   tick: () => number;
   reset: (difficulty?: Difficulty, state?: MinesweeperState) => void;
   update: (row: number, col: number, flagMode: boolean) => void;
   stop: (win: boolean) => void;
-};
-
-const baseMinesweeperState: Partial<MinesweeperState> = {
-  status: 'setup',
-  seed: '',
-  time: 0,
-  difficulty: 'easy',
-  dimensions: [0, 0],
-  numBombs: 0,
-  grid: [],
-  bombs: new SerializableSet(),
-  flags: new SerializableSet(),
-  history: [],
-  flagMode: false,
-  optFlagOnClick: false,
-  optFlagOnDoubleClick: true,
-  optFlagOnLongClick: true,
-  optFlagOnRightClick: true,
-  optShowRemainingBombs: true,
-  optShowTime: true,
-  usedHints: 0,
-  leaderboard: [],
 };
 
 export const useMinesweeperState = create<MinesweeperState>((set) => ({
@@ -93,17 +70,22 @@ export const useMinesweeperState = create<MinesweeperState>((set) => ({
   usedHints: 0,
   leaderboard: [],
   setState: (newState) => set(newState),
-  wipe: () => {
-    set(baseMinesweeperState);
-  },
   read: () => {
     return (getGamesData()['minesweeper'] as MinesweeperState) ?? undefined;
   },
   save: () => {
     set((prev) => {
       const gamesData = getGamesData();
-      const { setState, read, save, tick, reset, update, stop, ...saveData } =
-        prev;
+      const {
+        setState: _setState,
+        read: _read,
+        save: _save,
+        tick: _tick,
+        reset: _reset,
+        update: _update,
+        stop: _stop,
+        ...saveData
+      } = prev;
 
       saveGameData(gamesData, {
         minesweeper: saveData,
@@ -129,6 +111,7 @@ export const useMinesweeperState = create<MinesweeperState>((set) => ({
       );
 
       const resetState = {
+        ...prev,
         status: 'play',
         seed: newSeed,
         time: 0,
@@ -140,7 +123,7 @@ export const useMinesweeperState = create<MinesweeperState>((set) => ({
         flags: new SerializableSet(),
         history: [],
         usedHints: 0,
-      } as Partial<MinesweeperState>;
+      } as MinesweeperState;
 
       return state
         ? {
@@ -230,7 +213,6 @@ export const useMinesweeperState = create<MinesweeperState>((set) => ({
         leaderboard: newLeaderboard,
       };
 
-      // Sort the leaderboard by score and save to local storage
       saveGameData(getGamesData(), {
         minesweeper: newState,
       });

@@ -68,7 +68,7 @@ const SudokuPlay: React.FC = () => {
     } else if (status === 'play' && isSolved(grid)) {
       stop(true);
     }
-  }, [status, grid, read, reset, stop]);
+  }, [status, grid, read, reset, stop, navigate]);
 
   return (
     status !== 'setup' && (

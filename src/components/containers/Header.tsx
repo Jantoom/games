@@ -13,6 +13,8 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ back, settings, children }) => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const pathname = useLocation().pathname;
+  const isPresent = useIsPresent();
   const hasVisibleChildren = React.Children.toArray(children).some(Boolean);
 
   return (
@@ -49,10 +51,10 @@ const Header: React.FC<HeaderProps> = ({ back, settings, children }) => {
       <AnimatePresence mode="popLayout">
         {hasVisibleChildren && (
           <motion.div
-            key={useLocation().pathname}
+            key={pathname}
             layout
             initial={{ y: -100 }}
-            animate={{ y: useIsPresent() ? 0 : -100 }}
+            animate={{ y: isPresent ? 0 : -100 }}
             exit={{ y: -100 }}
             transition={{
               duration: 0.5,

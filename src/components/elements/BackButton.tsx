@@ -11,12 +11,13 @@ interface BackButtonProps {
 }
 
 const BackButton: React.FC<BackButtonProps> = ({ back, className }) => {
+  const pathname = useLocation().pathname;
   const destination =
     back === 'create'
-      ? swapLastUrlSubpath(useLocation().pathname, '/create')
+      ? swapLastUrlSubpath(pathname, '/create')
       : back === 'play'
-        ? swapLastUrlSubpath(useLocation().pathname, '/play')
-        : goToUrlSubpath(useLocation().pathname, 2);
+        ? swapLastUrlSubpath(pathname, '/play')
+        : goToUrlSubpath(pathname, 2);
   const { setState } = useGamesState();
 
   return (

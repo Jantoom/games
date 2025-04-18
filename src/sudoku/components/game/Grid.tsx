@@ -1,7 +1,6 @@
-import { animated, useSpring } from '@react-spring/web';
-import { useCallback, useEffect, useRef } from 'react';
 import Cell from '@/sudoku/components/game/Cell';
 import { useSudokuState } from '../../state';
+import ScaledContainer from '@/components/containers/ScaledContainer';
 
 const Grid: React.FC = () => {
   const {
@@ -16,39 +15,16 @@ const Grid: React.FC = () => {
     optAssistHighlight,
     update,
   } = useSudokuState();
-
-  const gridRef = useRef<HTMLDivElement | null>(null);
-  const gridContainerRef = useRef<HTMLDivElement | null>(null);
   const factor = 60;
-  const [{ scale }, scaleApi] = useSpring(() => ({
-    scale: 1,
-  }));
-
-  const updateScale = useCallback(() => {
-    if (!gridRef.current || !gridContainerRef.current) return;
-    const scale = Math.min(
-      gridContainerRef.current.clientHeight / gridRef.current.clientHeight,
-      gridContainerRef.current.clientWidth / gridRef.current.clientWidth,
-    );
-    void scaleApi.start({
-      scale,
-    });
-  }, [grid, scaleApi]);
-
-  window.addEventListener('resize', () => updateScale());
-
-  useEffect(() => updateScale(), [updateScale]);
 
   return (
-    <div
-      ref={gridContainerRef}
+    <ScaledContainer
       className="relative flex aspect-square w-full max-w-[60svh] items-center justify-center"
+      style={{ height: factor * 9, width: factor * 9 }}
     >
-      <animated.div
-        ref={gridRef}
+      <div
         key={seed}
-        className="absolute grid grid-cols-9 grid-rows-9"
-        style={{ height: factor * 9, width: factor * 9, scale }}
+        className="absolute grid h-full w-full grid-cols-9 grid-rows-9"
       >
         <svg
           className="pointer-events-none absolute"
@@ -188,7 +164,7 @@ const Grid: React.FC = () => {
               original={originalGrid[row][col] !== 0}
               highlighted={
                 optAssistHighlight &&
-                selectedNumber !== undefined &&
+                selectedNumber !== 0 &&
                 (num === selectedNumber ||
                   notes[`${row}-${col}`].has(selectedNumber))
               }
@@ -203,8 +179,8 @@ const Grid: React.FC = () => {
             />
           )),
         )}
-      </animated.div>
-    </div>
+      </div>
+    </ScaledContainer>
   );
 };
 

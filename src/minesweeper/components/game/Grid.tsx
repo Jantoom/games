@@ -13,6 +13,7 @@ import {
   positionCellsAreEqual,
 } from '@/minesweeper/utils';
 import Cell from './Cell';
+import ScaledContainer from '@/components/containers/ScaledContainer';
 
 const Grid: React.FC = () => {
   const {
@@ -29,6 +30,7 @@ const Grid: React.FC = () => {
     optFlagOnRightClick,
     update,
   } = useMinesweeperState();
+
   // Grid transform
   const gridRef = useRef<HTMLDivElement | null>(null);
   const gridContainerRef = useRef<HTMLDivElement | null>(null);
@@ -49,14 +51,6 @@ const Grid: React.FC = () => {
     opacity: 0,
     config: config.stiff,
   }));
-  // Gestures
-  const useGesture = createUseGesture([dragAction, pinchAction, wheelAction]);
-  const clickTimeout = useRef<NodeJS.Timeout | undefined>(undefined);
-  const longClickTimeout = useRef<NodeJS.Timeout | undefined>(undefined);
-  const prevClickPos = useRef<{ x: number; y: number } | undefined>(undefined);
-  const currClickPos = useRef<{ x: number; y: number } | undefined>(undefined);
-  const mousePos = useRef<{ x: number; y: number } | undefined>(undefined);
-
   const updatePos = (
     lenient: boolean,
     memo: [number, number],
@@ -77,7 +71,6 @@ const Grid: React.FC = () => {
     );
     void posApi.start({ x, y });
   };
-
   const updateScale = (
     lenient: boolean,
     memo: number,
@@ -119,23 +112,49 @@ const Grid: React.FC = () => {
       config: config.stiff,
     });
   };
-
-  const tryUpdate = (
-    startPos: { x: number; y: number },
-    finishPos: { x: number; y: number },
-    flagCheck: boolean,
-  ): void => {
-    const updateCell = getCellFromPosition(finishPos);
-    if (
-      updateCell &&
-      Math.abs(startPos.x - finishPos.x) < 20 &&
-      Math.abs(startPos.y - finishPos.y) < 20 &&
-      positionCellsAreEqual(startPos, finishPos)
-    ) {
-      update(updateCell.row, updateCell.col, flagCheck || flagMode);
+  // Set scale and position when grid is created
+  useEffect(() => {
+    if (!gridRef.current || !gridContainerRef.current) return;
+    // Small enough to fit whole grid in 90% of the container
+    const min =
+      Math.min(
+        gridContainerRef.current.clientHeight / gridRef.current.clientHeight,
+        gridContainerRef.current.clientWidth / gridRef.current.clientWidth,
+      ) * 0.9;
+    // Big enough to fit 10 cells vertically
+    const max = Math.max(
+      min,
+      gridContainerRef.current.clientHeight /
+        ((10 *
+          Math.max(gridRef.current.clientHeight, gridRef.current.clientWidth)) /
+          Math.max(...dimensions)),
+    );
+    void scaleApi.start({
+      scale: min,
+      min,
+      max,
+      opacity: Math.min(1, max - (max - min) - 1),
+    });
+  }, [dimensions, scaleApi]);
+  // Reset scale when game is finished
+  useEffect(() => {
+    if (status === 'finished' && min.get() !== 0) {
+      void scaleApi.start({
+        scale: min.get(),
+        opacity: Math.min(1, max.get() - (max.get() - min.get()) - 1),
+        config: config.slow,
+      });
+      void posApi.start({ x: 0, y: 0, config: config.slow });
     }
-  };
+  }, [status, scaleApi, posApi, min, max]);
 
+  // Gestures
+  const useGesture = createUseGesture([dragAction, pinchAction, wheelAction]);
+  const clickTimeout = useRef<NodeJS.Timeout | undefined>(undefined);
+  const longClickTimeout = useRef<NodeJS.Timeout | undefined>(undefined);
+  const prevClickPos = useRef<{ x: number; y: number } | undefined>(undefined);
+  const currClickPos = useRef<{ x: number; y: number } | undefined>(undefined);
+  const mousePos = useRef<{ x: number; y: number } | undefined>(undefined);
   const binds = useGesture(
     {
       onDrag: ({
@@ -265,39 +284,21 @@ const Grid: React.FC = () => {
     },
     { eventOptions: { passive: false } },
   );
-
-  useEffect(() => {
-    if (!gridRef.current || !gridContainerRef.current) return;
-    const min =
-      Math.min(
-        gridContainerRef.current.clientHeight / gridRef.current.clientHeight,
-        gridContainerRef.current.clientWidth / gridRef.current.clientWidth,
-      ) * 0.9; // Small enough to fit whole grid in 90% of the container
-    const max = Math.max(
-      min,
-      gridContainerRef.current.clientHeight /
-        ((10 *
-          Math.max(gridRef.current.clientHeight, gridRef.current.clientWidth)) /
-          Math.max(...dimensions)),
-    ); // Big enough to fit 10 cells vertically
-    void scaleApi.start({
-      scale: min,
-      min,
-      max,
-      opacity: Math.min(1, max - (max - min) - 1),
-    });
-  }, [dimensions, scaleApi]);
-
-  useEffect(() => {
-    if (status === 'finished' && min.get() !== 0) {
-      void scaleApi.start({
-        scale: min.get(),
-        opacity: Math.min(1, max.get() - (max.get() - min.get()) - 1),
-        config: config.slow,
-      });
-      void posApi.start({ x: 0, y: 0, config: config.slow });
+  const tryUpdate = (
+    startPos: { x: number; y: number },
+    finishPos: { x: number; y: number },
+    flagCheck: boolean,
+  ): void => {
+    const updateCell = getCellFromPosition(finishPos);
+    if (
+      updateCell &&
+      Math.abs(startPos.x - finishPos.x) < 20 &&
+      Math.abs(startPos.y - finishPos.y) < 20 &&
+      positionCellsAreEqual(startPos, finishPos)
+    ) {
+      update(updateCell.row, updateCell.col, flagCheck || flagMode);
     }
-  }, [status, scaleApi, posApi, min, max]);
+  };
 
   return (
     dimensions[0] > 0 && (
@@ -312,20 +313,22 @@ const Grid: React.FC = () => {
           msTouchAction: 'none',
         }}
       >
-        <div
-          ref={gridContainerRef}
+        <ScaledContainer
+          cref={gridContainerRef}
           className="relative flex h-[95%] w-full flex-col items-center justify-center overflow-hidden"
+          style={{
+            height: dimensions[0] * factor,
+            width: dimensions[1] * factor,
+          }}
         >
           <animated.div
             ref={gridRef}
             onMouseMove={(event) => {
               mousePos.current = { x: event.clientX, y: event.clientY };
             }}
-            className={`absolute grid`}
+            className={`absolute grid h-full w-full`}
             style={{
               gridTemplateColumns: `repeat(${dimensions[1]},minmax(0,1fr))`,
-              height: dimensions[0] * factor,
-              width: dimensions[1] * factor,
               x,
               y,
               scale,
@@ -381,12 +384,12 @@ const Grid: React.FC = () => {
                   id={`${row}-${col}`}
                   num={num}
                   flagged={flags.has(`${row}-${col}`)}
-                  isExploded={bombs.has(`${row}-${col}`) && num != undefined}
+                  exploded={bombs.has(`${row}-${col}`) && num != undefined}
                 />
               )),
             )}
           </animated.div>
-        </div>
+        </ScaledContainer>
       </div>
     )
   );

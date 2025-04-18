@@ -58,7 +58,7 @@ export const getPageDepthFromUrl = (url: string) => {
 };
 
 export const getGamesData = () => {
-  const regex = /\d\-\d/;
+  const regex = /\d-\d/;
   const shouldBeSet = (key: string) =>
     regex.test(key) || key === 'bombs' || key === 'flags';
 

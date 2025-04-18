@@ -37,7 +37,6 @@ export type SudokuState = {
       | Partial<SudokuState>
       | ((state: SudokuState) => Partial<SudokuState>),
   ) => void;
-  wipe: () => void;
   read: () => SudokuState | undefined;
   save: () => void;
   tick: () => number;
@@ -46,29 +45,6 @@ export type SudokuState = {
   update: (row: number, col: number, num: number, pencilMode: boolean) => void;
   undo: () => void;
   stop: (win: boolean) => void;
-};
-
-const baseSudokuState: Partial<SudokuState> = {
-  status: 'setup',
-  seed: '',
-  time: 0,
-  difficulty: 'easy',
-  originalGrid: [],
-  solvedGrid: [],
-  grid: [],
-  notes: {},
-  history: [],
-  errors: [],
-  selectedNumber: undefined,
-  pencilMode: false,
-  optAssistHighlight: false,
-  optAssistRemaining: false,
-  optAssistAutoRemove: false,
-  optShowTime: true,
-  usedAssistHighlight: false,
-  usedAssistRemaining: false,
-  usedAssistAutoRemove: false,
-  leaderboard: [],
 };
 
 export const useSudokuState = create<SudokuState>((set) => ({
@@ -93,9 +69,6 @@ export const useSudokuState = create<SudokuState>((set) => ({
   usedAssistAutoRemove: false,
   leaderboard: [],
   setState: (state) => set(state),
-  wipe: () => {
-    set(baseSudokuState);
-  },
   read: () => {
     return (getGamesData()['sudoku'] as SudokuState) ?? undefined;
   },
@@ -103,15 +76,15 @@ export const useSudokuState = create<SudokuState>((set) => ({
     set((prev) => {
       const gamesData = getGamesData();
       const {
-        setState,
-        read,
-        save,
-        tick,
-        reset,
-        restart,
-        update,
-        undo,
-        stop,
+        setState: _setState,
+        read: _read,
+        save: _save,
+        tick: _tick,
+        reset: _reset,
+        restart: _restart,
+        update: _update,
+        undo: _undo,
+        stop: _stop,
         ...saveData
       } = prev;
 
@@ -139,6 +112,7 @@ export const useSudokuState = create<SudokuState>((set) => ({
       );
 
       const resetState = {
+        ...prev,
         status: 'play',
         seed: newSeed,
         time: 0,
@@ -161,7 +135,7 @@ export const useSudokuState = create<SudokuState>((set) => ({
         usedAssistHighlight: false,
         usedAssistRemaining: false,
         usedAssistAutoRemove: false,
-      } as Partial<SudokuState>;
+      } as SudokuState;
 
       return state
         ? {
@@ -192,8 +166,6 @@ export const useSudokuState = create<SudokuState>((set) => ({
     set((prev) => {
       if (prev.status !== 'play') return {};
 
-      console.log(prev);
-
       const newHistory = [
         ...prev.history,
         {
@@ -208,9 +180,7 @@ export const useSudokuState = create<SudokuState>((set) => ({
       ];
 
       const newNotes = { ...prev.notes };
-      if (num === 0) {
-        newNotes[`${row}-${col}`] = new SerializableSet();
-      } else {
+      if (num !== 0) {
         const affectedCells = pencilMode
           ? [`${row}-${col}`]
           : prev.optAssistAutoRemove
@@ -224,6 +194,9 @@ export const useSudokuState = create<SudokuState>((set) => ({
             newNotes[key].add(num);
           }
         }
+      }
+      if (!pencilMode || num === 0) {
+        newNotes[`${row}-${col}`] = new SerializableSet();
       }
 
       const newGrid = prev.grid.map((r) => [...r]);
@@ -251,36 +224,38 @@ export const useSudokuState = create<SudokuState>((set) => ({
           };
     });
   },
-  stop: () => {
+  stop: (win) => {
     set((prev) => {
-      const gamesData = getGamesData();
-      const prevLeaderboard = (gamesData['sudoku']?.leaderboard ??
-        []) as LeaderboardEntry[];
-      const newEntry: LeaderboardEntry = {
-        seed: prev.seed,
-        difficulty: prev.difficulty,
-        score: formatTime(prev.time),
-        hints: [
-          prev.usedAssistHighlight || prev.optAssistHighlight,
-          prev.usedAssistRemaining || prev.optAssistRemaining,
-          prev.usedAssistAutoRemove || prev.optAssistAutoRemove,
-        ],
-        date: new Date().toISOString(),
-      };
-      const newLeaderboard = [...prevLeaderboard, newEntry];
-      newLeaderboard.sort((a, b) => a.score.localeCompare(b.score));
-      saveGameData(gamesData, {
-        sudoku: {
-          ...gamesData['sudoku'],
-          leaderboard: newLeaderboard,
-        },
-      });
+      const newLeaderboard: LeaderboardEntry[] = [...prev.leaderboard];
+      if (win) {
+        // Add the current game to the leaderboard
+        newLeaderboard.push({
+          seed: prev.seed,
+          difficulty: prev.difficulty,
+          score: formatTime(prev.time),
+          hints: [
+            prev.usedAssistHighlight || prev.optAssistHighlight,
+            prev.usedAssistRemaining || prev.optAssistRemaining,
+            prev.usedAssistAutoRemove || prev.optAssistAutoRemove,
+          ],
+          date: new Date().toISOString(),
+        });
+        newLeaderboard.sort((a, b) => a.score.localeCompare(b.score));
+      }
 
-      return {
+      const newState: SudokuState = {
+        ...prev,
         status: 'finished',
         pencilMode: false,
         selectedNumber: undefined,
+        leaderboard: newLeaderboard,
       };
+
+      saveGameData(getGamesData(), {
+        sudoku: newState,
+      });
+
+      return newState;
     });
   },
 }));
