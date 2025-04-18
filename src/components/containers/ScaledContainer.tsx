@@ -30,7 +30,7 @@ const ScaledContainer: React.FC<ScaledContainerProps> = ({
     void scaleApi.start({
       scale,
     });
-  }, [parentRef, containerRef, scaleApi]);
+  }, [parentRef, containerRef, scaleApi, className, style]);
 
   useEffect(() => {
     updateScale();

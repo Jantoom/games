@@ -3,7 +3,7 @@ import {
   SettingsContainer,
   SettingsGroup,
   SettingsSwitch,
-} from '../../components/generics/Settings';
+} from '../../../components/generics/Settings';
 
 const Settings: React.FC = () => {
   const {

@@ -1,24 +1,25 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { cn, formatTime } from '@/lib/utils';
 import { Label } from '../ui/label';
+import { GameStatus } from '@/lib/types';
 
 interface TimerTextProps {
   className?: string;
-  initial: number;
-  active: boolean;
+  init: number;
+  status: GameStatus;
   tick: () => number;
 }
 const TimerText: React.FC<TimerTextProps> = ({
   className,
-  initial,
-  active,
+  init,
+  status,
   tick,
 }) => {
   const timerRef = useRef<NodeJS.Timeout | undefined>(undefined);
-  const [time, setTime] = useState(initial);
+  const [time, setTime] = useState(init);
 
   useEffect(() => {
-    if (active) {
+    if (status === 'play') {
       clearInterval(timerRef.current);
       timerRef.current = setInterval(() => {
         setTime(tick());
@@ -34,7 +35,7 @@ const TimerText: React.FC<TimerTextProps> = ({
         timerRef.current = undefined;
       }
     };
-  }, [active, tick]);
+  }, [status, tick]);
 
   return (
     <Label

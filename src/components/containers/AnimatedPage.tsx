@@ -1,6 +1,6 @@
 import { motion, useIsPresent } from 'framer-motion';
 import React, { useEffect } from 'react';
-import { useGamesState } from '@/lib/state';
+import { useGlobalState } from '@/lib/state';
 import { PageDepth } from '@/lib/types';
 
 interface AnimatedPageProps {
@@ -14,7 +14,7 @@ const AnimatedPage: React.FC<AnimatedPageProps> = ({
   save,
   children,
 }) => {
-  const { navDirection, setState } = useGamesState();
+  const { navDirection, setState } = useGlobalState();
   const isPresent = useIsPresent();
 
   useEffect(() => {

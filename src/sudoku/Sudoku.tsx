@@ -9,12 +9,12 @@ import ThemeButton from '@/components/elements/ThemeButton';
 import { ResetDialog, ResetSetup } from '@/components/generics/Reset';
 import TimerText from '@/components/generics/TimerText';
 import { PageDepth } from '@/lib/types';
-import HintsButton from '@/sudoku/components/controls/HintsButton';
-import PencilButton from '@/sudoku/components/controls/PencilButton';
-import UndoButton from '@/sudoku/components/controls/UndoButton';
-import Grid from '@/sudoku/components/game/Grid';
-import NumberButtons from '@/sudoku/components/game/NumberButtons';
-import Settings from '@/sudoku/components/Settings';
+import HintsButton from './components/footer/HintsButton';
+import PencilButton from './components/footer/PencilButton';
+import UndoButton from './components/footer/UndoButton';
+import Grid from './components/body/Grid';
+import NumberButtons from './components/body/NumberButtons';
+import Settings from './components/sections/Settings';
 import { useSudokuState } from '@/sudoku/state';
 import { isSolved } from '@/sudoku/utils';
 import { difficulties } from './types';
@@ -74,13 +74,11 @@ const SudokuPlay: React.FC = () => {
     status !== 'setup' && (
       <AnimatedPage pageDepth={PageDepth.Play} save={save}>
         <Header back="create" settings={<Settings />}>
-          {optShowTime && (
-            <TimerText initial={time} active={status === 'play'} tick={tick} />
-          )}
+          {optShowTime && <TimerText init={time} status={status} tick={tick} />}
         </Header>
         <Body variant="play">
           <Grid />
-          <NumberButtons />
+          {status === 'play' && <NumberButtons />}
         </Body>
         <Footer reset={<ResetDialog reset={reset} restart={restart} />}>
           <HintsButton />

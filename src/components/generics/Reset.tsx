@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { DialogClose } from '@/components/ui/dialog';
-import { useGamesState } from '@/lib/state';
+import { useGlobalState } from '@/lib/state';
 import { cn, swapLastUrlSubpath } from '@/lib/utils';
 import DifficultyCarousel from './DifficultyCarousel';
 
@@ -59,7 +59,7 @@ const ResetSetup = <T extends string, U extends { status: string }>({
 }: ResetSetupProps<T, U>) => {
   const [difficulty, setDifficulty] = useState(difficulties[0]);
   const saveData = read();
-  const { setState } = useGamesState();
+  const { setState } = useGlobalState();
 
   const disableLoadPrevious = status !== 'play' && saveData?.status !== 'play';
 

@@ -3,13 +3,13 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
-import { useGamesState } from '@/lib/state';
+import { useGlobalState } from '@/lib/state';
 import { PageDepth } from '@/lib/types';
 import AnimatedPage from '../components/containers/AnimatedPage';
 import ThemeButton from '../components/elements/ThemeButton';
 
 const Menu: React.FC = () => {
-  const { setState } = useGamesState();
+  const { setState } = useGlobalState();
   return (
     <AnimatedPage pageDepth={PageDepth.Menu}>
       <div className="flex h-svh flex-col items-center justify-evenly">

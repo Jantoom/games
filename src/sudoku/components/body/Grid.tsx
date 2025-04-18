@@ -1,4 +1,4 @@
-import Cell from '@/sudoku/components/game/Cell';
+import Cell from '@/sudoku/components/body/Cell';
 import { useSudokuState } from '../../state';
 import ScaledContainer from '@/components/containers/ScaledContainer';
 
@@ -19,7 +19,7 @@ const Grid: React.FC = () => {
 
   return (
     <ScaledContainer
-      className="relative flex aspect-square w-full max-w-[60svh] items-center justify-center"
+      className={`relative flex aspect-square w-full ${status === 'play' ? 'max-w-[60svh]' : 'max-w-[75svh]'} items-center justify-center`}
       style={{ height: factor * 9, width: factor * 9 }}
     >
       <div

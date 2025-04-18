@@ -1,18 +1,19 @@
+import { MinesweeperState } from '@/minesweeper/state';
+import { SudokuState } from '@/sudoku/state';
+import { GlobalState } from './state';
+
 export const gameStatuses = ['setup', 'play', 'paused', 'finished'] as const;
 export type GameStatus = (typeof gameStatuses)[number];
-export type GamesData = {
-  sudoku?: object;
-  minesweeper?: object;
-  solitaire?: object;
-  snake?: object;
-  pong?: object;
-  '2048'?: object;
-};
 export enum PageDepth {
   Menu = 0,
   Create = 1,
   Play = 2,
 }
+export type GamesData = {
+  global: GlobalState;
+  sudoku: SudokuState;
+  minesweeper: MinesweeperState;
+};
 export class SerializableSet<T> extends Set<T> {
   constructor(iterable?: Iterable<T>) {
     super(iterable);

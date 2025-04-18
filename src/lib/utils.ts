@@ -1,6 +1,6 @@
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import { SerializableSet } from './types';
+import { GamesData, SerializableSet } from './types';
 
 /**
  *
@@ -57,7 +57,7 @@ export const getPageDepthFromUrl = (url: string) => {
   }
 };
 
-export const getGamesData = () => {
+export const getGamesData = (): GamesData => {
   const regex = /\d-\d/;
   const shouldBeSet = (key: string) =>
     regex.test(key) || key === 'bombs' || key === 'flags';
@@ -73,7 +73,7 @@ export const getGamesData = () => {
   );
 };
 
-export const saveGameData = (gamesData: object, gameData: object) =>
+export const saveGameData = (gamesData: GamesData, gameData: object) =>
   localStorage.setItem(
     'jantoom-games',
     JSON.stringify({
