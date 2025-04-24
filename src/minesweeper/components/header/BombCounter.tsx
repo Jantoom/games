@@ -5,9 +5,9 @@ import { Bomb } from 'lucide-react';
 const BombCounter: React.FC = () => {
   const { bombs, flags } = useMinesweeperState();
   return (
-    <div className="flex w-full items-center justify-center gap-x-2">
-      <Bomb className="h-1/2 stroke-foreground" />
-      <Label className="pb-0.5 text-2xl font-semibold leading-none">
+    <div className="relative flex w-full items-center justify-center gap-x-[0.25rem]">
+      <Bomb className="h-[1.25rem] stroke-foreground" />
+      <Label className="align-text-top text-xl font-semibold">
         {Math.max(0, bombs.size - flags.size)}
       </Label>
     </div>

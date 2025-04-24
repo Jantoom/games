@@ -77,8 +77,8 @@ const MinesweeperPlay: React.FC = () => {
     status !== 'setup' && (
       <AnimatedPage pageDepth={PageDepth.Play} save={save}>
         <Header back="create" settings={<Settings />}>
-          {optShowRemainingBombs && <BombCounter />}
           {optShowTime && <TimerText init={time} status={status} tick={tick} />}
+          {optShowRemainingBombs && <BombCounter />}
         </Header>
         <Body variant="play">
           <Grid />

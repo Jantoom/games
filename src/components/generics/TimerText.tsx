@@ -39,7 +39,7 @@ const TimerText: React.FC<TimerTextProps> = ({
 
   return (
     <Label
-      className={cn('w-full text-center text-[3svh] font-medium', className)}
+      className={cn('relative w-full text-center text-xl font-medium', className)}
     >
       {formatTime(time)}
     </Label>
