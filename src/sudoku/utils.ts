@@ -3,7 +3,7 @@ import { shuffle } from '@/lib/utils';
 import { Difficulty, Grid, Notes } from '@/sudoku/types';
 
 const difficultyConfig: Record<Difficulty, { numRemovals: number }> = {
-  easy: { numRemovals: 35 },
+  easy: { numRemovals: 1 },
   medium: { numRemovals: 45 },
   hard: { numRemovals: 55 },
 };

@@ -8,23 +8,20 @@ import DifficultyCarousel from './DifficultyCarousel';
 
 interface ResetSetupProps<T extends string, U extends { status: string }> {
   status: string;
-  read: () => U | undefined;
   reset: (difficulty?: T, state?: U) => void;
   difficulties: T[];
   className?: string;
 }
 const ResetSetup = <T extends string, U extends { status: string }>({
   status,
-  read,
   reset,
   difficulties,
   className,
 }: ResetSetupProps<T, U>) => {
   const [difficulty, setDifficulty] = useState(difficulties[0]);
   const { setState } = useGlobalState();
-  const saveData = read();
 
-  const disableLoadPrevious = status !== 'play' && saveData?.status !== 'play';
+  const disableResume = status === 'create';
 
   return (
     <>
@@ -52,16 +49,15 @@ const ResetSetup = <T extends string, U extends { status: string }>({
       </div>
       <Link
         to={swapLastUrlSubpath(useLocation().pathname, '/play')}
-        className={`w-full ${disableLoadPrevious ? 'pointer-events-none' : ''}`}
+        className={`w-full ${disableResume ? 'pointer-events-none' : ''}`}
       >
         <Button
           onClick={() => {
             setState({ navDirection: 'right' });
-            if (status !== 'play') reset(undefined, saveData);
           }}
           variant="outline"
           className="w-full rounded-full border border-border hover:bg-secondary"
-          disabled={disableLoadPrevious}
+          disabled={disableResume}
         >
           Resume game
         </Button>
@@ -119,7 +115,7 @@ const ResetPrompt = <T extends string>({
   const [difficulty, setDifficulty] = useState(difficulties[0]);
 
   return (
-    <div className="flex items-center justify-evenly w-[90svw] gap-x-4 mb-6">
+    <div className="mb-6 flex w-[90svw] items-center justify-evenly gap-x-4">
       <Button
         onClick={() => reset(difficulty)}
         variant="outline"
@@ -131,7 +127,7 @@ const ResetPrompt = <T extends string>({
         difficulty={difficulty}
         difficulties={difficulties}
         setDifficulty={setDifficulty}
-        className='w-[45%]'
+        className="w-[45%]"
       />
     </div>
   );

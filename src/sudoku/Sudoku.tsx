@@ -4,7 +4,6 @@ import Page from '../components/containers/Page';
 import Body from '@/components/containers/Body';
 import Footer from '@/components/containers/Footer';
 import Header from '@/components/containers/Header';
-import LeaderboardButton from '@/components/elements/LeaderboardButton';
 import ThemeButton from '@/components/elements/ThemeButton';
 import { ResetPrompt, ResetSetup } from '@/components/generics/Reset';
 import TimerText from '@/components/generics/TimerText';
@@ -13,14 +12,26 @@ import PencilButton from './components/footer/PencilButton';
 import UndoButton from './components/footer/UndoButton';
 import Grid from './components/body/Grid';
 import NumberButtons from './components/body/NumberButtons';
-import Settings from './components/setup/Settings';
+import Settings from './components/sections/Settings';
 import { useSudokuState } from '@/sudoku/state';
 import { isSolved } from '@/sudoku/utils';
 import { difficulties } from './types';
 import ResetButton from './components/footer/ResetButton';
+import {
+  LeaderboardButton,
+  LeaderboardDialog,
+} from '@/components/generics/Leaderboard';
+import Leaderboard from './components/sections/Leaderboard';
 
 const SudokuCreate: React.FC = () => {
   const { status, read, reset } = useSudokuState();
+
+  useEffect(() => {
+    const saveData = read();
+    if (status === 'create' && saveData?.status !== 'create') {
+      reset(undefined, saveData);
+    }
+  }, [status, read, reset]);
 
   return (
     <Page>
@@ -28,14 +39,13 @@ const SudokuCreate: React.FC = () => {
       <Body variant="create">
         <ResetSetup
           status={status}
-          read={read}
           reset={reset}
           difficulties={[...difficulties]}
         />
         <Settings />
       </Body>
       <Footer>
-        <LeaderboardButton game="sudoku" difficulties={[...difficulties]} />
+        <LeaderboardButton leaderboard={<Leaderboard />} />
         <ThemeButton />
       </Footer>
     </Page>
@@ -89,6 +99,11 @@ const SudokuPlay: React.FC = () => {
           <UndoButton />
           <HintsButton />
         </Footer>
+        {status === 'finished' && isSolved(grid) && (
+          <LeaderboardDialog delay>
+            <Leaderboard />
+          </LeaderboardDialog>
+        )}
       </Page>
     )
   );

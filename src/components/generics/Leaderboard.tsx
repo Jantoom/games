@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronRight, Trash } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Trash, Trophy } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
@@ -23,6 +23,53 @@ import {
 } from '../ui/table';
 import { cn, getGamesData, saveGameData } from '@/lib/utils';
 import { GamesData } from '@/lib/types';
+import DialogButton from './DialogButton';
+
+interface LeaderboardButtonProps {
+  leaderboard: React.ReactNode;
+}
+const LeaderboardButton: React.FC<LeaderboardButtonProps> = ({
+  leaderboard,
+}) => {
+  const [isLeaderboardOpen, setIsLeaderboardOpen] = useState(false);
+
+  return (
+    <DialogButton
+      Icon={Trophy}
+      title="Leaderboard"
+      isOpen={isLeaderboardOpen}
+      setIsOpen={setIsLeaderboardOpen}
+    >
+      {leaderboard}
+    </DialogButton>
+  );
+};
+
+interface LeaderboardDialogProps {
+  delay?: boolean;
+  children: React.ReactNode;
+}
+const LeaderboardDialog = ({ delay, children }: LeaderboardDialogProps) => {
+  const [isLeaderboardOpen, setIsLeaderboardOpen] = useState(!delay);
+
+  useEffect(() => {
+    if (delay) {
+      setTimeout(() => {
+        setIsLeaderboardOpen(true);
+      }, 1000);
+    }
+  }, []);
+
+  return (
+    <Dialog open={isLeaderboardOpen} onOpenChange={setIsLeaderboardOpen}>
+      <DialogContent>
+        <DialogTitle className="text-center">Leaderboard</DialogTitle>
+        <DialogDescription className="hidden" />
+        {children}
+      </DialogContent>
+    </Dialog>
+  );
+};
 
 interface LeaderboardCarouselProps<T extends string> {
   difficulty: T;
@@ -36,13 +83,6 @@ const LeaderboardCarousel = <T extends string>({
 }: LeaderboardCarouselProps<T>) => {
   const [api, setApi] = useState<CarouselApi>();
   const [isInitialised, setIsInitialised] = useState(false);
-  const [isLeaderboardOpen, setIsLeaderboardOpen] = useState(false);
-
-  useEffect(() => {
-    setTimeout(() => {
-      setIsLeaderboardOpen(true);
-    }, 1000);
-  }, []);
 
   useEffect(() => {
     if (api && !isInitialised) {
@@ -52,36 +92,30 @@ const LeaderboardCarousel = <T extends string>({
   }, [api, isInitialised, difficulty, difficulties]);
 
   return (
-    <Dialog open={isLeaderboardOpen} onOpenChange={setIsLeaderboardOpen}>
-      <DialogContent>
-        <DialogTitle className="text-center">Leaderboard</DialogTitle>
-        <DialogDescription className="hidden" />
-        <Carousel
-          setApi={setApi}
-          opts={{
-            align: 'start',
-            loop: true,
-          }}
-          className="relative h-full w-full min-w-32"
-        >
-          <Button
-            variant="ghost"
-            className="absolute left-0 top-0 z-10 aspect-square h-12 rounded-full p-0 hover:bg-secondary"
-            onClick={() => api.scrollPrev()}
-          >
-            <ChevronLeft />
-          </Button>
-          <CarouselContent className="h-full">{children}</CarouselContent>
-          <Button
-            variant="ghost"
-            className="absolute right-0 top-0 z-10 aspect-square h-12 rounded-full p-0 hover:bg-secondary"
-            onClick={() => api.scrollNext()}
-          >
-            <ChevronRight />
-          </Button>
-        </Carousel>
-      </DialogContent>
-    </Dialog>
+    <Carousel
+      setApi={setApi}
+      opts={{
+        align: 'start',
+        loop: true,
+      }}
+      className="relative h-full w-full min-w-32"
+    >
+      <Button
+        variant="ghost"
+        className="absolute left-0 top-0 z-10 aspect-square h-12 rounded-full p-0 hover:bg-secondary"
+        onClick={() => api.scrollPrev()}
+      >
+        <ChevronLeft />
+      </Button>
+      <CarouselContent className="h-full">{children}</CarouselContent>
+      <Button
+        variant="ghost"
+        className="absolute right-0 top-0 z-10 aspect-square h-12 rounded-full p-0 hover:bg-secondary"
+        onClick={() => api.scrollNext()}
+      >
+        <ChevronRight />
+      </Button>
+    </Carousel>
   );
 };
 
@@ -218,6 +252,8 @@ const LeaderboardTableCell = ({
 };
 
 export {
+  LeaderboardButton,
+  LeaderboardDialog,
   LeaderboardCarousel,
   LeaderboardCarouselItem,
   LeaderboardTable,

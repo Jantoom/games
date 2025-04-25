@@ -10,7 +10,7 @@ import {
   LeaderboardTableRow,
 } from '@/components/generics/Leaderboard';
 
-const MinesweeperLeaderboard: React.FC = () => {
+const Leaderboard: React.FC = () => {
   const { seed, difficulty, leaderboard, setState } = useMinesweeperState();
 
   return (
@@ -47,4 +47,4 @@ const MinesweeperLeaderboard: React.FC = () => {
   );
 };
 
-export default MinesweeperLeaderboard;
+export default Leaderboard;

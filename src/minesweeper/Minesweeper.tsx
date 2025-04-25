@@ -4,7 +4,6 @@ import Page from '../components/containers/Page';
 import Body from '@/components/containers/Body';
 import Footer from '@/components/containers/Footer';
 import Header from '@/components/containers/Header';
-import LeaderboardButton from '@/components/elements/LeaderboardButton';
 import ThemeButton from '@/components/elements/ThemeButton';
 import { ResetPrompt, ResetSetup } from '@/components/generics/Reset';
 import TimerText from '@/components/generics/TimerText';
@@ -18,9 +17,20 @@ import { difficulties } from './types';
 import BombCounter from './components/header/BombCounter';
 import ResetButton from './components/footer/ResetButton';
 import Leaderboard from './components/sections/Leaderboard';
+import {
+  LeaderboardButton,
+  LeaderboardDialog,
+} from '@/components/generics/Leaderboard';
 
 const MinesweeperCreate: React.FC = () => {
   const { status, read, reset } = useMinesweeperState();
+
+  useEffect(() => {
+    const saveData = read();
+    if (status === 'create' && saveData?.status !== 'create') {
+      reset(undefined, saveData);
+    }
+  }, [status, read, reset]);
 
   return (
     <Page>
@@ -28,17 +38,13 @@ const MinesweeperCreate: React.FC = () => {
       <Body variant="create">
         <ResetSetup
           status={status}
-          read={read}
           reset={reset}
           difficulties={[...difficulties]}
         />
         <Settings />
       </Body>
       <Footer>
-        <LeaderboardButton
-          game="minesweeper"
-          difficulties={[...difficulties]}
-        />
+        <LeaderboardButton leaderboard={<Leaderboard />} />
         <ThemeButton />
       </Footer>
     </Page>
@@ -93,7 +99,11 @@ const MinesweeperPlay: React.FC = () => {
           <FlagButton />
           <HintButton />
         </Footer>
-        {status === 'finished' && <Leaderboard />}
+        {status === 'finished' && isSolved(bombs, flags) && (
+          <LeaderboardDialog delay>
+            <Leaderboard />
+          </LeaderboardDialog>
+        )}
       </Page>
     )
   );

@@ -40,7 +40,7 @@ const Menu: React.FC = () => {
             Minesweeper
           </Link>
         </Button>
-        <Separator className="my-1" />
+        {/* <Separator className="my-1" />
         <Button
           asChild
           variant="ghost"
@@ -91,7 +91,7 @@ const Menu: React.FC = () => {
           >
             2048
           </Link>
-        </Button>
+        </Button> */}
       </Body>
       <Footer>
         <ThemeButton />
