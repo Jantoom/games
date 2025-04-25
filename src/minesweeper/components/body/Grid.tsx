@@ -315,7 +315,7 @@ const Grid: React.FC = () => {
       >
         <ScaledContainer
           cref={gridContainerRef}
-          className="relative flex h-[97.5%] w-full flex-col items-center justify-center overflow-hidden"
+          className="relative flex h-full w-full flex-col items-center justify-center overflow-hidden"
           style={{
             height: dimensions[0] * factor,
             width: dimensions[1] * factor,

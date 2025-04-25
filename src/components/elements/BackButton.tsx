@@ -20,20 +20,18 @@ const BackButton: React.FC<BackButtonProps> = ({ back, className }) => {
   const { setState } = useGlobalState();
 
   return (
-    <div className="relative flex h-full w-full items-center justify-start">
-      <Link
-        to={destination}
-        className={cn(
-          'flex h-full w-fit cursor-pointer flex-row items-center rounded-full px-4 hover:bg-secondary',
-          className,
-        )}
-        onClick={() => {
-          setState({ navDirection: 'left' });
-        }}
-      >
-        <ArrowLeft className="h-1/2 stroke-foreground" />
-      </Link>
-    </div>
+    <Link
+      to={destination}
+      className={cn(
+        'flex h-full w-fit cursor-pointer items-center rounded-full px-4 hover:bg-secondary',
+        className,
+      )}
+      onClick={() => {
+        setState({ navDirection: 'left' });
+      }}
+    >
+      <ArrowLeft className="stroke-foreground" />
+    </Link>
   );
 };
 

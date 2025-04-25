@@ -13,7 +13,6 @@ const Footer: React.FC<FooterProps> = ({ reset, children }) => {
 
   return (
     <motion.div
-      layout
       key="footer"
       initial={{ y: 100 }}
       animate={{ y: 0 }}
@@ -22,22 +21,20 @@ const Footer: React.FC<FooterProps> = ({ reset, children }) => {
         duration: 0.5,
         ease: 'easeInOut',
       }}
-      className="relative flex h-[6svh] w-screen justify-between px-[2.5vw]"
+      className="relative flex h-[8svh] w-screen items-center justify-evenly p-1"
     >
-      <div className="absolute inset-0 rounded-t-[40px] bg-secondary brightness-95" />
-      <div className="relative flex h-full w-full items-center justify-evenly">
-        {reset && (
-          <DialogButton
-            Icon={RotateCcw}
-            title="Reset game?"
-            isOpen={isResetOpen}
-            setIsOpen={setIsResetOpen}
-          >
-            {reset}
-          </DialogButton>
-        )}
-        {children}
-      </div>
+      <div className="absolute inset-0 -z-10 brightness-95" />
+      {reset && (
+        <DialogButton
+          Icon={RotateCcw}
+          title="Reset game?"
+          isOpen={isResetOpen}
+          setIsOpen={setIsResetOpen}
+        >
+          {reset}
+        </DialogButton>
+      )}
+      {children}
     </motion.div>
   );
 };

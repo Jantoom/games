@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import AnimatedPage from '@/components/containers/AnimatedPage';
+import Page from '../components/containers/Page';
 import Body from '@/components/containers/Body';
 import Footer from '@/components/containers/Footer';
 import Header from '@/components/containers/Header';
@@ -8,7 +8,6 @@ import LeaderboardButton from '@/components/elements/LeaderboardButton';
 import ThemeButton from '@/components/elements/ThemeButton';
 import { ResetDialog, ResetSetup } from '@/components/generics/Reset';
 import TimerText from '@/components/generics/TimerText';
-import { PageDepth } from '@/lib/types';
 import FlagButton from './components/footer/FlagButton';
 import HintButton from './components/footer/HintButton';
 import Grid from './components/body/Grid';
@@ -22,9 +21,9 @@ const MinesweeperCreate: React.FC = () => {
   const { status, read, reset } = useMinesweeperState();
 
   return (
-    <AnimatedPage pageDepth={PageDepth.Create}>
-      <Header back="menu" />
-      <Body variant="setup">
+    <Page>
+      <Header title="Minesweeper" back="menu" />
+      <Body variant="create">
         <ResetSetup
           status={status}
           read={read}
@@ -40,7 +39,7 @@ const MinesweeperCreate: React.FC = () => {
         />
         <ThemeButton />
       </Footer>
-    </AnimatedPage>
+    </Page>
   );
 };
 
@@ -75,19 +74,19 @@ const MinesweeperPlay: React.FC = () => {
 
   return (
     status !== 'setup' && (
-      <AnimatedPage pageDepth={PageDepth.Play} save={save}>
-        <Header back="create" settings={<Settings />}>
-          {optShowTime && <TimerText init={time} status={status} tick={tick} />}
+      <Page>
+        <Header title="Minesweeper" back="create" settings={<Settings />}>
           {optShowRemainingBombs && <BombCounter />}
+          {optShowTime && <TimerText init={time} status={status} tick={tick} />}
         </Header>
-        <Body variant="play">
+        <Body variant="play" save={save}>
           <Grid />
         </Body>
         <Footer reset={<ResetDialog reset={reset} />}>
-          <HintButton />
           <FlagButton />
+          <HintButton />
         </Footer>
-      </AnimatedPage>
+      </Page>
     )
   );
 };

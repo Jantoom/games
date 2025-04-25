@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import AnimatedPage from '@/components/containers/AnimatedPage';
+import Page from '../components/containers/Page';
 import Body from '@/components/containers/Body';
 import Footer from '@/components/containers/Footer';
 import Header from '@/components/containers/Header';
@@ -8,7 +8,6 @@ import LeaderboardButton from '@/components/elements/LeaderboardButton';
 import ThemeButton from '@/components/elements/ThemeButton';
 import { ResetDialog, ResetSetup } from '@/components/generics/Reset';
 import TimerText from '@/components/generics/TimerText';
-import { PageDepth } from '@/lib/types';
 import HintsButton from './components/footer/HintsButton';
 import PencilButton from './components/footer/PencilButton';
 import UndoButton from './components/footer/UndoButton';
@@ -23,9 +22,9 @@ const SudokuCreate: React.FC = () => {
   const { status, read, reset } = useSudokuState();
 
   return (
-    <AnimatedPage pageDepth={PageDepth.Create}>
-      <Header back="menu" />
-      <Body variant="setup">
+    <Page>
+      <Header title="Sudoku" back="menu" />
+      <Body variant="create">
         <ResetSetup
           status={status}
           read={read}
@@ -38,7 +37,7 @@ const SudokuCreate: React.FC = () => {
         <LeaderboardButton game="sudoku" difficulties={[...difficulties]} />
         <ThemeButton />
       </Footer>
-    </AnimatedPage>
+    </Page>
   );
 };
 
@@ -72,20 +71,24 @@ const SudokuPlay: React.FC = () => {
 
   return (
     status !== 'setup' && (
-      <AnimatedPage pageDepth={PageDepth.Play} save={save}>
-        <Header back="create" settings={<Settings />}>
-          {optShowTime && <TimerText init={time} status={status} tick={tick} />}
+      <Page>
+        <Header title="Sudoku" back="create" settings={<Settings />}>
+          <div className="flex w-1/4 min-w-32 items-center justify-between">
+            {optShowTime && (
+              <TimerText init={time} status={status} tick={tick} />
+            )}
+          </div>
         </Header>
-        <Body variant="play">
+        <Body variant="play" save={save}>
           <Grid />
           {status === 'play' && <NumberButtons />}
         </Body>
         <Footer reset={<ResetDialog reset={reset} restart={restart} />}>
-          <HintsButton />
           <PencilButton />
           <UndoButton />
+          <HintsButton />
         </Footer>
-      </AnimatedPage>
+      </Page>
     )
   );
 };
