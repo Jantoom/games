@@ -1,16 +1,14 @@
+import { GameStatus } from '@/lib/types';
 import { motion } from 'framer-motion';
-import { RotateCcw } from 'lucide-react';
-import React, { useState } from 'react';
-import DialogButton from '../generics/DialogButton';
+import React from 'react';
 
 interface FooterProps {
+  status?: GameStatus;
   reset?: React.ReactNode;
   children?: React.ReactNode;
 }
 
-const Footer: React.FC<FooterProps> = ({ reset, children }) => {
-  const [isResetOpen, setIsResetOpen] = useState(false);
-
+const Footer: React.FC<FooterProps> = ({ status, reset, children }) => {
   return (
     <motion.div
       key="footer"
@@ -24,17 +22,7 @@ const Footer: React.FC<FooterProps> = ({ reset, children }) => {
       className="relative flex h-[8svh] w-screen items-center justify-evenly p-1"
     >
       <div className="absolute inset-0 -z-10 brightness-95" />
-      {reset && (
-        <DialogButton
-          Icon={RotateCcw}
-          title="Reset game?"
-          isOpen={isResetOpen}
-          setIsOpen={setIsResetOpen}
-        >
-          {reset}
-        </DialogButton>
-      )}
-      {children}
+      {status !== 'finished' ? children : reset}
     </motion.div>
   );
 };

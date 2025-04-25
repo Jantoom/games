@@ -50,7 +50,7 @@ export type MinesweeperState = {
 };
 
 export const useMinesweeperState = create<MinesweeperState>((set) => ({
-  status: 'setup',
+  status: 'create',
   seed: '',
   time: 0,
   difficulty: 'easy',

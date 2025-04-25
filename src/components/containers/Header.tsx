@@ -41,7 +41,7 @@ const Header: React.FC<HeaderProps> = ({ title, back, settings, children }) => {
         </div>
       ) : (
         <div>
-        <Label className="text-center text-2xl">{title}</Label>
+          <Label className="text-center text-2xl">{title}</Label>
         </div>
       )}
       {settings && (

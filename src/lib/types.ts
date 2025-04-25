@@ -2,7 +2,7 @@ import { MinesweeperState } from '@/minesweeper/state';
 import { SudokuState } from '@/sudoku/state';
 import { GlobalState } from './state';
 
-export const gameStatuses = ['setup', 'play', 'paused', 'finished'] as const;
+export const gameStatuses = ['create', 'play', 'paused', 'finished'] as const;
 export type GameStatus = (typeof gameStatuses)[number];
 export enum PageDepth {
   Menu = 0,

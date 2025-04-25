@@ -48,7 +48,7 @@ export type SudokuState = {
 };
 
 export const useSudokuState = create<SudokuState>((set) => ({
-  status: 'setup',
+  status: 'create',
   seed: '',
   time: 0,
   difficulty: 'easy',

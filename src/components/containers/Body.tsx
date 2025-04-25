@@ -8,7 +8,7 @@ const bodyVariants = cva('flex flex-grow flex-col items-center', {
   variants: {
     variant: {
       menu: 'justify-center',
-      create: 'w-[80svw] justify-center gap-y-8',
+      create: 'w-1/2 min-w-72 justify-center gap-y-8',
       play: 'w-full justify-evenly',
     },
   },
@@ -18,57 +18,47 @@ const bodyVariants = cva('flex flex-grow flex-col items-center', {
 });
 
 interface BodyProps extends VariantProps<typeof bodyVariants> {
-  save?: () => void;
   className?: string;
   children: React.ReactNode;
 }
 
-const Body: React.FC<BodyProps> = ({ save, variant, className, children }) => {
+const Body: React.FC<BodyProps> = ({ variant, className, children }) => {
   const { navDirection, setState } = useGlobalState();
   const isPresent = useIsPresent();
 
   useEffect(() => {
-    document.body.style.overflow = 'hidden';
-
-    return () => {
-      document.body.style.overflow = 'auto';
-    };
-  }, [variant, setState]);
-
-  useEffect(() => {
-    const handleBeforeUnload = (_event: BeforeUnloadEvent) => {
-      save();
-    };
-    if (save) window.addEventListener('beforeunload', handleBeforeUnload);
-
-    return () => {
-      if (save) window.removeEventListener('beforeunload', handleBeforeUnload);
-    };
-  }, [save]);
+    setState({ navDirection: undefined });
+  }, [setState]);
 
   return (
     <motion.div
       key={variant}
       initial={{
         opacity: 0,
-        x: isPresent
-          ? navDirection === 'left'
-            ? -100
-            : 100
-          : navDirection === 'left'
-            ? 100
-            : -100,
+        x:
+          navDirection === 'left'
+            ? isPresent
+              ? -100
+              : 100
+            : navDirection === 'right'
+              ? isPresent
+                ? 100
+                : -100
+              : 0,
       }}
       animate={{ opacity: 1, x: 0 }}
       exit={{
         opacity: 0,
-        x: isPresent
-          ? navDirection === 'left'
-            ? -100
-            : 100
-          : navDirection === 'left'
-            ? 100
-            : -100,
+        x:
+          navDirection === 'left'
+            ? isPresent
+              ? -100
+              : 100
+            : navDirection === 'right'
+              ? isPresent
+                ? 100
+                : -100
+              : 0,
       }}
       transition={{ duration: 0.5, ease: 'easeInOut' }}
       className={cn(bodyVariants({ variant, className }))}

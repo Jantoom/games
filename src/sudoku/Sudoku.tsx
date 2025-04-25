@@ -6,17 +6,18 @@ import Footer from '@/components/containers/Footer';
 import Header from '@/components/containers/Header';
 import LeaderboardButton from '@/components/elements/LeaderboardButton';
 import ThemeButton from '@/components/elements/ThemeButton';
-import { ResetDialog, ResetSetup } from '@/components/generics/Reset';
+import { ResetPrompt, ResetSetup } from '@/components/generics/Reset';
 import TimerText from '@/components/generics/TimerText';
 import HintsButton from './components/footer/HintsButton';
 import PencilButton from './components/footer/PencilButton';
 import UndoButton from './components/footer/UndoButton';
 import Grid from './components/body/Grid';
 import NumberButtons from './components/body/NumberButtons';
-import Settings from './components/sections/Settings';
+import Settings from './components/setup/Settings';
 import { useSudokuState } from '@/sudoku/state';
 import { isSolved } from '@/sudoku/utils';
 import { difficulties } from './types';
+import ResetButton from './components/footer/ResetButton';
 
 const SudokuCreate: React.FC = () => {
   const { status, read, reset } = useSudokuState();
@@ -44,22 +45,22 @@ const SudokuCreate: React.FC = () => {
 const SudokuPlay: React.FC = () => {
   const {
     status,
+    seed,
     time,
     grid,
     optShowTime,
     read,
     save,
     reset,
-    restart,
     stop,
     tick,
   } = useSudokuState();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (status === 'setup') {
+    if (status === 'create') {
       const saveData = read();
-      if (!saveData?.status || saveData.status === 'setup') {
+      if (!saveData?.status || saveData.status === 'create') {
         navigate('/games/sudoku/create');
       } else {
         reset(undefined, saveData);
@@ -70,20 +71,20 @@ const SudokuPlay: React.FC = () => {
   }, [status, grid, read, reset, stop, navigate]);
 
   return (
-    status !== 'setup' && (
-      <Page>
+    status !== 'create' && (
+      <Page seed={seed} save={save}>
         <Header title="Sudoku" back="create" settings={<Settings />}>
-          <div className="flex w-1/4 min-w-32 items-center justify-between">
-            {optShowTime && (
-              <TimerText init={time} status={status} tick={tick} />
-            )}
-          </div>
+          {optShowTime && <TimerText init={time} status={status} tick={tick} />}
         </Header>
-        <Body variant="play" save={save}>
+        <Body variant="play">
           <Grid />
           {status === 'play' && <NumberButtons />}
         </Body>
-        <Footer reset={<ResetDialog reset={reset} restart={restart} />}>
+        <Footer
+          status={status}
+          reset={<ResetPrompt reset={reset} difficulties={[...difficulties]} />}
+        >
+          <ResetButton />
           <PencilButton />
           <UndoButton />
           <HintsButton />

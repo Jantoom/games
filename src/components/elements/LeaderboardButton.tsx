@@ -1,7 +1,7 @@
 import { Trophy } from 'lucide-react';
 import { useState } from 'react';
 import DialogButton from '../generics/DialogButton';
-import Leaderboard from '../generics/Leaderboard';
+import { Leaderboard } from '../generics/Leaderboard';
 
 interface LeaderboardButtonProps<T extends string> {
   game: string;
@@ -23,11 +23,11 @@ const LeaderboardButton = <T extends string>({
       isOpen={isLeaderboardOpen}
       setIsOpen={setIsLeaderboardOpen}
     >
-      <Leaderboard
+      {/* <Leaderboard
         game={game}
         difficulty={difficulty}
         difficulties={difficulties}
-      />
+      /> */}
     </DialogButton>
   );
 };

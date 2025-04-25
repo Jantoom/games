@@ -6,43 +6,6 @@ import { useGlobalState } from '@/lib/state';
 import { cn, swapLastUrlSubpath } from '@/lib/utils';
 import DifficultyCarousel from './DifficultyCarousel';
 
-interface ResetDialogProps {
-  restart?: () => void;
-  reset: () => void;
-  className?: string;
-}
-
-const ResetDialog: React.FC<ResetDialogProps> = ({
-  restart,
-  reset,
-  className,
-}) => {
-  return (
-    <div className={cn('flex flex-row gap-2', className)}>
-      {restart && (
-        <DialogClose asChild>
-          <Button
-            onClick={() => restart()}
-            variant="outline"
-            className="w-full rounded-full border border-border hover:bg-secondary"
-          >
-            Clear game
-          </Button>
-        </DialogClose>
-      )}
-      <DialogClose asChild>
-        <Button
-          onClick={() => reset()}
-          variant="outline"
-          className="w-full rounded-full border border-border hover:bg-secondary"
-        >
-          New game
-        </Button>
-      </DialogClose>
-    </div>
-  );
-};
-
 interface ResetSetupProps<T extends string, U extends { status: string }> {
   status: string;
   read: () => U | undefined;
@@ -58,8 +21,8 @@ const ResetSetup = <T extends string, U extends { status: string }>({
   className,
 }: ResetSetupProps<T, U>) => {
   const [difficulty, setDifficulty] = useState(difficulties[0]);
-  const saveData = read();
   const { setState } = useGlobalState();
+  const saveData = read();
 
   const disableLoadPrevious = status !== 'play' && saveData?.status !== 'play';
 
@@ -100,11 +63,78 @@ const ResetSetup = <T extends string, U extends { status: string }>({
           className="w-full rounded-full border border-border hover:bg-secondary"
           disabled={disableLoadPrevious}
         >
-          Load previous game
+          Resume game
         </Button>
       </Link>
     </>
   );
 };
 
-export { ResetDialog, ResetSetup };
+interface ResetDialogProps {
+  restart?: () => void;
+  reset: () => void;
+  className?: string;
+}
+
+const ResetDialog: React.FC<ResetDialogProps> = ({
+  restart,
+  reset,
+  className,
+}) => {
+  return (
+    <div className={cn('flex flex-row gap-2', className)}>
+      {restart && (
+        <DialogClose asChild>
+          <Button
+            onClick={() => restart()}
+            variant="outline"
+            className="w-full rounded-full border border-border hover:bg-secondary"
+          >
+            Clear game
+          </Button>
+        </DialogClose>
+      )}
+      <DialogClose asChild>
+        <Button
+          onClick={() => reset()}
+          variant="outline"
+          className="w-full rounded-full border border-border hover:bg-secondary"
+        >
+          New game
+        </Button>
+      </DialogClose>
+    </div>
+  );
+};
+
+interface ResetPromptProps<T extends string> {
+  reset: (difficulty: T) => void;
+  difficulties: T[];
+}
+
+const ResetPrompt = <T extends string>({
+  reset,
+  difficulties,
+}: ResetPromptProps<T>) => {
+  const [difficulty, setDifficulty] = useState(difficulties[0]);
+
+  return (
+    <div className="flex items-center justify-evenly w-[90svw] gap-x-4 mb-6">
+      <Button
+        onClick={() => reset(difficulty)}
+        variant="outline"
+        className="w-[45%] rounded-full border border-border hover:bg-secondary"
+      >
+        New game
+      </Button>
+      <DifficultyCarousel
+        difficulty={difficulty}
+        difficulties={difficulties}
+        setDifficulty={setDifficulty}
+        className='w-[45%]'
+      />
+    </div>
+  );
+};
+
+export { ResetSetup, ResetDialog, ResetPrompt };
