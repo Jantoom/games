@@ -7,7 +7,7 @@ import { useGlobalState } from '@/lib/state';
 const bodyVariants = cva('flex flex-grow flex-col items-center', {
   variants: {
     variant: {
-      menu: '',
+      menu: 'justify-center',
       create: 'w-[80svw] justify-center gap-y-8',
       play: 'w-full justify-evenly',
     },

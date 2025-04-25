@@ -29,13 +29,20 @@ const Header: React.FC<HeaderProps> = ({ title, back, settings, children }) => {
       className={`relative flex h-[8svh] w-screen items-center justify-center p-1`}
     >
       <div className="absolute inset-0 -z-10 brightness-95" />
-      <BackButton back={back} className="absolute left-1 aspect-square h-fit" />
+      {back && (
+        <BackButton
+          back={back}
+          className="absolute left-1 aspect-square h-fit"
+        />
+      )}
       {hasVisibleChildren ? (
         <div className="flex w-1/4 min-w-32 items-center justify-between gap-x-6">
           {children}
         </div>
       ) : (
+        <div>
         <Label className="text-center text-2xl">{title}</Label>
+        </div>
       )}
       {settings && (
         <DialogButton
