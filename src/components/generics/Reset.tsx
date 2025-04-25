@@ -9,16 +9,18 @@ import DifficultyCarousel from './DifficultyCarousel';
 interface ResetSetupProps<T extends string, U extends { status: string }> {
   status: string;
   reset: (difficulty?: T, state?: U) => void;
+  difficulty: T;
   difficulties: T[];
   className?: string;
 }
 const ResetSetup = <T extends string, U extends { status: string }>({
   status,
   reset,
+  difficulty,
   difficulties,
   className,
 }: ResetSetupProps<T, U>) => {
-  const [difficulty, setDifficulty] = useState(difficulties[0]);
+  const [selectedDifficulty, setSelectedDifficulty] = useState(difficulty);
   const { setState } = useGlobalState();
 
   const disableResume = status === 'create';
@@ -27,9 +29,9 @@ const ResetSetup = <T extends string, U extends { status: string }>({
     <>
       <div className={cn('flex w-full flex-col items-center gap-2', className)}>
         <DifficultyCarousel
-          difficulty={difficulty}
+          difficulty={selectedDifficulty}
           difficulties={difficulties}
-          setDifficulty={setDifficulty}
+          setDifficulty={setSelectedDifficulty}
         />
         <Link
           to={swapLastUrlSubpath(useLocation().pathname, '/play')}

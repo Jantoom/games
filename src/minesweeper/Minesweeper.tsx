@@ -23,7 +23,7 @@ import {
 } from '@/components/generics/Leaderboard';
 
 const MinesweeperCreate: React.FC = () => {
-  const { status, read, reset } = useMinesweeperState();
+  const { status, difficulty, read, reset } = useMinesweeperState();
 
   useEffect(() => {
     const saveData = read();
@@ -39,6 +39,7 @@ const MinesweeperCreate: React.FC = () => {
         <ResetSetup
           status={status}
           reset={reset}
+          difficulty={difficulty}
           difficulties={[...difficulties]}
         />
         <Settings />

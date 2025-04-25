@@ -24,7 +24,7 @@ import {
 import Leaderboard from './components/sections/Leaderboard';
 
 const SudokuCreate: React.FC = () => {
-  const { status, read, reset } = useSudokuState();
+  const { status, difficulty, read, reset } = useSudokuState();
 
   useEffect(() => {
     const saveData = read();
@@ -40,6 +40,7 @@ const SudokuCreate: React.FC = () => {
         <ResetSetup
           status={status}
           reset={reset}
+          difficulty={difficulty}
           difficulties={[...difficulties]}
         />
         <Settings />
