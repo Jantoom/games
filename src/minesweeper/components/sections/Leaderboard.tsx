@@ -6,9 +6,9 @@ import {
   LeaderboardCarouselItem,
   LeaderboardTable,
   LeaderboardTableBody,
-  LeaderboardTableHeader,
   LeaderboardTableRow,
 } from '@/components/generics/Leaderboard';
+import { formatDate, formatTime } from '@/lib/utils';
 
 const Leaderboard: React.FC = () => {
   const { seed, difficulty, leaderboard, setState } = useMinesweeperState();
@@ -21,7 +21,7 @@ const Leaderboard: React.FC = () => {
       {difficulties.map((diff, index) => (
         <LeaderboardCarouselItem key={index} difficulty={diff}>
           <LeaderboardTable>
-            <LeaderboardTableHeader headers={['Score', 'Hints', 'Date']} />
+            {/* <LeaderboardTableHeader headers={['Date', 'Time']} /> */}
             <LeaderboardTableBody>
               {leaderboard
                 .filter((entry) => entry.difficulty === diff)
@@ -32,9 +32,8 @@ const Leaderboard: React.FC = () => {
                     game="minesweeper"
                     setState={setState}
                     data={[
-                      entry.score,
-                      entry.hints,
-                      new Date(entry.date).toLocaleDateString(),
+                      `${index + 1}. ${formatDate(entry.date)}`,
+                      formatTime(entry.time),
                     ]}
                     isCurrent={seed === entry.seed}
                   />

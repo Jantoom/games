@@ -1,14 +1,18 @@
-import { cva, type VariantProps } from 'class-variance-authority';
+import { cva } from 'class-variance-authority';
 import { motion, useIsPresent } from 'framer-motion';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { useGlobalState } from '@/lib/state';
+import { useLocation } from 'react-router-dom';
+import { PagePath } from '@/lib/types';
 
 const bodyVariants = cva('flex flex-grow flex-col items-center', {
   variants: {
     variant: {
       menu: 'justify-center',
-      create: 'w-1/2 min-w-72 justify-center gap-y-8',
+      create: 'w-full max-w-72 justify-center gap-y-8',
+      settings: 'w-full max-w-72 justify-center gap-y-8',
+      leaderboard: 'w-full max-w-72 justify-center gap-y-8',
       play: 'w-full justify-evenly',
     },
   },
@@ -17,14 +21,18 @@ const bodyVariants = cva('flex flex-grow flex-col items-center', {
   },
 });
 
-interface BodyProps extends VariantProps<typeof bodyVariants> {
+interface BodyProps {
   className?: string;
   children: React.ReactNode;
 }
 
-const Body: React.FC<BodyProps> = ({ variant, className, children }) => {
+const Body: React.FC<BodyProps> = ({ className, children }) => {
   const { navDirection, setState } = useGlobalState();
   const isPresent = useIsPresent();
+
+  const [variant, _setVariant] = useState(
+    (useLocation().pathname.split('/').pop() as PagePath) ?? 'menu',
+  );
 
   useEffect(() => {
     setState({ navDirection: undefined });

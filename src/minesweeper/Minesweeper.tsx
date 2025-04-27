@@ -4,7 +4,6 @@ import Page from '../components/containers/Page';
 import Body from '@/components/containers/Body';
 import Footer from '@/components/containers/Footer';
 import Header from '@/components/containers/Header';
-import ThemeButton from '@/components/elements/ThemeButton';
 import { ResetPrompt, ResetSetup } from '@/components/generics/Reset';
 import TimerText from '@/components/generics/TimerText';
 import FlagButton from './components/footer/FlagButton';
@@ -15,12 +14,8 @@ import { useMinesweeperState } from '@/minesweeper/state';
 import { isSolved } from '@/minesweeper/utils';
 import { difficulties } from './types';
 import BombCounter from './components/header/BombCounter';
-import ResetButton from './components/footer/ResetButton';
 import Leaderboard from './components/sections/Leaderboard';
-import {
-  LeaderboardButton,
-  LeaderboardDialog,
-} from '@/components/generics/Leaderboard';
+import { LeaderboardDialog } from '@/components/generics/Leaderboard';
 
 const MinesweeperCreate: React.FC = () => {
   const { status, difficulty, read, reset } = useMinesweeperState();
@@ -34,8 +29,8 @@ const MinesweeperCreate: React.FC = () => {
 
   return (
     <Page>
-      <Header title="Minesweeper" back="menu" />
-      <Body variant="create">
+      <Header />
+      <Body>
         <ResetSetup
           status={status}
           reset={reset}
@@ -44,10 +39,7 @@ const MinesweeperCreate: React.FC = () => {
         />
         <Settings />
       </Body>
-      <Footer>
-        <LeaderboardButton leaderboard={<Leaderboard />} />
-        <ThemeButton />
-      </Footer>
+      <Footer />
     </Page>
   );
 };
@@ -85,18 +77,21 @@ const MinesweeperPlay: React.FC = () => {
   return (
     status !== 'create' && (
       <Page seed={seed} save={save}>
-        <Header title="Minesweeper" back="create" settings={<Settings />}>
-          {optShowRemainingBombs && <BombCounter />}
-          {optShowTime && <TimerText init={time} status={status} tick={tick} />}
+        <Header>
+          <div className="flex w-full flex-col items-center gap-y-1">
+            {optShowRemainingBombs && <BombCounter />}
+            {optShowTime && (
+              <TimerText init={time} status={status} tick={tick} />
+            )}
+          </div>
         </Header>
-        <Body variant="play">
+        <Body>
           <Grid />
         </Body>
         <Footer
           status={status}
           reset={<ResetPrompt reset={reset} difficulties={[...difficulties]} />}
         >
-          <ResetButton />
           <FlagButton />
           <HintButton />
         </Footer>
@@ -110,4 +105,33 @@ const MinesweeperPlay: React.FC = () => {
   );
 };
 
-export { MinesweeperCreate, MinesweeperPlay };
+const MinesweeperSettings: React.FC = () => {
+  return (
+    <Page>
+      <Header />
+      <Body>
+        <Settings />
+      </Body>
+      <Footer />
+    </Page>
+  );
+};
+
+const MinesweeperLeaderboard: React.FC = () => {
+  return (
+    <Page>
+      <Header />
+      <Body>
+        <Leaderboard />
+      </Body>
+      <Footer />
+    </Page>
+  );
+};
+
+export {
+  MinesweeperCreate,
+  MinesweeperPlay,
+  MinesweeperSettings,
+  MinesweeperLeaderboard,
+};

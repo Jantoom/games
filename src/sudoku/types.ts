@@ -12,7 +12,7 @@ export type HistoryEntry = {
 export type LeaderboardEntry = {
   seed: string;
   difficulty: Difficulty;
-  score: string;
   hints: boolean[];
   date: string;
+  time: number;
 };

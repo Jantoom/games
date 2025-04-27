@@ -1,7 +1,12 @@
 import React from 'react';
 import Menu from '@/menu/Menu';
-import { MinesweeperCreate, MinesweeperPlay } from '@/minesweeper/Minesweeper';
-import { SudokuCreate, SudokuPlay } from './sudoku/Sudoku';
+import {
+  MinesweeperCreate,
+  MinesweeperLeaderboard,
+  MinesweeperPlay,
+  MinesweeperSettings,
+} from '@/minesweeper/Minesweeper';
+import { SudokuCreate, SudokuLeaderboard, SudokuPlay, SudokuSettings } from './sudoku/Sudoku';
 
 const Page = {
   Menu: {
@@ -19,6 +24,16 @@ const Page = {
     path: '/games/sudoku/play',
     element: React.createElement(SudokuPlay),
   },
+  SudokuSettings: {
+    name: 'SudokuSettings',
+    path: '/games/sudoku/settings',
+    element: React.createElement(SudokuSettings),
+  },
+  SudokuLeaderboard: {
+    name: 'SudokuLeaderboard',
+    path: '/games/sudoku/leaderboard',
+    element: React.createElement(SudokuLeaderboard),
+  },
   MinesweeperCreate: {
     name: 'Minesweeper',
     path: '/games/minesweeper/create',
@@ -28,6 +43,16 @@ const Page = {
     name: 'Minesweeper',
     path: '/games/minesweeper/play',
     element: React.createElement(MinesweeperPlay),
+  },
+  MinesweeperSettings: {
+    name: 'Minesweeper',
+    path: '/games/minesweeper/settings',
+    element: React.createElement(MinesweeperSettings),
+  },
+  MinesweeperLeaderboard: {
+    name: 'Minesweeper',
+    path: '/games/minesweeper/leaderboard',
+    element: React.createElement(MinesweeperLeaderboard),
   },
 } as const;
 

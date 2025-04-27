@@ -1,23 +1,23 @@
-import { Trophy } from 'lucide-react';
+import { Settings } from 'lucide-react';
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useGlobalState } from '@/lib/state';
 import { swapLastUrlSubpath } from '@/lib/utils';
 import ControlButton from '../generics/ControlButton';
 
-interface LeaderboardButtonProps {
+interface SettingsButtonProps {
   className?: string;
 }
 
-const LeaderboardButton: React.FC<LeaderboardButtonProps> = ({ className }) => {
+const SettingsButton: React.FC<SettingsButtonProps> = ({ className }) => {
   const pathname = useLocation().pathname;
-  const destination = swapLastUrlSubpath(pathname, '/leaderboard');
+  const destination = swapLastUrlSubpath(pathname, '/settings');
   const { setState } = useGlobalState();
 
   return (
     <Link to={destination} className="h-full">
       <ControlButton
-        Icon={Trophy}
+        Icon={Settings}
         isSelected={false}
         onClick={() => {
           setState({ navDirection: 'right' });
@@ -28,4 +28,4 @@ const LeaderboardButton: React.FC<LeaderboardButtonProps> = ({ className }) => {
   );
 };
 
-export default LeaderboardButton;
+export default SettingsButton;

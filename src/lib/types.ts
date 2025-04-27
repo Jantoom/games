@@ -4,11 +4,14 @@ import { GlobalState } from './state';
 
 export const gameStatuses = ['create', 'play', 'paused', 'finished'] as const;
 export type GameStatus = (typeof gameStatuses)[number];
-export enum PageDepth {
-  Menu = 0,
-  Create = 1,
-  Play = 2,
-}
+export const pagePaths = [
+  'menu',
+  'create',
+  'play',
+  'settings',
+  'leaderboard',
+] as const;
+export type PagePath = (typeof pagePaths)[number];
 export type GamesData = {
   global: GlobalState;
   sudoku: SudokuState;

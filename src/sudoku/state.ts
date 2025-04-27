@@ -1,7 +1,7 @@
 import seedrandom from 'seedrandom';
 import { create } from 'zustand';
 import { GameStatus, SerializableSet } from '@/lib/types';
-import { formatTime, getGamesData, saveGameData } from '@/lib/utils';
+import { getGamesData, saveGameData } from '@/lib/utils';
 import {
   Difficulty,
   Grid,
@@ -232,15 +232,15 @@ export const useSudokuState = create<SudokuState>((set) => ({
         newLeaderboard.push({
           seed: prev.seed,
           difficulty: prev.difficulty,
-          score: formatTime(prev.time),
           hints: [
             prev.usedAssistHighlight || prev.optAssistHighlight,
             prev.usedAssistRemaining || prev.optAssistRemaining,
             prev.usedAssistAutoRemove || prev.optAssistAutoRemove,
           ],
           date: new Date().toISOString(),
+          time: prev.time,
         });
-        newLeaderboard.sort((a, b) => a.score.localeCompare(b.score));
+        newLeaderboard.sort((a, b) => a.time - b.time);
       }
 
       const newState: SudokuState = {

@@ -14,7 +14,21 @@ export const formatTime = (seconds: number) => {
   const hrs = Math.floor(seconds / 60 / 60);
   const mins = Math.floor(seconds / 60) % 60;
   const secs = seconds % 60;
-  return `${hrs ? `${hrs}:` : ''}${mins.toString().padStart(hrs ? 2 : 1, '0')}:${secs.toString().padStart(2, '0')}`;
+  return (
+    `${hrs ? `${hrs}H ` : ''}` +
+    `${hrs || mins ? `${mins}M ` : ''}` +
+    `${secs}S`
+  );
+};
+
+export const formatDate = (date: string) => {
+  return new Date(date)
+    .toLocaleDateString('en-US', {
+      month: 'short',
+      day: '2-digit',
+      year: 'numeric',
+    })
+    .replace(',', '');
 };
 
 export const shuffle = <T>(array: T[]): T[] => {
@@ -40,21 +54,6 @@ export const swapLastUrlSubpath = (url: string, param: string) => {
 
 export const goToUrlSubpath = (url: string, index: number) => {
   return url.split('/').slice(0, index).join('/');
-};
-
-export const getPageDepthFromUrl = (url: string) => {
-  const token = url.split('/')[-1];
-  switch (token) {
-    case 'play': {
-      return 2;
-    }
-    case 'create': {
-      return 1;
-    }
-    default: {
-      return 0;
-    }
-  }
 };
 
 export const getGamesData = (): GamesData => {

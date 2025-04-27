@@ -4,17 +4,21 @@ import React, { useState } from 'react';
 import BackButton from '../elements/BackButton';
 import DialogButton from '../generics/DialogButton';
 import { Label } from '../ui/label';
+import ThemeButton from '../elements/ThemeButton';
+import { useLocation } from 'react-router-dom';
 
 interface HeaderProps {
-  title?: string;
-  back?: 'menu' | 'create' | 'play';
   settings?: React.ReactNode;
   children?: React.ReactNode;
 }
 
-const Header: React.FC<HeaderProps> = ({ title, back, settings, children }) => {
+const Header: React.FC<HeaderProps> = ({ settings, children }) => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const hasVisibleChildren = React.Children.toArray(children).some(Boolean);
+
+  const [title, _setTitle] = useState(
+    useLocation().pathname.split('/')[2] ?? 'Games by Jaleel',
+  );
 
   return (
     <motion.div
@@ -28,32 +32,29 @@ const Header: React.FC<HeaderProps> = ({ title, back, settings, children }) => {
       }}
       className={`relative flex h-[8svh] w-screen items-center justify-center p-1`}
     >
-      <div className="absolute inset-0 -z-10 brightness-95" />
-      {back && (
-        <BackButton
-          back={back}
-          className="absolute left-1 aspect-square h-fit"
-        />
-      )}
+      <div className="absolute inset-0 -z-10 bg-background opacity-95" />
+      <div className="absolute inset-0 flex flex-row-reverse items-center justify-between p-1">
+        <ThemeButton />
+        {title !== 'Games by Jaleel' && <BackButton />}
+        {settings && (
+          <DialogButton
+            Icon={Settings}
+            title="Settings"
+            isOpen={isSettingsOpen}
+            setIsOpen={setIsSettingsOpen}
+          >
+            {settings}
+          </DialogButton>
+        )}
+      </div>
       {hasVisibleChildren ? (
-        <div className="flex w-1/4 min-w-32 items-center justify-between gap-x-6">
+        <div className="flex w-3/4 min-w-32 items-center gap-x-6">
           {children}
         </div>
       ) : (
         <div>
-          <Label className="text-center text-2xl">{title}</Label>
+          <Label className="text-center text-2xl capitalize">{title}</Label>
         </div>
-      )}
-      {settings && (
-        <DialogButton
-          Icon={Settings}
-          title="Settings"
-          isOpen={isSettingsOpen}
-          setIsOpen={setIsSettingsOpen}
-          className="absolute right-1 aspect-square h-fit"
-        >
-          {settings}
-        </DialogButton>
       )}
     </motion.div>
   );

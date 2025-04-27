@@ -4,7 +4,6 @@ import Page from '../components/containers/Page';
 import Body from '@/components/containers/Body';
 import Footer from '@/components/containers/Footer';
 import Header from '@/components/containers/Header';
-import ThemeButton from '@/components/elements/ThemeButton';
 import { ResetPrompt, ResetSetup } from '@/components/generics/Reset';
 import TimerText from '@/components/generics/TimerText';
 import HintsButton from './components/footer/HintsButton';
@@ -35,19 +34,17 @@ const SudokuCreate: React.FC = () => {
 
   return (
     <Page>
-      <Header title="Sudoku" back="menu" />
-      <Body variant="create">
+      <Header />
+      <Body>
         <ResetSetup
           status={status}
           reset={reset}
           difficulty={difficulty}
           difficulties={[...difficulties]}
         />
-        <Settings />
       </Body>
       <Footer>
         <LeaderboardButton leaderboard={<Leaderboard />} />
-        <ThemeButton />
       </Footer>
     </Page>
   );
@@ -84,10 +81,10 @@ const SudokuPlay: React.FC = () => {
   return (
     status !== 'create' && (
       <Page seed={seed} save={save}>
-        <Header title="Sudoku" back="create" settings={<Settings />}>
+        <Header>
           {optShowTime && <TimerText init={time} status={status} tick={tick} />}
         </Header>
-        <Body variant="play">
+        <Body>
           <Grid />
           {status === 'play' && <NumberButtons />}
         </Body>
@@ -110,4 +107,28 @@ const SudokuPlay: React.FC = () => {
   );
 };
 
-export { SudokuCreate, SudokuPlay };
+const SudokuSettings: React.FC = () => {
+  return (
+    <Page>
+      <Header />
+      <Body>
+        <Settings />
+      </Body>
+      <Footer />
+    </Page>
+  );
+};
+
+const SudokuLeaderboard: React.FC = () => {
+  return (
+    <Page>
+      <Header />
+      <Body>
+        <Leaderboard />
+      </Body>
+      <Footer />
+    </Page>
+  );
+};
+
+export { SudokuCreate, SudokuPlay, SudokuSettings, SudokuLeaderboard };

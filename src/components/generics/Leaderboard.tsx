@@ -24,6 +24,7 @@ import {
 import { cn, getGamesData, saveGameData } from '@/lib/utils';
 import { GamesData } from '@/lib/types';
 import DialogButton from './DialogButton';
+import ControlButton from './ControlButton';
 
 interface LeaderboardButtonProps {
   leaderboard: React.ReactNode;
@@ -164,14 +165,12 @@ const LeaderboardTableHeader = ({ headers }: LeaderboardTableHeaderProps) => {
         {headers.map((header, index) => (
           <TableHead
             key={index}
-            className={`border-b border-border px-0 ${index === 0 ? 'text-start' : 'text-center'}`}
+            className={`border-b border-border px-0 text-base ${index === 0 ? 'text-start' : index === headers.length - 1 ? 'text-end' : 'text-center'}`}
           >
             {header}
           </TableHead>
         ))}
-        <TableHead className="border-b border-border px-0 text-end">
-          Delete
-        </TableHead>
+        <TableHead className="border-b border-border px-0"></TableHead>
       </TableRow>
     </TableHeader>
   );
@@ -222,19 +221,24 @@ const LeaderboardTableRow = <T extends { leaderboard: any[] }>({
       {data.map((item, index) => (
         <LeaderboardTableCell
           key={index}
-          className={index === 0 ? 'text-start' : 'text-center'}
+          className={`m-0 text-base ${
+            index === 0
+              ? 'text-start'
+              : index === data.length - 1
+                ? 'text-end'
+                : 'text-center'
+          }`}
         >
           {item}
         </LeaderboardTableCell>
       ))}
       <LeaderboardTableCell className="text-end">
-        <Button
-          variant="ghost"
+        <ControlButton
+          Icon={Trash}
           onClick={() => deleteEntry(index)}
-          className="rounded-full px-0 hover:bg-secondary"
-        >
-          <Trash />
-        </Button>
+          isSelected={false}
+          className="p-0 aspect-auto h-8"
+        />
       </LeaderboardTableCell>
     </TableRow>
   );
@@ -248,7 +252,7 @@ const LeaderboardTableCell = ({
   className,
   children,
 }: LeaderboardTableCellProps) => {
-  return <TableCell className={cn('px-0', className)}>{children}</TableCell>;
+  return <TableCell className={cn('py-1 px-0', className)}>{children}</TableCell>;
 };
 
 export {

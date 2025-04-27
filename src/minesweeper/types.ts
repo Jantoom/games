@@ -5,9 +5,9 @@ export type HistoryEntry = {
   grid: Grid;
 };
 export type LeaderboardEntry = {
-  difficulty: Difficulty;
-  hints: number;
-  score: string;
   seed: string;
+  difficulty: Difficulty;
+  time: number;
+  usedHints: boolean;
   date: string;
 };

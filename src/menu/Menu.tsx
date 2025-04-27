@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { useGlobalState } from '@/lib/state';
 import Page from '../components/containers/Page';
-import ThemeButton from '../components/elements/ThemeButton';
 import Body from '@/components/containers/Body';
 import Header from '@/components/containers/Header';
 import Footer from '@/components/containers/Footer';
@@ -13,8 +12,8 @@ const Menu: React.FC = () => {
   const { setState } = useGlobalState();
   return (
     <Page>
-      <Header title="Games by Jaleel" />
-      <Body variant="menu">
+      <Header />
+      <Body>
         <Button
           asChild
           variant="ghost"
@@ -93,9 +92,7 @@ const Menu: React.FC = () => {
           </Link>
         </Button> */}
       </Body>
-      <Footer>
-        <ThemeButton />
-      </Footer>
+      <Footer />
     </Page>
   );
 };

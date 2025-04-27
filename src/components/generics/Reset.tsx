@@ -26,29 +26,27 @@ const ResetSetup = <T extends string, U extends { status: string }>({
   const disableResume = status === 'create';
 
   return (
-    <>
-      <div className={cn('flex w-full flex-col items-center gap-2', className)}>
-        <DifficultyCarousel
-          difficulty={selectedDifficulty}
-          difficulties={difficulties}
-          setDifficulty={setSelectedDifficulty}
-        />
-        <Link
-          to={swapLastUrlSubpath(useLocation().pathname, '/play')}
-          className="w-full"
+    <div className={cn('flex w-full flex-col items-center gap-y-4', className)}>
+      <DifficultyCarousel
+        difficulty={selectedDifficulty}
+        difficulties={difficulties}
+        setDifficulty={setSelectedDifficulty}
+      />
+      <Link
+        to={swapLastUrlSubpath(useLocation().pathname, '/play')}
+        className="w-full"
+      >
+        <Button
+          onClick={() => {
+            setState({ navDirection: 'right' });
+            reset(difficulty);
+          }}
+          variant="outline"
+          className="w-full rounded-full border border-border hover:bg-secondary"
         >
-          <Button
-            onClick={() => {
-              setState({ navDirection: 'right' });
-              reset(difficulty);
-            }}
-            variant="outline"
-            className="w-full rounded-full border border-border hover:bg-secondary"
-          >
-            New game
-          </Button>
-        </Link>
-      </div>
+          New game
+        </Button>
+      </Link>
       <Link
         to={swapLastUrlSubpath(useLocation().pathname, '/play')}
         className={`w-full ${disableResume ? 'pointer-events-none' : ''}`}
@@ -64,7 +62,7 @@ const ResetSetup = <T extends string, U extends { status: string }>({
           Resume game
         </Button>
       </Link>
-    </>
+    </div>
   );
 };
 

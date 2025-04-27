@@ -1,7 +1,7 @@
 import seedrandom from 'seedrandom';
 import { create } from 'zustand';
 import { GameStatus, SerializableSet } from '@/lib/types';
-import { formatTime, getGamesData, saveGameData } from '@/lib/utils';
+import { getGamesData, saveGameData } from '@/lib/utils';
 import {
   Difficulty,
   Grid,
@@ -34,7 +34,7 @@ export type MinesweeperState = {
   optFlagOnRightClick: boolean;
   optShowRemainingBombs: boolean;
   optShowTime: boolean;
-  usedHints: number;
+  usedHints: boolean;
   leaderboard: LeaderboardEntry[];
   setState: (
     newState:
@@ -67,7 +67,7 @@ export const useMinesweeperState = create<MinesweeperState>((set) => ({
   optFlagOnRightClick: true,
   optShowRemainingBombs: true,
   optShowTime: true,
-  usedHints: 0,
+  usedHints: false,
   leaderboard: [],
   setState: (newState) => set(newState),
   read: () => {
@@ -122,7 +122,7 @@ export const useMinesweeperState = create<MinesweeperState>((set) => ({
         bombs: bombs,
         flags: new SerializableSet(),
         history: [],
-        usedHints: 0,
+        usedHints: false,
       } as MinesweeperState;
 
       return state
@@ -180,11 +180,11 @@ export const useMinesweeperState = create<MinesweeperState>((set) => ({
         newLeaderboard.push({
           seed: prev.seed,
           difficulty: prev.difficulty,
-          score: formatTime(prev.time),
-          hints: prev.usedHints,
+          time: prev.time,
+          usedHints: prev.usedHints,
           date: new Date().toISOString(),
         });
-        newLeaderboard.sort((a, b) => a.score.localeCompare(b.score));
+        newLeaderboard.sort((a, b) => a.time - b.time);
 
         // Reveal remaining cells
         newGrid = prev.grid.map((array, row) =>
