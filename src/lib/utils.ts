@@ -1,6 +1,6 @@
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import { GamesData, SerializableSet } from './types';
+import { createJSONStorage } from 'zustand/middleware';
 
 /**
  *
@@ -56,30 +56,14 @@ export const goToUrlSubpath = (url: string, index: number) => {
   return url.split('/').slice(0, index).join('/');
 };
 
-export const getGamesData = (): GamesData => {
-  const regex = /\d-\d/;
-  const shouldBeSet = (key: string) =>
-    regex.test(key) || key === 'bombs' || key === 'flags';
-
-  return JSON.parse(
-    localStorage.getItem(`jantoom-games`) ?? '{}',
-    (key, value) => {
-      if (value && shouldBeSet(key)) {
-        return new SerializableSet([...value]);
-      }
-      return value;
-    },
-  );
+export const createDefaultJSONStorage = () => {
+  return createJSONStorage(() => localStorage, {
+    reviver: (_key, value: any) =>
+      value && value.type === 'set' ? new Set(value.value) : value,
+    replacer: (_key, value) =>
+      value instanceof Set ? { type: 'set', value: [...value] } : value,
+  });
 };
-
-export const saveGameData = (gamesData: GamesData, gameData: object) =>
-  localStorage.setItem(
-    'jantoom-games',
-    JSON.stringify({
-      ...gamesData,
-      ...gameData,
-    }),
-  );
 
 declare global {
   /* eslint-disable unused-imports/no-unused-vars */

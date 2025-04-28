@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { DialogClose } from '@/components/ui/dialog';
-import { useGlobalState } from '@/lib/state';
+import { useGlobalStore } from '@/lib/state';
 import { cn, swapLastUrlSubpath } from '@/lib/utils';
 import DifficultyCarousel from './DifficultyCarousel';
 
@@ -21,7 +21,7 @@ const ResetSetup = <T extends string, U extends { status: string }>({
   className,
 }: ResetSetupProps<T, U>) => {
   const [selectedDifficulty, setSelectedDifficulty] = useState(difficulty);
-  const { setState } = useGlobalState();
+  const { setState } = useGlobalStore();
 
   const disableResume = status === 'create';
 

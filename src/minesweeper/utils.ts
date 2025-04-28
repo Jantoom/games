@@ -1,4 +1,3 @@
-import { SerializableSet } from '@/lib/types';
 import { Difficulty, Grid } from '@/minesweeper/types';
 
 const difficultyConfig: Record<
@@ -24,7 +23,7 @@ export const generateMinesweeper = (
   dimensions: [number, number];
   numBombs: number;
   puzzle: Grid;
-  bombs: SerializableSet<string>;
+  bombs: Set<string>;
 } => {
   config = difficultyConfig[difficulty];
   cellCoords = Array.from({ length: config.numRows }).flatMap((_, row) =>
@@ -34,7 +33,7 @@ export const generateMinesweeper = (
   const puzzle = Array.from({ length: config.numRows }).map(() =>
     Array.from({ length: config.numCols }),
   ) as Grid;
-  const bombs = new SerializableSet<string>();
+  const bombs = new Set<string>();
   while (bombs.size < config.numBombs) {
     bombs.add(
       `${Math.floor(Math.random() * config.numRows)}-${Math.floor(Math.random() * config.numCols)}`,
@@ -50,11 +49,13 @@ export const generateMinesweeper = (
 };
 
 export const isSolved = (
-  bombs: SerializableSet<string>,
-  flags: SerializableSet<string>,
+  grid: Grid,
+  bombs: Set<string>,
+  flags: Set<string>,
 ): boolean =>
   bombs.size === flags.size &&
-  ([...bombs] as string[]).every((bomb) => flags.has(bomb));
+  ([...bombs] as string[]).every((bomb) => flags.has(bomb)) &&
+  grid.flatMap((array, row) => array.map((num, col) => num != null ? true : `${row}-${col}`)).every((key) => key === true || flags.has(key));
 
 export const getAdjacentCells = (
   row: number,
@@ -83,13 +84,13 @@ export const getAdjacentCells = (
     );
 
 export const getAdjacentSafeCells = (
-  bombs: SerializableSet<string>,
+  bombs: Set<string>,
   adjacentCells: { row: number; col: number }[],
 ): { row: number; col: number }[] =>
   toCellCoords(toCellKeys(adjacentCells).filter((key) => !bombs.has(key)));
 
 export const getSafeCells = (
-  bombs: SerializableSet<string>,
+  bombs: Set<string>,
   row: number,
   col: number,
 ): { row: number; col: number; adjacentBombs: number }[] => {
@@ -97,7 +98,7 @@ export const getSafeCells = (
 
   const result: { row: number; col: number; adjacentBombs: number }[] = [];
   const queue: { row: number; col: number }[] = [{ row, col }];
-  const visited = new SerializableSet<string>();
+  const visited = new Set<string>();
 
   while (queue.length > 0) {
     const { row, col } = queue.shift() as { row: number; col: number };
@@ -126,7 +127,7 @@ export const getSafeCells = (
 
 export const getHintCells = (
   grid: Grid,
-  bombs: SerializableSet<string>,
+  bombs: Set<string>,
 ): { row: number; col: number }[] =>
   cellCoords.filter(
     ({ row, col }) =>

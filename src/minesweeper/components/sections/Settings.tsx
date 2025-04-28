@@ -3,7 +3,7 @@ import {
   SettingsGroup,
   SettingsSwitch,
 } from '@/components/generics/Settings';
-import { useMinesweeperState } from '@/minesweeper/state';
+import { useMinesweeperStore } from '@/minesweeper/state';
 
 const Settings: React.FC = () => {
   const {
@@ -14,7 +14,7 @@ const Settings: React.FC = () => {
     optShowRemainingBombs,
     optShowTime,
     setState,
-  } = useMinesweeperState();
+  } = useMinesweeperStore();
 
   return (
     <SettingsContainer>

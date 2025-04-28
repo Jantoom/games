@@ -2,7 +2,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Bomb, Flag } from 'lucide-react';
 import React from 'react';
 import { Themes } from '@/lib/styles';
-import { useGlobalState } from '../../../lib/state';
+import { useGlobalStore } from '../../../lib/state';
 
 interface CellProps {
   id: string;
@@ -12,7 +12,7 @@ interface CellProps {
 }
 
 const Cell: React.FC<CellProps> = ({ id, num, flagged, exploded }) => {
-  const { theme } = useGlobalState();
+  const { theme } = useGlobalStore();
   const randomDelay = Math.random() * 0.1;
 
   return (

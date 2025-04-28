@@ -12,7 +12,7 @@ import UndoButton from './components/footer/UndoButton';
 import Grid from './components/body/Grid';
 import NumberButtons from './components/body/NumberButtons';
 import Settings from './components/sections/Settings';
-import { useSudokuState } from '@/sudoku/state';
+import { useSudokuStore } from '@/sudoku/state';
 import { isSolved } from '@/sudoku/utils';
 import { difficulties } from './types';
 import ResetButton from './components/footer/ResetButton';
@@ -23,14 +23,7 @@ import {
 import Leaderboard from './components/sections/Leaderboard';
 
 const SudokuCreate: React.FC = () => {
-  const { status, difficulty, read, reset } = useSudokuState();
-
-  useEffect(() => {
-    const saveData = read();
-    if (status === 'create' && saveData?.status !== 'create') {
-      reset(undefined, saveData);
-    }
-  }, [status, read, reset]);
+  const { status, difficulty, reset } = useSudokuStore();
 
   return (
     <Page>
@@ -51,36 +44,21 @@ const SudokuCreate: React.FC = () => {
 };
 
 const SudokuPlay: React.FC = () => {
-  const {
-    status,
-    seed,
-    time,
-    grid,
-    optShowTime,
-    read,
-    save,
-    reset,
-    stop,
-    tick,
-  } = useSudokuState();
+  const { status, seed, time, grid, optShowTime, reset, stop, tick } =
+    useSudokuStore();
   const navigate = useNavigate();
 
   useEffect(() => {
     if (status === 'create') {
-      const saveData = read();
-      if (!saveData?.status || saveData.status === 'create') {
-        navigate('/games/sudoku/create');
-      } else {
-        reset(undefined, saveData);
-      }
+      navigate('/games/sudoku/create');
     } else if (status === 'play' && isSolved(grid)) {
       stop(true);
     }
-  }, [status, grid, read, reset, stop, navigate]);
+  }, [status, grid, navigate, stop]);
 
   return (
     status !== 'create' && (
-      <Page seed={seed} save={save}>
+      <Page seed={seed}>
         <Header>
           {optShowTime && <TimerText init={time} status={status} tick={tick} />}
         </Header>

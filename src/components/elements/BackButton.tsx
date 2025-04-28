@@ -1,7 +1,7 @@
 import { ArrowLeft } from 'lucide-react';
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { useGlobalState } from '@/lib/state';
+import { useGlobalStore } from '@/lib/state';
 import { goToUrlSubpath, swapLastUrlSubpath } from '@/lib/utils';
 import ControlButton from '../generics/ControlButton';
 
@@ -11,7 +11,7 @@ const BackButton: React.FC = () => {
       ? goToUrlSubpath(useLocation().pathname, 2)
       : swapLastUrlSubpath(useLocation().pathname, 'create'),
   );
-  const { setState } = useGlobalState();
+  const { setState } = useGlobalStore();
 
   return (
     <Link to={backUrl} className="h-full">

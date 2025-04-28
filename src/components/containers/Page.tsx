@@ -3,11 +3,10 @@ import { motion } from 'framer-motion';
 
 interface PageProps {
   seed?: string;
-  save?: () => void;
   children: React.ReactNode;
 }
 
-const Page: React.FC<PageProps> = ({ seed, save, children }) => {
+const Page: React.FC<PageProps> = ({ seed, children }) => {
   useEffect(() => {
     document.body.style.overflow = 'hidden';
 
@@ -15,17 +14,6 @@ const Page: React.FC<PageProps> = ({ seed, save, children }) => {
       document.body.style.overflow = 'auto';
     };
   }, []);
-
-  useEffect(() => {
-    const handleBeforeUnload = (_event: BeforeUnloadEvent) => {
-      save();
-    };
-    if (save) window.addEventListener('beforeunload', handleBeforeUnload);
-
-    return () => {
-      if (save) window.removeEventListener('beforeunload', handleBeforeUnload);
-    };
-  }, [save]);
 
   return (
     <motion.div

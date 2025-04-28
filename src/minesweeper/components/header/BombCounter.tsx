@@ -1,9 +1,9 @@
 import { Label } from '@/components/ui/label';
-import { useMinesweeperState } from '@/minesweeper/state';
+import { useMinesweeperStore } from '@/minesweeper/state';
 import { Bomb } from 'lucide-react';
 
 const BombCounter: React.FC = () => {
-  const { bombs, flags } = useMinesweeperState();
+  const { bombs, flags } = useMinesweeperStore();
   return (
     <div className="relative flex w-fit items-center justify-center gap-x-1">
       <Bomb className="stroke-foreground" />

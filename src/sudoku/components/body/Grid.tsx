@@ -1,5 +1,5 @@
 import Cell from '@/sudoku/components/body/Cell';
-import { useSudokuState } from '../../state';
+import { useSudokuStore } from '../../state';
 import ScaledContainer from '@/components/containers/ScaledContainer';
 
 const Grid: React.FC = () => {
@@ -14,7 +14,7 @@ const Grid: React.FC = () => {
     pencilMode,
     optAssistHighlight,
     update,
-  } = useSudokuState();
+  } = useSudokuStore();
   const factor = 60;
 
   return (

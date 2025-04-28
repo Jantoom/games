@@ -3,7 +3,7 @@ import React, { useCallback, useRef, useState } from 'react';
 import DialogButton from '@/components/generics/DialogButton';
 import { Button } from '@/components/ui/button';
 import { DialogClose } from '@/components/ui/dialog';
-import { useSudokuState } from '@/sudoku/state';
+import { useSudokuStore } from '@/sudoku/state';
 import {
   getAutoNotes,
   getConflictCells,
@@ -14,7 +14,7 @@ import {
 
 const HintsButton: React.FC = () => {
   const { status, solvedGrid, grid, notes, update, setState } =
-    useSudokuState();
+    useSudokuStore();
   const [isHintsOpen, setIsHintsOpen] = useState(false);
   const errorBlinkerRef = useRef<NodeJS.Timeout | undefined>(undefined);
 

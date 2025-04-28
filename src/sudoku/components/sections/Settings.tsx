@@ -1,4 +1,4 @@
-import { useSudokuState } from '@/sudoku/state';
+import { useSudokuStore } from '@/sudoku/state';
 import {
   SettingsContainer,
   SettingsGroup,
@@ -12,7 +12,7 @@ const Settings: React.FC = () => {
     optAssistAutoRemove,
     optShowTime,
     setState,
-  } = useSudokuState();
+  } = useSudokuStore();
 
   return (
     <SettingsContainer>

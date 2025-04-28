@@ -10,7 +10,7 @@ import FlagButton from './components/footer/FlagButton';
 import HintButton from './components/footer/HintButton';
 import Grid from './components/body/Grid';
 import Settings from './components/sections/Settings';
-import { useMinesweeperState } from '@/minesweeper/state';
+import { useMinesweeperStore } from '@/minesweeper/state';
 import { isSolved } from '@/minesweeper/utils';
 import { difficulties } from './types';
 import BombCounter from './components/header/BombCounter';
@@ -18,14 +18,7 @@ import Leaderboard from './components/sections/Leaderboard';
 import { LeaderboardDialog } from '@/components/generics/Leaderboard';
 
 const MinesweeperCreate: React.FC = () => {
-  const { status, difficulty, read, reset } = useMinesweeperState();
-
-  useEffect(() => {
-    const saveData = read();
-    if (status === 'create' && saveData?.status !== 'create') {
-      reset(undefined, saveData);
-    }
-  }, [status, read, reset]);
+  const { status, difficulty, reset } = useMinesweeperStore();
 
   return (
     <Page>
@@ -37,7 +30,6 @@ const MinesweeperCreate: React.FC = () => {
           difficulty={difficulty}
           difficulties={[...difficulties]}
         />
-        <Settings />
       </Body>
       <Footer />
     </Page>
@@ -49,34 +41,28 @@ const MinesweeperPlay: React.FC = () => {
     status,
     seed,
     time,
+    grid,
     bombs,
     flags,
     optShowRemainingBombs,
     optShowTime,
-    read,
-    save,
     reset,
     stop,
     tick,
-  } = useMinesweeperState();
+  } = useMinesweeperStore();
   const navigate = useNavigate();
 
   useEffect(() => {
     if (status === 'create') {
-      const saveData = read();
-      if (!saveData?.status || saveData.status === 'create') {
-        navigate('/games/minesweeper/create');
-      } else {
-        reset(undefined, saveData);
-      }
-    } else if (status === 'play' && isSolved(bombs, flags)) {
+      navigate('/games/minesweeper/create');
+    } else if (status === 'play' && isSolved(grid, bombs, flags)) {
       stop(true);
     }
-  }, [status, bombs, flags, read, reset, stop, navigate]);
+  }, [status, grid, bombs, flags, reset, stop, navigate]);
 
   return (
     status !== 'create' && (
-      <Page seed={seed} save={save}>
+      <Page seed={seed}>
         <Header>
           <div className="flex w-full flex-col items-center gap-y-1">
             {optShowRemainingBombs && <BombCounter />}
@@ -95,7 +81,7 @@ const MinesweeperPlay: React.FC = () => {
           <FlagButton />
           <HintButton />
         </Footer>
-        {status === 'finished' && isSolved(bombs, flags) && (
+        {status === 'finished' && (
           <LeaderboardDialog delay>
             <Leaderboard />
           </LeaderboardDialog>

@@ -2,14 +2,14 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AnimatePresence } from 'framer-motion';
 import { useEffect, cloneElement } from 'react';
 import { useLocation, useOutlet } from 'react-router-dom';
-import { useGlobalState } from './lib/state';
+import { useGlobalStore } from './lib/state';
 
 const queryClient = new QueryClient();
 
 const App = () => {
   const { pathname } = useLocation();
   const element = useOutlet();
-  const { theme, setTheme } = useGlobalState();
+  const { theme, setTheme } = useGlobalStore();
 
   useEffect(() => {
     setTheme(theme || 'dark-blue');

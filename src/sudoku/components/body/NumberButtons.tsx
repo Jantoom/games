@@ -1,12 +1,12 @@
 import { Eraser } from 'lucide-react';
 import React, { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { useSudokuState } from '@/sudoku/state';
+import { useSudokuStore } from '@/sudoku/state';
 import { getMatchingCells } from '@/sudoku/utils';
 
 const NumberButtons: React.FC = () => {
   const { status, grid, selectedNumber, optAssistRemaining, setState } =
-    useSudokuState();
+    useSudokuStore();
 
   useEffect(() => {
     if (optAssistRemaining) setState({ usedAssistRemaining: true });

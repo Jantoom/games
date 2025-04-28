@@ -1,5 +1,5 @@
 import React from 'react';
-import { useMinesweeperState } from '@/minesweeper/state';
+import { useMinesweeperStore } from '@/minesweeper/state';
 import { difficulties } from '@/minesweeper/types';
 import {
   LeaderboardCarousel,
@@ -11,7 +11,7 @@ import {
 import { formatDate, formatTime } from '@/lib/utils';
 
 const Leaderboard: React.FC = () => {
-  const { seed, difficulty, leaderboard, setState } = useMinesweeperState();
+  const { seed, difficulty, leaderboard, setState } = useMinesweeperStore();
 
   return (
     <LeaderboardCarousel

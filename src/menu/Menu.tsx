@@ -2,14 +2,14 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { useGlobalState } from '@/lib/state';
+import { useGlobalStore } from '@/lib/state';
 import Page from '../components/containers/Page';
 import Body from '@/components/containers/Body';
 import Header from '@/components/containers/Header';
 import Footer from '@/components/containers/Footer';
 
 const Menu: React.FC = () => {
-  const { setState } = useGlobalState();
+  const { setState } = useGlobalStore();
   return (
     <Page>
       <Header />

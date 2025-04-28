@@ -1,11 +1,11 @@
 import DialogButton from '@/components/generics/DialogButton';
 import { ResetDialog } from '@/components/generics/Reset';
-import { useSudokuState } from '@/sudoku/state';
+import { useSudokuStore } from '@/sudoku/state';
 import { RotateCcw } from 'lucide-react';
 import React, { useState } from 'react';
 
 const ResetButton: React.FC = () => {
-  const { reset, restart } = useSudokuState();
+  const { reset, restart } = useSudokuStore();
   const [isResetOpen, setIsResetOpen] = useState(false);
 
   return (

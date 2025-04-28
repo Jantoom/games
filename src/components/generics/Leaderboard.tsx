@@ -21,7 +21,7 @@ import {
   TableHeader,
   TableRow,
 } from '../ui/table';
-import { cn, getGamesData, saveGameData } from '@/lib/utils';
+import { cn } from '@/lib/utils';
 import { GamesData } from '@/lib/types';
 import DialogButton from './DialogButton';
 import ControlButton from './ControlButton';
@@ -192,24 +192,15 @@ interface LeaderboardTableRowProps<T extends { leaderboard: any[] }> {
 }
 const LeaderboardTableRow = <T extends { leaderboard: any[] }>({
   index,
-  game,
   setState,
   data,
   isCurrent,
 }: LeaderboardTableRowProps<T>) => {
   const deleteEntry = (index: number): void => {
     setState((prev) => {
-      const gamesData = getGamesData();
       const newLeaderboard = prev.leaderboard.filter(
         (_, index_) => index_ !== index,
       );
-      const newGameData = {
-        [game]: {
-          ...gamesData[game],
-          leaderboard: newLeaderboard,
-        },
-      };
-      saveGameData(gamesData, newGameData);
       return { leaderboard: newLeaderboard };
     });
   };
@@ -237,7 +228,7 @@ const LeaderboardTableRow = <T extends { leaderboard: any[] }>({
           Icon={Trash}
           onClick={() => deleteEntry(index)}
           isSelected={false}
-          className="p-0 aspect-auto h-8"
+          className="aspect-auto h-8 p-0"
         />
       </LeaderboardTableCell>
     </TableRow>
@@ -252,7 +243,9 @@ const LeaderboardTableCell = ({
   className,
   children,
 }: LeaderboardTableCellProps) => {
-  return <TableCell className={cn('py-1 px-0', className)}>{children}</TableCell>;
+  return (
+    <TableCell className={cn('px-0 py-1', className)}>{children}</TableCell>
+  );
 };
 
 export {

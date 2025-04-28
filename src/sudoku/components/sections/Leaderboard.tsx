@@ -1,5 +1,5 @@
 import React from 'react';
-import { useSudokuState } from '@/sudoku/state';
+import { useSudokuStore } from '@/sudoku/state';
 import { difficulties } from '@/sudoku/types';
 import {
   LeaderboardCarousel,
@@ -11,7 +11,7 @@ import {
 import { formatDate, formatTime } from '@/lib/utils';
 
 const Leaderboard: React.FC = () => {
-  const { seed, difficulty, leaderboard, setState } = useSudokuState();
+  const { seed, difficulty, leaderboard, setState } = useSudokuStore();
 
   return (
     <LeaderboardCarousel

@@ -17,18 +17,14 @@ export type GamesData = {
   sudoku: SudokuState;
   minesweeper: MinesweeperState;
 };
-export class SerializableSet<T> extends Set<T> {
-  constructor(iterable?: Iterable<T>) {
-    super(iterable);
-  }
-  toJSON() {
-    return [...this];
-  }
-  static from<T>(array: T[]) {
-    return new SerializableSet(array);
-  }
-
-  static fromJSON<U>(data: U[]): SerializableSet<U> {
-    return new SerializableSet(data);
-  }
+export interface BaseState {
+  status: GameStatus;
+  seed: string;
+  setState: (
+    newState:
+      | Partial<BaseState>
+      | ((state: BaseState) => Partial<BaseState>),
+  ) => void;
+  read: () => BaseState | undefined;
+  save: () => void;
 }

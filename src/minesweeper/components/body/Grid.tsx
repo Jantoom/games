@@ -7,7 +7,7 @@ import {
 } from '@use-gesture/react';
 import { clamp } from 'framer-motion';
 import React, { useEffect, useRef } from 'react';
-import { useMinesweeperState } from '@/minesweeper/state';
+import { useMinesweeperStore } from '@/minesweeper/state';
 import {
   getCellFromPosition,
   positionCellsAreEqual,
@@ -29,7 +29,7 @@ const Grid: React.FC = () => {
     optFlagOnLongClick,
     optFlagOnRightClick,
     update,
-  } = useMinesweeperState();
+  } = useMinesweeperStore();
 
   // Grid transform
   const gridRef = useRef<HTMLDivElement | null>(null);

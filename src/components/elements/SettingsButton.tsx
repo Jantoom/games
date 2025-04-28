@@ -1,7 +1,7 @@
 import { Settings } from 'lucide-react';
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { useGlobalState } from '@/lib/state';
+import { useGlobalStore } from '@/lib/state';
 import { swapLastUrlSubpath } from '@/lib/utils';
 import ControlButton from '../generics/ControlButton';
 
@@ -12,7 +12,7 @@ interface SettingsButtonProps {
 const SettingsButton: React.FC<SettingsButtonProps> = ({ className }) => {
   const pathname = useLocation().pathname;
   const destination = swapLastUrlSubpath(pathname, '/settings');
-  const { setState } = useGlobalState();
+  const { setState } = useGlobalStore();
 
   return (
     <Link to={destination} className="h-full">

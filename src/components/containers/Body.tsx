@@ -2,7 +2,7 @@ import { cva } from 'class-variance-authority';
 import { motion, useIsPresent } from 'framer-motion';
 import React, { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
-import { useGlobalState } from '@/lib/state';
+import { useGlobalStore } from '@/lib/state';
 import { useLocation } from 'react-router-dom';
 import { PagePath } from '@/lib/types';
 
@@ -27,7 +27,7 @@ interface BodyProps {
 }
 
 const Body: React.FC<BodyProps> = ({ className, children }) => {
-  const { navDirection, setState } = useGlobalState();
+  const { navDirection, setState } = useGlobalStore();
   const isPresent = useIsPresent();
 
   const [variant, _setVariant] = useState(

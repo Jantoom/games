@@ -1,6 +1,7 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 import { Themes } from '@/lib/styles';
-import { getGamesData, saveGameData } from './utils';
+import { createDefaultJSONStorage } from './utils';
 
 export type GlobalState = {
   theme: string | undefined;
@@ -13,24 +14,33 @@ export type GlobalState = {
   ) => void;
 };
 
-export const useGlobalState = create<GlobalState>((set) => {
-  const state = getGamesData()['global'] as GlobalState;
-
-  return {
-    navDirection: state?.navDirection ?? undefined,
-    theme: state?.theme ?? Object.keys(Themes)[0],
-    setTheme: (theme: string) => {
-      if (theme in Themes) {
-        for (const [colorAlias, hexCode] of Object.entries(Themes[theme])) {
-          document.documentElement.style.setProperty(
-            `--${colorAlias}`,
-            hexCode,
-          );
+export const useGlobalStore = create<GlobalState>()(
+  persist(
+    (set) => ({
+      navDirection: undefined,
+      theme: Object.keys(Themes)[0],
+      setTheme: (theme: string) => {
+        if (theme in Themes) {
+          for (const [colorAlias, hexCode] of Object.entries(Themes[theme])) {
+            document.documentElement.style.setProperty(
+              `--${colorAlias}`,
+              hexCode,
+            );
+          }
         }
-        saveGameData(getGamesData(), { global: { theme: theme } });
-      }
-      set({ theme: theme });
+        set({ theme: theme });
+      },
+      setState: (newState) => set(newState),
+    }),
+    {
+      name: 'jantoom-games-global',
+      storage: createDefaultJSONStorage(),
+      partialize: (state) =>
+        Object.fromEntries(
+          Object.entries(state).filter(
+            ([key]) => !['setState', 'setTheme'].includes(key),
+          ),
+        ),
     },
-    setState: (newState) => set(newState),
-  };
-});
+  ),
+);
