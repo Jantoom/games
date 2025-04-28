@@ -54,13 +54,13 @@ export const useSudokuStore = create<SudokuState>()(
       seed: '',
       time: 0,
       difficulty: 'easy',
-      originalGrid: [],
-      solvedGrid: [],
-      grid: [],
-      notes: {},
-      history: [],
-      errors: [],
-      selectedNumber: undefined,
+      originalGrid: [] as Grid,
+      solvedGrid: [] as Grid,
+      grid: [] as Grid,
+      notes: {} as Notes,
+      history: [] as HistoryEntry[],
+      errors: [] as string[],
+      selectedNumber: undefined as number,
       pencilMode: false,
       optAssistHighlight: false,
       optAssistRemaining: false,
@@ -69,7 +69,7 @@ export const useSudokuStore = create<SudokuState>()(
       usedAssistHighlight: false,
       usedAssistRemaining: false,
       usedAssistAutoRemove: false,
-      leaderboard: [],
+      leaderboard: [] as LeaderboardEntry[],
       setState: (state) => set(state),
       tick: () => {
         let time: number;
@@ -81,7 +81,7 @@ export const useSudokuStore = create<SudokuState>()(
       },
       reset: (difficulty, state) => {
         set((prev) => {
-          const newSeed = `${Math.random()}`;
+          const newSeed = `${Math.random()}`.slice(2);
           seedrandom(newSeed, { global: true });
           const { puzzle, solution } = generateSudoku(
             difficulty ?? state?.difficulty ?? prev.difficulty,
@@ -232,21 +232,6 @@ export const useSudokuStore = create<SudokuState>()(
     {
       name: 'jantoom-games-sudoku',
       storage: createDefaultJSONStorage(),
-      partialize: (state) =>
-        Object.fromEntries(
-          Object.entries(state).filter(
-            ([key]) =>
-              ![
-                'setState',
-                'tick',
-                'reset',
-                'restart',
-                'update',
-                'undo',
-                'stop',
-              ].includes(key),
-          ),
-        ),
     },
   ),
 );

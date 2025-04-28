@@ -3,43 +3,38 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { useGlobalStore } from '@/lib/state';
-import Page from '../components/containers/Page';
-import Body from '@/components/containers/Body';
-import Header from '@/components/containers/Header';
-import Footer from '@/components/containers/Footer';
+import BasicPage from '@/components/containers/BasicPage';
 
 const Menu: React.FC = () => {
   const { setState } = useGlobalStore();
   return (
-    <Page>
-      <Header />
-      <Body>
-        <Button
-          asChild
-          variant="ghost"
-          className="w-full text-xl hover:bg-secondary"
+    <BasicPage>
+      <Button
+        asChild
+        variant="ghost"
+        className="w-full text-xl hover:bg-secondary"
+      >
+        <Link
+          to="/games/sudoku/create"
+          onClick={() => setState({ navDirection: 'right' })}
         >
-          <Link
-            to="/games/sudoku/create"
-            onClick={() => setState({ navDirection: 'right' })}
-          >
-            Sudoku
-          </Link>
-        </Button>
-        <Separator className="my-1" />
-        <Button
-          asChild
-          variant="ghost"
-          className="w-full text-xl hover:bg-secondary"
+          Sudoku
+        </Link>
+      </Button>
+      <Separator className="my-1" />
+      <Button
+        asChild
+        variant="ghost"
+        className="w-full text-xl hover:bg-secondary"
+      >
+        <Link
+          to="/games/minesweeper/create"
+          onClick={() => setState({ navDirection: 'right' })}
         >
-          <Link
-            to="/games/minesweeper/create"
-            onClick={() => setState({ navDirection: 'right' })}
-          >
-            Minesweeper
-          </Link>
-        </Button>
-        {/* <Separator className="my-1" />
+          Minesweeper
+        </Link>
+      </Button>
+      {/* <Separator className="my-1" />
         <Button
           asChild
           variant="ghost"
@@ -91,9 +86,7 @@ const Menu: React.FC = () => {
             2048
           </Link>
         </Button> */}
-      </Body>
-      <Footer />
-    </Page>
+    </BasicPage>
   );
 };
 

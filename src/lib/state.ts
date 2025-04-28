@@ -17,7 +17,7 @@ export type GlobalState = {
 export const useGlobalStore = create<GlobalState>()(
   persist(
     (set) => ({
-      navDirection: undefined,
+      navDirection: undefined as 'left' | 'right' | undefined,
       theme: Object.keys(Themes)[0],
       setTheme: (theme: string) => {
         if (theme in Themes) {

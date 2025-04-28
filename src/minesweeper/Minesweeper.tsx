@@ -16,25 +16,7 @@ import { difficulties } from './types';
 import BombCounter from './components/header/BombCounter';
 import Leaderboard from './components/sections/Leaderboard';
 import { LeaderboardDialog } from '@/components/generics/Leaderboard';
-
-const MinesweeperCreate: React.FC = () => {
-  const { status, difficulty, reset } = useMinesweeperStore();
-
-  return (
-    <Page>
-      <Header />
-      <Body>
-        <ResetSetup
-          status={status}
-          reset={reset}
-          difficulty={difficulty}
-          difficulties={[...difficulties]}
-        />
-      </Body>
-      <Footer />
-    </Page>
-  );
-};
+import BasicPage from '@/components/containers/BasicPage';
 
 const MinesweeperPlay: React.FC = () => {
   const {
@@ -58,7 +40,7 @@ const MinesweeperPlay: React.FC = () => {
     } else if (status === 'play' && isSolved(grid, bombs, flags)) {
       stop(true);
     }
-  }, [status, grid, bombs, flags, reset, stop, navigate]);
+  }, [status, grid, bombs, flags, stop, navigate]);
 
   return (
     status !== 'create' && (
@@ -81,7 +63,7 @@ const MinesweeperPlay: React.FC = () => {
           <FlagButton />
           <HintButton />
         </Footer>
-        {status === 'finished' && (
+        {status === 'finished' && isSolved(grid, bombs, flags) && (
           <LeaderboardDialog delay>
             <Leaderboard />
           </LeaderboardDialog>
@@ -91,33 +73,39 @@ const MinesweeperPlay: React.FC = () => {
   );
 };
 
+const MinesweeperCreate: React.FC = () => {
+  const { status, difficulty, reset } = useMinesweeperStore();
+  return (
+    <BasicPage>
+      <ResetSetup
+        status={status}
+        reset={reset}
+        difficulty={difficulty}
+        difficulties={[...difficulties]}
+      />
+    </BasicPage>
+  );
+};
+
 const MinesweeperSettings: React.FC = () => {
   return (
-    <Page>
-      <Header />
-      <Body>
-        <Settings />
-      </Body>
-      <Footer />
-    </Page>
+    <BasicPage>
+      <Settings />
+    </BasicPage>
   );
 };
 
 const MinesweeperLeaderboard: React.FC = () => {
   return (
-    <Page>
-      <Header />
-      <Body>
-        <Leaderboard />
-      </Body>
-      <Footer />
-    </Page>
+    <BasicPage>
+      <Leaderboard />
+    </BasicPage>
   );
 };
 
 export {
-  MinesweeperCreate,
   MinesweeperPlay,
+  MinesweeperCreate,
   MinesweeperSettings,
   MinesweeperLeaderboard,
 };

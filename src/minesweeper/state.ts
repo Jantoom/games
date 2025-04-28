@@ -55,10 +55,10 @@ export const useMinesweeperStore = create<MinesweeperState>()(
       difficulty: 'easy',
       dimensions: [0, 0],
       numBombs: 0,
-      grid: [],
+      grid: [] as Grid,
       bombs: new Set(),
       flags: new Set(),
-      history: [],
+      history: [] as HistoryEntry[],
       flagMode: false,
       optFlagOnClick: false,
       optFlagOnDoubleClick: true,
@@ -67,7 +67,7 @@ export const useMinesweeperStore = create<MinesweeperState>()(
       optShowRemainingBombs: true,
       optShowTime: true,
       usedHints: false,
-      leaderboard: [],
+      leaderboard: [] as LeaderboardEntry[],
       setState: (newState) => set(newState),
       tick: () => {
         let time: number;
@@ -79,7 +79,7 @@ export const useMinesweeperStore = create<MinesweeperState>()(
       },
       reset: (difficulty, state) => {
         set((prev) => {
-          const newSeed = `${Math.random()}`;
+          const newSeed = `${Math.random()}`.slice(2);
           seedrandom(newSeed, { global: true });
           const { dimensions, numBombs, puzzle, bombs } = generateMinesweeper(
             difficulty ?? state?.difficulty ?? prev.difficulty,

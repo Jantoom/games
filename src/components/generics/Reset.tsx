@@ -20,15 +20,15 @@ const ResetSetup = <T extends string, U extends { status: string }>({
   difficulties,
   className,
 }: ResetSetupProps<T, U>) => {
-  const [selectedDifficulty, setSelectedDifficulty] = useState(difficulty);
+  const [selectedDifficulty, setSelectedDifficulty] = useState<T>(difficulty);
   const { setState } = useGlobalStore();
 
-  const disableResume = status === 'create';
+  const disableResume = status === 'create' || selectedDifficulty != difficulty;
 
   return (
     <div className={cn('flex w-full flex-col items-center gap-y-4', className)}>
       <DifficultyCarousel
-        difficulty={selectedDifficulty}
+        difficulty={difficulty}
         difficulties={difficulties}
         setDifficulty={setSelectedDifficulty}
       />
@@ -39,7 +39,7 @@ const ResetSetup = <T extends string, U extends { status: string }>({
         <Button
           onClick={() => {
             setState({ navDirection: 'right' });
-            reset(difficulty);
+            reset(selectedDifficulty);
           }}
           variant="outline"
           className="w-full rounded-full border border-border hover:bg-secondary"
@@ -49,7 +49,7 @@ const ResetSetup = <T extends string, U extends { status: string }>({
       </Link>
       <Link
         to={swapLastUrlSubpath(useLocation().pathname, '/play')}
-        className={`w-full ${disableResume ? 'pointer-events-none' : ''}`}
+        className={`w-full ${disableResume ? 'pointer-events-none opacity-0' : ''}`}
       >
         <Button
           onClick={() => {

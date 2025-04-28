@@ -16,32 +16,9 @@ import { useSudokuStore } from '@/sudoku/state';
 import { isSolved } from '@/sudoku/utils';
 import { difficulties } from './types';
 import ResetButton from './components/footer/ResetButton';
-import {
-  LeaderboardButton,
-  LeaderboardDialog,
-} from '@/components/generics/Leaderboard';
+import { LeaderboardDialog } from '@/components/generics/Leaderboard';
 import Leaderboard from './components/sections/Leaderboard';
-
-const SudokuCreate: React.FC = () => {
-  const { status, difficulty, reset } = useSudokuStore();
-
-  return (
-    <Page>
-      <Header />
-      <Body>
-        <ResetSetup
-          status={status}
-          reset={reset}
-          difficulty={difficulty}
-          difficulties={[...difficulties]}
-        />
-      </Body>
-      <Footer>
-        <LeaderboardButton leaderboard={<Leaderboard />} />
-      </Footer>
-    </Page>
-  );
-};
+import BasicPage from '@/components/containers/BasicPage';
 
 const SudokuPlay: React.FC = () => {
   const { status, seed, time, grid, optShowTime, reset, stop, tick } =
@@ -54,7 +31,7 @@ const SudokuPlay: React.FC = () => {
     } else if (status === 'play' && isSolved(grid)) {
       stop(true);
     }
-  }, [status, grid, navigate, stop]);
+  }, [status, grid, stop, navigate]);
 
   return (
     status !== 'create' && (
@@ -85,28 +62,34 @@ const SudokuPlay: React.FC = () => {
   );
 };
 
+const SudokuCreate: React.FC = () => {
+  const { status, difficulty, reset } = useSudokuStore();
+  return (
+    <BasicPage>
+      <ResetSetup
+        status={status}
+        reset={reset}
+        difficulty={difficulty}
+        difficulties={[...difficulties]}
+      />
+    </BasicPage>
+  );
+};
+
 const SudokuSettings: React.FC = () => {
   return (
-    <Page>
-      <Header />
-      <Body>
-        <Settings />
-      </Body>
-      <Footer />
-    </Page>
+    <BasicPage>
+      <Settings />
+    </BasicPage>
   );
 };
 
 const SudokuLeaderboard: React.FC = () => {
   return (
-    <Page>
-      <Header />
-      <Body>
-        <Leaderboard />
-      </Body>
-      <Footer />
-    </Page>
+    <BasicPage>
+      <Leaderboard />
+    </BasicPage>
   );
 };
 
-export { SudokuCreate, SudokuPlay, SudokuSettings, SudokuLeaderboard };
+export { SudokuPlay, SudokuCreate, SudokuSettings, SudokuLeaderboard };

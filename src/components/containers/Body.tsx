@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { useGlobalStore } from '@/lib/state';
 import { useLocation } from 'react-router-dom';
-import { PagePath } from '@/lib/types';
+import { PagePath, pagePaths } from '@/lib/types';
 
 const bodyVariants = cva('flex flex-grow flex-col items-center', {
   variants: {
@@ -29,9 +29,9 @@ interface BodyProps {
 const Body: React.FC<BodyProps> = ({ className, children }) => {
   const { navDirection, setState } = useGlobalStore();
   const isPresent = useIsPresent();
-
-  const [variant, _setVariant] = useState(
-    (useLocation().pathname.split('/').pop() as PagePath) ?? 'menu',
+  const subpath = useLocation().pathname.split('/').pop();
+  const [variant, _setVariant] = useState<PagePath>(
+    pagePaths.includes(subpath as PagePath) ? (subpath as PagePath) : 'menu',
   );
 
   useEffect(() => {
