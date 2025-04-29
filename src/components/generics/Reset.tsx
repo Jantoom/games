@@ -21,9 +21,11 @@ const ResetBody = <T extends string, U extends { status: string }>({
   className,
 }: ResetBodyProps<T, U>) => {
   const [selectedDifficulty, setSelectedDifficulty] = useState<T>(difficulty);
+  const [justCreated, setJustCreated] = useState(false);
   const { setState } = useGlobalStore();
 
-  const disableResume = status === 'create' || selectedDifficulty != difficulty;
+  const disableResume =
+    justCreated || status === 'create' || selectedDifficulty != difficulty;
 
   return (
     <div className={cn('flex w-full flex-col items-center gap-y-4', className)}>
@@ -39,6 +41,9 @@ const ResetBody = <T extends string, U extends { status: string }>({
         <Button
           onClick={() => {
             setState({ navDirection: 'right' });
+            if (selectedDifficulty != difficulty) {
+              setJustCreated(true);
+            }
             reset(selectedDifficulty);
           }}
           variant="outline"
