@@ -1,5 +1,5 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import {
@@ -24,14 +24,30 @@ const DifficultyCarousel = <T extends string>({
 }: DifficultyCarouselProps<T>) => {
   const [api, setApi] = useState<CarouselApi>();
   const [isInitialised, setIsInitialised] = useState(false);
+  const [hide, setHide] = useState(undefined);
+
+  const checkHiddenButtons = useCallback(
+    (index: number) => {
+      if (index === 0) {
+        setHide('prev');
+      } else if (index === difficulties.length - 1) {
+        setHide('next');
+      }
+    },
+    [difficulties],
+  );
 
   useEffect(() => {
     if (!api) return;
     if (!isInitialised) {
-      api.scrollTo(difficulties.indexOf(difficulty), true);
+      const index = difficulties.indexOf(difficulty);
+      checkHiddenButtons(index);
+      api.scrollTo(index, true);
 
       api.on('select', () => {
-        setDifficulty(difficulties[api.selectedScrollSnap()]);
+        const index = api.selectedScrollSnap();
+        checkHiddenButtons(index);
+        setDifficulty(difficulties[index]);
       });
       setIsInitialised(true);
     }
@@ -41,14 +57,13 @@ const DifficultyCarousel = <T extends string>({
     <Carousel
       setApi={setApi}
       opts={{
-        align: 'start',
-        loop: true,
+        loop: false,
       }}
       className={cn('flex w-full min-w-32 flex-row items-center', className)}
     >
       <Button
         variant="ghost"
-        className="h-12 w-8 rounded-full p-0"
+        className={`h-12 w-8 rounded-full p-0 ${hide === 'prev' ? 'opacity-0' : ''}`}
         onClick={() => api.scrollPrev()}
       >
         <ChevronLeft />
@@ -68,7 +83,7 @@ const DifficultyCarousel = <T extends string>({
       </CarouselContent>
       <Button
         variant="ghost"
-        className="h-12 w-8 rounded-full p-0"
+        className={`h-12 w-8 rounded-full p-0 ${hide === 'next' ? 'opacity-0' : ''}`}
         onClick={() => api.scrollNext()}
       >
         <ChevronRight />

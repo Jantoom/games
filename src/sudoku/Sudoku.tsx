@@ -21,8 +21,17 @@ import Leaderboard from './components/sections/Leaderboard';
 import BasicPage from '@/components/containers/BasicPage';
 
 const SudokuPlay: React.FC = () => {
-  const { status, seed, time, grid, optShowTime, reset, stop, tick } =
-    useSudokuStore();
+  const {
+    status,
+    seed,
+    time,
+    difficulty,
+    grid,
+    optShowTime,
+    reset,
+    stop,
+    tick,
+  } = useSudokuStore();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -45,7 +54,13 @@ const SudokuPlay: React.FC = () => {
         </Body>
         <Footer
           status={status}
-          reset={<ResetPrompt reset={reset} difficulties={[...difficulties]} />}
+          reset={
+            <ResetPrompt
+              reset={reset}
+              difficulty={difficulty}
+              difficulties={[...difficulties]}
+            />
+          }
         >
           <ResetButton />
           <PencilButton />

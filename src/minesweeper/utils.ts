@@ -4,9 +4,11 @@ const difficultyConfig: Record<
   Difficulty,
   { numRows: number; numCols: number; numBombs: number }
 > = {
-  easy: { numRows: 12, numCols: 8, numBombs: 12 },
-  medium: { numRows: 21, numCols: 14, numBombs: 36 },
-  hard: { numRows: 30, numCols: 20, numBombs: 72 },
+  beginner: { numRows: 9, numCols: 9, numBombs: 10},
+  easy: { numRows: 12, numCols: 10, numBombs: 20 },
+  medium: { numRows: 16, numCols: 16, numBombs: 40 },
+  hard: { numRows: 22, numCols: 16, numBombs: 70 },
+  extreme: { numRows: 30, numCols: 16, numBombs: 99 },
 };
 
 let config: { numRows: number; numCols: number; numBombs: number } =

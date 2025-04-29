@@ -104,27 +104,29 @@ const ResetDialog: React.FC<ResetDialogProps> = ({
 
 interface ResetPromptProps<T extends string> {
   reset: (difficulty: T) => void;
+  difficulty: T;
   difficulties: T[];
 }
 const ResetPrompt = <T extends string>({
   reset,
+  difficulty,
   difficulties,
 }: ResetPromptProps<T>) => {
-  const [difficulty, setDifficulty] = useState(difficulties[0]);
+  const [selectedDifficulty, setSelectedDifficulty] = useState(difficulty);
 
   return (
     <div className="mb-6 flex w-[90svw] items-center justify-evenly gap-x-4">
       <Button
-        onClick={() => reset(difficulty)}
+        onClick={() => reset(selectedDifficulty)}
         variant="outline"
         className="w-[45%] rounded-full"
       >
         New game
       </Button>
       <DifficultyCarousel
-        difficulty={difficulty}
+        difficulty={selectedDifficulty}
         difficulties={difficulties}
-        setDifficulty={setDifficulty}
+        setDifficulty={setSelectedDifficulty}
         className="w-[45%]"
       />
     </div>

@@ -9,6 +9,7 @@ import {
 } from '@/components/ui/carousel';
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogTitle,
@@ -67,6 +68,11 @@ const LeaderboardDialog = ({ delay, children }: LeaderboardDialogProps) => {
         <DialogTitle className="text-center">Leaderboard</DialogTitle>
         <DialogDescription className="hidden" />
         {children}
+        <DialogClose asChild>
+          <Button variant="outline" className="rounded-full">
+            Got it!
+          </Button>
+        </DialogClose>
       </DialogContent>
     </Dialog>
   );

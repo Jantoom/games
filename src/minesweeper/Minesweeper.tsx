@@ -23,6 +23,7 @@ const MinesweeperPlay: React.FC = () => {
     status,
     seed,
     time,
+    difficulty,
     grid,
     bombs,
     flags,
@@ -58,7 +59,13 @@ const MinesweeperPlay: React.FC = () => {
         </Body>
         <Footer
           status={status}
-          reset={<ResetPrompt reset={reset} difficulties={[...difficulties]} />}
+          reset={
+            <ResetPrompt
+              reset={reset}
+              difficulty={difficulty}
+              difficulties={[...difficulties]}
+            />
+          }
         >
           <FlagButton />
           <HintButton />
