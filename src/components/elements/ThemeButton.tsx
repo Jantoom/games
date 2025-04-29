@@ -21,8 +21,8 @@ const ThemeButton: React.FC = () => {
         <DialogClose asChild key={t}>
           <Button
             onClick={() => setTheme(t)}
-            variant="outline"
-            className={`w-full border border-border ${theme === t ? 'bg-primary text-background' : ''} hover:bg-secondary`}
+            variant={theme === t ? 'default' : 'outline'}
+            className="rounded-full"
           >
             {t
               .split('-')

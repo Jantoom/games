@@ -23,7 +23,7 @@ const NumberButtons: React.FC = () => {
         return (
           <Button
             key={num}
-            variant="outline"
+            variant={isSelected ? 'default' : 'outline'}
             onClick={() =>
               setState((prev) => ({
                 selectedNumber:
@@ -32,7 +32,7 @@ const NumberButtons: React.FC = () => {
                     : undefined,
               }))
             }
-            className={`relative aspect-square h-[6svh] max-h-full w-[6svh] max-w-full rounded-full py-0 hover:bg-secondary ${isSelected ? 'bg-primary text-background' : ''}`}
+            className="relative aspect-square h-[6svh] max-h-full w-[6svh] max-w-full rounded-full py-0"
           >
             {num ? (
               <>

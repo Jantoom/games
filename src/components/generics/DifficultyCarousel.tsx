@@ -48,7 +48,7 @@ const DifficultyCarousel = <T extends string>({
     >
       <Button
         variant="ghost"
-        className="h-12 w-8 rounded-full p-0 hover:bg-secondary"
+        className="h-12 w-8 rounded-full p-0"
         onClick={() => api.scrollPrev()}
       >
         <ChevronLeft />
@@ -58,7 +58,7 @@ const DifficultyCarousel = <T extends string>({
           <CarouselItem key={index}>
             <Button
               variant="ghost"
-              className="w-full rounded-full pb-2 text-center text-base hover:bg-secondary"
+              className="w-full rounded-full pb-2 text-center text-base"
               onClick={() => setDifficulty(diff)}
             >
               {diff[0].toUpperCase() + diff.slice(1)}
@@ -68,7 +68,7 @@ const DifficultyCarousel = <T extends string>({
       </CarouselContent>
       <Button
         variant="ghost"
-        className="h-12 w-8 rounded-full p-0 hover:bg-secondary"
+        className="h-12 w-8 rounded-full p-0"
         onClick={() => api.scrollNext()}
       >
         <ChevronRight />

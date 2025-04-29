@@ -16,7 +16,7 @@ const HintButton: React.FC = () => {
       const targetCell =
         targetCells[Math.floor(Math.random() * targetCells.length)];
       if (targetCell) {
-        setState((prev) => ({ usedHints: prev.usedHints + 1 }));
+        setState((prev) => ({ usedHints: prev.usedHints || true }));
         update(targetCell.row, targetCell.col, false);
       }
     }
@@ -34,7 +34,7 @@ const HintButton: React.FC = () => {
         <Button
           onClick={getHint}
           variant="outline"
-          className="w-full border border-border hover:bg-secondary"
+          className="w-full"
         >
           Yes
         </Button>
@@ -42,7 +42,7 @@ const HintButton: React.FC = () => {
       <DialogClose asChild>
         <Button
           variant="outline"
-          className="w-full border border-border hover:bg-secondary"
+          className="w-full"
         >
           No
         </Button>

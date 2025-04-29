@@ -72,7 +72,7 @@ const HintsButton: React.FC = () => {
         <Button
           onClick={getHint}
           variant="outline"
-          className="w-full border border-border hover:bg-secondary"
+          className="w-full rounded-full"
         >
           Get Hint
         </Button>
@@ -81,7 +81,7 @@ const HintsButton: React.FC = () => {
         <Button
           onClick={showMismatches}
           variant="outline"
-          className="w-full border border-border hover:bg-secondary"
+          className="w-full rounded-full"
         >
           Show Mismatches
         </Button>
@@ -90,7 +90,7 @@ const HintsButton: React.FC = () => {
         <Button
           onClick={validateGrid}
           variant="outline"
-          className="w-full border border-border hover:bg-secondary"
+          className="w-full rounded-full"
         >
           Validate Grid
         </Button>
@@ -99,7 +99,7 @@ const HintsButton: React.FC = () => {
         <Button
           onClick={addAutoNotes}
           variant="outline"
-          className="w-full border border-border hover:bg-secondary"
+          className="w-full rounded-full"
         >
           Add Auto Notes
         </Button>

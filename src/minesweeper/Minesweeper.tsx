@@ -4,7 +4,7 @@ import Page from '../components/containers/Page';
 import Body from '@/components/containers/Body';
 import Footer from '@/components/containers/Footer';
 import Header from '@/components/containers/Header';
-import { ResetPrompt, ResetSetup } from '@/components/generics/Reset';
+import { ResetPrompt, ResetBody } from '@/components/generics/Reset';
 import TimerText from '@/components/generics/TimerText';
 import FlagButton from './components/footer/FlagButton';
 import HintButton from './components/footer/HintButton';
@@ -77,7 +77,7 @@ const MinesweeperCreate: React.FC = () => {
   const { status, difficulty, reset } = useMinesweeperStore();
   return (
     <BasicPage>
-      <ResetSetup
+      <ResetBody
         status={status}
         reset={reset}
         difficulty={difficulty}

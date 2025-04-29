@@ -4,7 +4,7 @@ import Page from '../components/containers/Page';
 import Body from '@/components/containers/Body';
 import Footer from '@/components/containers/Footer';
 import Header from '@/components/containers/Header';
-import { ResetPrompt, ResetSetup } from '@/components/generics/Reset';
+import { ResetPrompt, ResetBody } from '@/components/generics/Reset';
 import TimerText from '@/components/generics/TimerText';
 import HintsButton from './components/footer/HintsButton';
 import PencilButton from './components/footer/PencilButton';
@@ -66,7 +66,7 @@ const SudokuCreate: React.FC = () => {
   const { status, difficulty, reset } = useSudokuStore();
   return (
     <BasicPage>
-      <ResetSetup
+      <ResetBody
         status={status}
         reset={reset}
         difficulty={difficulty}

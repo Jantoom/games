@@ -12,7 +12,7 @@ const Menu: React.FC = () => {
       <Button
         asChild
         variant="ghost"
-        className="w-full text-xl hover:bg-secondary"
+        className="w-full text-xl"
       >
         <Link
           to="/games/sudoku/create"
@@ -25,7 +25,7 @@ const Menu: React.FC = () => {
       <Button
         asChild
         variant="ghost"
-        className="w-full text-xl hover:bg-secondary"
+        className="w-full text-xl"
       >
         <Link
           to="/games/minesweeper/create"
@@ -38,7 +38,7 @@ const Menu: React.FC = () => {
         <Button
           asChild
           variant="ghost"
-          className="w-full text-xl hover:bg-secondary"
+          className="w-full text-xl"
         >
           <Link
             to="/games/solitaire/create"
@@ -51,7 +51,7 @@ const Menu: React.FC = () => {
         <Button
           asChild
           variant="ghost"
-          className="w-full text-xl hover:bg-secondary"
+          className="w-full text-xl"
         >
           <Link
             to="/games/snake/create"
@@ -64,7 +64,7 @@ const Menu: React.FC = () => {
         <Button
           asChild
           variant="ghost"
-          className="w-full text-xl hover:bg-secondary"
+          className="w-full text-xl"
         >
           <Link
             to="/games/pong/create"
@@ -77,7 +77,7 @@ const Menu: React.FC = () => {
         <Button
           asChild
           variant="ghost"
-          className="w-full text-xl hover:bg-secondary"
+          className="w-full text-xl"
         >
           <Link
             to="/games/2048/create"

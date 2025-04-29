@@ -6,20 +6,20 @@ import { useGlobalStore } from '@/lib/state';
 import { cn, swapLastUrlSubpath } from '@/lib/utils';
 import DifficultyCarousel from './DifficultyCarousel';
 
-interface ResetSetupProps<T extends string, U extends { status: string }> {
+interface ResetBodyProps<T extends string, U extends { status: string }> {
   status: string;
   reset: (difficulty?: T, state?: U) => void;
   difficulty: T;
   difficulties: T[];
   className?: string;
 }
-const ResetSetup = <T extends string, U extends { status: string }>({
+const ResetBody = <T extends string, U extends { status: string }>({
   status,
   reset,
   difficulty,
   difficulties,
   className,
-}: ResetSetupProps<T, U>) => {
+}: ResetBodyProps<T, U>) => {
   const [selectedDifficulty, setSelectedDifficulty] = useState<T>(difficulty);
   const { setState } = useGlobalStore();
 
@@ -42,7 +42,7 @@ const ResetSetup = <T extends string, U extends { status: string }>({
             reset(selectedDifficulty);
           }}
           variant="outline"
-          className="w-full rounded-full border border-border hover:bg-secondary"
+          className="w-full rounded-full"
         >
           New game
         </Button>
@@ -56,7 +56,7 @@ const ResetSetup = <T extends string, U extends { status: string }>({
             setState({ navDirection: 'right' });
           }}
           variant="outline"
-          className="w-full rounded-full border border-border hover:bg-secondary"
+          className="w-full rounded-full"
           disabled={disableResume}
         >
           Resume game
@@ -71,7 +71,6 @@ interface ResetDialogProps {
   reset: () => void;
   className?: string;
 }
-
 const ResetDialog: React.FC<ResetDialogProps> = ({
   restart,
   reset,
@@ -84,7 +83,7 @@ const ResetDialog: React.FC<ResetDialogProps> = ({
           <Button
             onClick={() => restart()}
             variant="outline"
-            className="w-full rounded-full border border-border hover:bg-secondary"
+            className="w-full rounded-full"
           >
             Clear game
           </Button>
@@ -94,7 +93,7 @@ const ResetDialog: React.FC<ResetDialogProps> = ({
         <Button
           onClick={() => reset()}
           variant="outline"
-          className="w-full rounded-full border border-border hover:bg-secondary"
+          className="w-full rounded-full"
         >
           New game
         </Button>
@@ -107,7 +106,6 @@ interface ResetPromptProps<T extends string> {
   reset: (difficulty: T) => void;
   difficulties: T[];
 }
-
 const ResetPrompt = <T extends string>({
   reset,
   difficulties,
@@ -119,7 +117,7 @@ const ResetPrompt = <T extends string>({
       <Button
         onClick={() => reset(difficulty)}
         variant="outline"
-        className="w-[45%] rounded-full border border-border hover:bg-secondary"
+        className="w-[45%] rounded-full"
       >
         New game
       </Button>
@@ -133,4 +131,4 @@ const ResetPrompt = <T extends string>({
   );
 };
 
-export { ResetSetup, ResetDialog, ResetPrompt };
+export { ResetBody, ResetDialog, ResetPrompt };

@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 html {
-  color-scheme: light !important;
+  color-scheme: dark !important;
 }
 
 @layer base {

@@ -182,13 +182,6 @@ export const useMinesweeperStore = create<MinesweeperState>()(
     {
       name: 'jantoom-games-minesweeper',
       storage: createDefaultJSONStorage(),
-      partialize: (state) =>
-        Object.fromEntries(
-          Object.entries(state).filter(
-            ([key]) =>
-              !['setState', 'tick', 'reset', 'update', 'stop'].includes(key),
-          ),
-        ),
     },
   ),
 );

@@ -21,11 +21,8 @@ export const useGlobalStore = create<GlobalState>()(
       theme: Object.keys(Themes)[0],
       setTheme: (theme: string) => {
         if (theme in Themes) {
-          for (const [colorAlias, hexCode] of Object.entries(Themes[theme])) {
-            document.documentElement.style.setProperty(
-              `--${colorAlias}`,
-              hexCode,
-            );
+          for (const [alias, color] of Object.entries(Themes[theme])) {
+            document.documentElement.style.setProperty(`--${alias}`, color);
           }
         }
         set({ theme: theme });

@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import React from 'react';
 import { CellNotes } from '@/sudoku/types';
+import { cn } from '@/lib/utils';
 
 interface CellProps {
   num: number;
@@ -20,6 +21,7 @@ const Cell: React.FC<CellProps> = ({
   onClick,
 }) => {
   const randomDelay = Math.random() * 0.2;
+  // if (!original) console.log(highlighted)
   return (
     <div
       className={`aspect-square h-full w-full p-[10%] ${original ? '' : 'cursor-pointer'}`}
@@ -99,7 +101,10 @@ const Cell: React.FC<CellProps> = ({
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3, ease: 'easeInOut' }}
-              className={`absolute select-none text-2xl font-medium transition-colors ${highlighted || flagged ? 'text-background' : original ? 'text-border' : 'text-primary'}`}
+              className={cn(
+                `absolute select-none text-2xl font-medium transition-colors`,
+                `${highlighted ? 'text-primary-foreground' : flagged ? 'text-destructive-foreground' : original ? 'text-secondary-foreground' : 'text-primary'}`,
+              )}
             >
               {num ?? ''}
             </motion.span>

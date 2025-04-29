@@ -16,12 +16,12 @@ const ControlButton = React.forwardRef<HTMLButtonElement, ControlButtonProps>(
         variant={isSelected ? 'default' : 'ghost'}
         onClick={onClick}
         className={cn(
-          `h-full rounded-full py-0 hover:bg-secondary ${isSelected ? 'bg-primary' : ''}`,
+          `h-full rounded-full`,
           className,
         )}
         {...props}
       >
-        {Icon !== undefined && <Icon className="h-1/2 stroke-foreground" />}
+        {Icon !== undefined && <Icon className="h-1/2 hover:stroke-accent-foreground" />}
       </Button>
     );
   },

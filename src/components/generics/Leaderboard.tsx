@@ -103,7 +103,7 @@ const LeaderboardCarousel = <T extends string>({
     >
       <Button
         variant="ghost"
-        className="absolute left-0 top-0 z-10 aspect-square h-12 rounded-full p-0 hover:bg-secondary"
+        className="absolute left-0 top-0 z-10 aspect-square h-12 rounded-full p-0"
         onClick={() => api.scrollPrev()}
       >
         <ChevronLeft />
@@ -111,7 +111,7 @@ const LeaderboardCarousel = <T extends string>({
       <CarouselContent className="h-full">{children}</CarouselContent>
       <Button
         variant="ghost"
-        className="absolute right-0 top-0 z-10 aspect-square h-12 rounded-full p-0 hover:bg-secondary"
+        className="absolute right-0 top-0 z-10 aspect-square h-12 rounded-full p-0"
         onClick={() => api.scrollNext()}
       >
         <ChevronRight />
