@@ -5,7 +5,6 @@ import {
   LeaderboardAssists,
   LeaderboardHints,
   LeaderboardTable,
-  LeaderboardTableBody,
   LeaderboardTableRow,
 } from '@/components/generics/Leaderboard';
 import { formatDate, formatTime } from '@/lib/utils';
@@ -27,12 +26,14 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ allowDeletion }) => {
     setState,
   } = useSudokuStore();
   const [selectedDifficulty, setSelectedDifficulty] = useState(difficulty);
-  const [selectedUsedHints, setSelectedUsedHints] = useState(usedHints);
   const [selectedUsedAssists, setSelectedUsedAssists] = useState([
     optAssistHighlight,
     optAssistRemaining,
     optAssistAutoRemove,
   ]);
+  const [selectedUsedHints, setSelectedUsedHints] = useState(usedHints);
+
+  const tableKey = `${selectedDifficulty}${selectedUsedAssists}${selectedUsedHints}`;
 
   return (
     <>
@@ -51,33 +52,30 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ allowDeletion }) => {
           setUsedHints={setSelectedUsedHints}
         />
       </div>
-      <LeaderboardTable difficulty={selectedDifficulty}>
-        <LeaderboardTableBody>
-          {leaderboard
-            .filter(
-              (entry) =>
-                entry.difficulty === selectedDifficulty &&
-                entry.usedAssists.every(
-                  (usedAssist, index) =>
-                    usedAssist == selectedUsedAssists[index],
-                ) &&
-                entry.usedHints === selectedUsedHints,
-            )
-            .map((entry, index) => {
-              const isCurrent = seed === entry.seed;
-              return (
-                <LeaderboardTableRow
-                  key={index}
-                  index={index}
-                  game="sudoku"
-                  setState={setState}
-                  data={[formatDate(entry.date), formatTime(entry.time)]}
-                  isCurrent={isCurrent}
-                  allowDeletion={allowDeletion}
-                />
-              );
-            })}
-        </LeaderboardTableBody>
+      <LeaderboardTable tableKey={tableKey} allowDeletion={allowDeletion}>
+        {leaderboard
+          .filter(
+            (entry) =>
+              entry.difficulty === selectedDifficulty &&
+              entry.usedAssists.every(
+                (usedAssist, index) => usedAssist == selectedUsedAssists[index],
+              ) &&
+              entry.usedHints === selectedUsedHints,
+          )
+          .map((entry, index) => {
+            const isCurrent = seed === entry.seed;
+            return (
+              <LeaderboardTableRow
+                key={index}
+                index={index}
+                game="sudoku"
+                setState={setState}
+                data={[formatDate(entry.date), formatTime(entry.time)]}
+                isCurrent={isCurrent}
+                allowDeletion={allowDeletion}
+              />
+            );
+          })}
       </LeaderboardTable>
     </>
   );

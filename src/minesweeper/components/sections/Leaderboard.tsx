@@ -4,7 +4,6 @@ import { difficulties } from '@/minesweeper/types';
 import {
   LeaderboardHints,
   LeaderboardTable,
-  LeaderboardTableBody,
   LeaderboardTableRow,
 } from '@/components/generics/Leaderboard';
 import { formatDate, formatTime } from '@/lib/utils';
@@ -20,6 +19,8 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ allowDeletion }) => {
   const [selectedDifficulty, setSelectedDifficulty] = useState(difficulty);
   const [selectedUsedHints, setSelectedUsedHints] = useState(usedHints);
 
+  const tableKey = `${selectedDifficulty}${selectedUsedHints}`;
+
   return (
     <>
       <DifficultyCarousel
@@ -31,29 +32,27 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ allowDeletion }) => {
         usedHints={selectedUsedHints}
         setUsedHints={setSelectedUsedHints}
       />
-      <LeaderboardTable difficulty={selectedDifficulty}>
-        <LeaderboardTableBody>
-          {leaderboard
-            .filter(
-              (entry) =>
-                entry.difficulty === selectedDifficulty &&
-                entry.usedHints === selectedUsedHints,
-            )
-            .map((entry, index) => (
-              <LeaderboardTableRow
-                key={index}
-                index={index}
-                game="minesweeper"
-                setState={setState}
-                data={[
-                  `${index + 1}. ${formatDate(entry.date)}`,
-                  formatTime(entry.time),
-                ]}
-                isCurrent={seed === entry.seed}
-                allowDeletion={allowDeletion}
-              />
-            ))}
-        </LeaderboardTableBody>
+      <LeaderboardTable tableKey={tableKey} allowDeletion={allowDeletion}>
+        {leaderboard
+          .filter(
+            (entry) =>
+              entry.difficulty === selectedDifficulty &&
+              entry.usedHints === selectedUsedHints,
+          )
+          .map((entry, index) => (
+            <LeaderboardTableRow
+              key={index}
+              index={index}
+              game="minesweeper"
+              setState={setState}
+              data={[
+                `${index + 1}. ${formatDate(entry.date)}`,
+                formatTime(entry.time),
+              ]}
+              isCurrent={seed === entry.seed}
+              allowDeletion={allowDeletion}
+            />
+          ))}
       </LeaderboardTable>
     </>
   );

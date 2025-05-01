@@ -52,7 +52,7 @@ export const useMinesweeperStore = create<MinesweeperState>()(
       status: 'create',
       seed: '',
       time: 0,
-      difficulty: 'easy',
+      difficulty: 'beginner',
       dimensions: [0, 0],
       numBombs: 0,
       grid: [] as Grid,
@@ -182,6 +182,7 @@ export const useMinesweeperStore = create<MinesweeperState>()(
     {
       name: 'jantoom-games-minesweeper',
       storage: createDefaultJSONStorage(),
+      version: 0.01,
     },
   ),
 );

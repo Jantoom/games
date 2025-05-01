@@ -1,5 +1,5 @@
 import { Trash, Trophy } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -123,33 +123,51 @@ const LeaderboardHints = ({
   );
 };
 
-interface LeaderboardTableProps<T extends string> {
-  difficulty: T;
+interface LeaderboardTableProps {
+  tableKey: string;
+  headers?: string[];
+  allowDeletion?: boolean;
   className?: string;
   children: React.ReactNode;
 }
-const LeaderboardTable = <T extends string>({
-  difficulty,
+const LeaderboardTable = ({
+  tableKey,
+  headers,
+  allowDeletion = true,
   className,
   children,
-}: LeaderboardTableProps<T>) => {
+}: LeaderboardTableProps) => {
+  const hasVisibleChildren = React.Children.toArray(children).some(Boolean);
   return (
     <AnimatePresence mode="wait">
       <motion.div
-        key={`${difficulty}`}
+        key={tableKey}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.1, ease: 'easeInOut' }}
-        className={cn('h-80 max-h-[80svh] w-full overflow-auto', className)}
+        className={cn(
+          'flex h-80 max-h-[80svh] w-full flex-col items-center overflow-auto',
+          className,
+        )}
         style={{
           msOverflowStyle: 'none',
           scrollbarWidth: 'none',
         }}
       >
-        <Table className={cn('border-separate border-spacing-0', className)}>
-          {children}
-        </Table>
+        {hasVisibleChildren ? (
+          <Table className={cn('border-separate border-spacing-0', className)}>
+            {headers && (
+              <LeaderboardTableHeader
+                headers={headers}
+                allowDeletion={allowDeletion}
+              />
+            )}
+            <LeaderboardTableBody>{children}</LeaderboardTableBody>
+          </Table>
+        ) : (
+          <LeaderboardEmpty />
+        )}
       </motion.div>
     </AnimatePresence>
   );
@@ -259,6 +277,17 @@ const LeaderboardTableCell = ({
   );
 };
 
+interface LeaderboardEmptyProps {
+  className?: string;
+}
+const LeaderboardEmpty = ({ className }: LeaderboardEmptyProps) => {
+  return (
+    <Label className={cn('py-2 text-center text-sm', className)}>
+      No entries yet
+    </Label>
+  );
+};
+
 export {
   LeaderboardButton,
   LeaderboardDialog,
@@ -269,4 +298,5 @@ export {
   LeaderboardTableBody,
   LeaderboardTableRow,
   LeaderboardTableCell,
+  LeaderboardEmpty,
 };

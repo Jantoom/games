@@ -54,7 +54,7 @@ export const useSudokuStore = create<SudokuState>()(
       status: 'create',
       seed: '',
       time: 0,
-      difficulty: 'easy',
+      difficulty: 'beginner',
       originalGrid: [] as Grid,
       solvedGrid: [] as Grid,
       grid: [] as Grid,
@@ -236,6 +236,7 @@ export const useSudokuStore = create<SudokuState>()(
     {
       name: 'jantoom-games-sudoku',
       storage: createDefaultJSONStorage(),
+      version: 0.01,
     },
   ),
 );
