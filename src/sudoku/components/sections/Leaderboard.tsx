@@ -2,31 +2,67 @@ import React, { useState } from 'react';
 import { useSudokuStore } from '@/sudoku/state';
 import { difficulties } from '@/sudoku/types';
 import {
-  LeaderboardSelector,
+  LeaderboardAssists,
+  LeaderboardHints,
   LeaderboardTable,
   LeaderboardTableBody,
   LeaderboardTableRow,
 } from '@/components/generics/Leaderboard';
 import { formatDate, formatTime } from '@/lib/utils';
+import DifficultyCarousel from '@/components/elements/DifficultyCarousel';
 
 interface LeaderboardProps {
   allowDeletion?: boolean;
 }
 
 const Leaderboard: React.FC<LeaderboardProps> = ({ allowDeletion }) => {
-  const { seed, difficulty, leaderboard, setState } = useSudokuStore();
+  const {
+    seed,
+    difficulty,
+    optAssistHighlight,
+    optAssistRemaining,
+    optAssistAutoRemove,
+    usedHints,
+    leaderboard,
+    setState,
+  } = useSudokuStore();
   const [selectedDifficulty, setSelectedDifficulty] = useState(difficulty);
+  const [selectedUsedHints, setSelectedUsedHints] = useState(usedHints);
+  const [selectedUsedAssists, setSelectedUsedAssists] = useState([
+    optAssistHighlight,
+    optAssistRemaining,
+    optAssistAutoRemove,
+  ]);
 
   return (
-    <LeaderboardSelector
-      difficulties={[...difficulties]}
-      difficulty={selectedDifficulty}
-      setDifficulty={setSelectedDifficulty}
-    >
-      <LeaderboardTable>
+    <>
+      <DifficultyCarousel
+        difficulties={[...difficulties]}
+        difficulty={difficulty}
+        setDifficulty={setSelectedDifficulty}
+      />
+      <div className="flex w-full">
+        <LeaderboardAssists
+          usedAssists={selectedUsedAssists}
+          setUsedAssists={setSelectedUsedAssists}
+        />
+        <LeaderboardHints
+          usedHints={selectedUsedHints}
+          setUsedHints={setSelectedUsedHints}
+        />
+      </div>
+      <LeaderboardTable difficulty={selectedDifficulty}>
         <LeaderboardTableBody>
           {leaderboard
-            .filter((entry) => entry.difficulty === selectedDifficulty)
+            .filter(
+              (entry) =>
+                entry.difficulty === selectedDifficulty &&
+                entry.usedAssists.every(
+                  (usedAssist, index) =>
+                    usedAssist == selectedUsedAssists[index],
+                ) &&
+                entry.usedHints === selectedUsedHints,
+            )
             .map((entry, index) => {
               const isCurrent = seed === entry.seed;
               return (
@@ -35,18 +71,7 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ allowDeletion }) => {
                   index={index}
                   game="sudoku"
                   setState={setState}
-                  data={[
-                    formatDate(entry.date),
-                    formatTime(entry.time),
-                    // <div className="flex w-full items-center justify-center gap-2">
-                    //   {entry.hints.map((hint, index) => (
-                    //     <div
-                    //       key={index}
-                    //       className={`h-4 w-4 rounded-full ${hint ? (isCurrent ? 'bg-primary' : 'bg-foreground') : isCurrent ? 'border border-primary' : 'border border-foreground'}`}
-                    //     />
-                    //   ))}
-                    // </div>,
-                  ]}
+                  data={[formatDate(entry.date), formatTime(entry.time)]}
                   isCurrent={isCurrent}
                   allowDeletion={allowDeletion}
                 />
@@ -54,7 +79,7 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ allowDeletion }) => {
             })}
         </LeaderboardTableBody>
       </LeaderboardTable>
-    </LeaderboardSelector>
+    </>
   );
 };
 

@@ -20,8 +20,8 @@ import { cn } from '@/lib/utils';
 import { GamesData } from '@/lib/types';
 import DialogButton from './DialogButton';
 import ControlButton from './ControlButton';
-import DifficultyCarousel from '../elements/DifficultyCarousel';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Label } from '../ui/label';
 
 interface LeaderboardButtonProps {
   leaderboard: React.ReactNode;
@@ -60,7 +60,7 @@ const LeaderboardDialog = ({ delay, children }: LeaderboardDialogProps) => {
 
   return (
     <Dialog open={isLeaderboardOpen} onOpenChange={setIsLeaderboardOpen}>
-      <DialogContent>
+      <DialogContent className="gap-y-2">
         <DialogTitle className="text-center">Leaderboard</DialogTitle>
         <DialogDescription className="hidden" />
         {children}
@@ -74,52 +74,84 @@ const LeaderboardDialog = ({ delay, children }: LeaderboardDialogProps) => {
   );
 };
 
-interface LeaderboardSelectorProps<T extends string> {
-  difficulties: T[];
-  difficulty: T;
-  setDifficulty: React.Dispatch<React.SetStateAction<T>>;
-  className?: string;
-  children: React.ReactNode;
+interface LeaderboardAssistsProps {
+  usedAssists: boolean[];
+  setUsedAssists: React.Dispatch<React.SetStateAction<boolean[]>>;
 }
-const LeaderboardSelector = <T extends string>({
-  difficulties,
-  difficulty,
-  setDifficulty,
-  className,
-  children,
-}: LeaderboardSelectorProps<T>) => {
+const LeaderboardAssists = ({
+  usedAssists,
+  setUsedAssists,
+}: LeaderboardAssistsProps) => {
   return (
-    <>
-      <DifficultyCarousel
-        difficulties={[...difficulties]}
-        difficulty={difficulty}
-        setDifficulty={setDifficulty}
-      />
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={`${difficulty}`}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.1, ease: 'easeInOut' }}
-          className={cn('h-96 max-h-[80svh] w-full', className)}
-        >
-          {children}
-        </motion.div>
-      </AnimatePresence>
-    </>
+    <div className="flex w-full flex-col items-center gap-y-2">
+      <Label className="text-xs">Assists</Label>
+      <div className="flex w-full items-center justify-center gap-2">
+        {usedAssists.map((usedAssist, index) => (
+          <div
+            key={index}
+            className={`h-4 w-4 rounded-full transition-colors duration-300 ease-in-out ${usedAssist ? 'bg-primary' : 'border border-primary'}`}
+            onClick={() => {
+              setUsedAssists(
+                usedAssists.map((usedAssist, oldIndex) =>
+                  index === oldIndex ? !usedAssist : usedAssist,
+                ),
+              );
+            }}
+          />
+        ))}
+      </div>
+    </div>
   );
 };
 
-interface LeaderboardTableProps {
+interface LeaderboardHintsProps {
+  usedHints: boolean;
+  setUsedHints: React.Dispatch<React.SetStateAction<boolean>>;
+}
+const LeaderboardHints = ({
+  usedHints,
+  setUsedHints,
+}: LeaderboardHintsProps) => {
+  return (
+    <div className="flex w-full flex-col items-center gap-y-2">
+      <Label className="text-xs">Hints used</Label>
+      <div
+        className={`h-4 w-4 rounded-full transition-colors duration-300 ease-in-out ${usedHints ? 'bg-primary' : 'border border-primary'}`}
+        onClick={() => setUsedHints(!usedHints)}
+      />
+    </div>
+  );
+};
+
+interface LeaderboardTableProps<T extends string> {
+  difficulty: T;
   className?: string;
   children: React.ReactNode;
 }
-const LeaderboardTable = ({ className, children }: LeaderboardTableProps) => {
+const LeaderboardTable = <T extends string>({
+  difficulty,
+  className,
+  children,
+}: LeaderboardTableProps<T>) => {
   return (
-    <Table className={cn('border-separate border-spacing-0', className)}>
-      {children}
-    </Table>
+    <AnimatePresence mode="wait">
+      <motion.div
+        key={`${difficulty}`}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.1, ease: 'easeInOut' }}
+        className={cn('h-80 max-h-[80svh] w-full overflow-auto', className)}
+        style={{
+          msOverflowStyle: 'none',
+          scrollbarWidth: 'none',
+        }}
+      >
+        <Table className={cn('border-separate border-spacing-0', className)}>
+          {children}
+        </Table>
+      </motion.div>
+    </AnimatePresence>
   );
 };
 
@@ -185,17 +217,18 @@ const LeaderboardTableRow = <T extends { leaderboard: any[] }>({
     <TableRow
       className={`h-10 text-sm font-medium ${isCurrent ? 'text-primary' : ''}`}
     >
-      {data.map((item, index) => (
+      {data.map((item, i) => (
         <LeaderboardTableCell
-          key={index}
+          key={i}
           className={`m-0 text-base ${
-            index === 0
+            i === 0
               ? 'text-start'
-              : index === data.length - 1
+              : i === data.length - 1
                 ? 'text-end'
                 : 'text-center'
           }`}
         >
+          {i === 0 ? `${index + 1}. ` : ''}
           {item}
         </LeaderboardTableCell>
       ))}
@@ -229,7 +262,8 @@ const LeaderboardTableCell = ({
 export {
   LeaderboardButton,
   LeaderboardDialog,
-  LeaderboardSelector,
+  LeaderboardAssists,
+  LeaderboardHints,
   LeaderboardTable,
   LeaderboardTableHeader,
   LeaderboardTableBody,

@@ -42,6 +42,7 @@ const HintsButton: React.FC = () => {
       const targetCell =
         targetCells[Math.floor(Math.random() * targetCells.length)];
       if (targetCell) {
+        setState((prev) => ({ usedHints: prev.usedHints || true }));
         update(
           targetCell.row,
           targetCell.col,
@@ -51,12 +52,17 @@ const HintsButton: React.FC = () => {
       }
     }
   };
-  const showMismatches = () =>
+  const showMismatches = () => {
+    setState((prev) => ({ usedHints: prev.usedHints || true }));
     showErrorAnimation(toCellKeys(getConflictCells(grid)));
-  const validateGrid = () =>
+  };
+  const validateGrid = () => {
+    setState((prev) => ({ usedHints: prev.usedHints || true }));
     showErrorAnimation(toCellKeys(getMismatchCells(grid, solvedGrid)));
+  };
   const addAutoNotes = () =>
     setState((prev) => ({
+      usedHints: prev.usedHints || true,
       notes: { ...prev.notes, ...getAutoNotes(prev.grid) },
     }));
 

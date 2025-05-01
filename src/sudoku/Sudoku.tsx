@@ -69,7 +69,7 @@ const SudokuPlay: React.FC = () => {
         </Footer>
         {status === 'finished' && isSolved(grid) && (
           <LeaderboardDialog delay>
-            <Leaderboard />
+            <Leaderboard allowDeletion={false} />
           </LeaderboardDialog>
         )}
       </Page>

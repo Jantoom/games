@@ -2,31 +2,43 @@ import React, { useState } from 'react';
 import { useMinesweeperStore } from '@/minesweeper/state';
 import { difficulties } from '@/minesweeper/types';
 import {
-  LeaderboardSelector,
+  LeaderboardHints,
   LeaderboardTable,
   LeaderboardTableBody,
   LeaderboardTableRow,
 } from '@/components/generics/Leaderboard';
 import { formatDate, formatTime } from '@/lib/utils';
+import DifficultyCarousel from '@/components/elements/DifficultyCarousel';
 
 interface LeaderboardProps {
   allowDeletion?: boolean;
 }
 
 const Leaderboard: React.FC<LeaderboardProps> = ({ allowDeletion }) => {
-  const { seed, difficulty, leaderboard, setState } = useMinesweeperStore();
+  const { seed, difficulty, usedHints, leaderboard, setState } =
+    useMinesweeperStore();
   const [selectedDifficulty, setSelectedDifficulty] = useState(difficulty);
+  const [selectedUsedHints, setSelectedUsedHints] = useState(usedHints);
 
   return (
-    <LeaderboardSelector
-      difficulties={[...difficulties]}
-      difficulty={selectedDifficulty}
-      setDifficulty={setSelectedDifficulty}
-    >
-      <LeaderboardTable>
+    <>
+      <DifficultyCarousel
+        difficulties={[...difficulties]}
+        difficulty={difficulty}
+        setDifficulty={setSelectedDifficulty}
+      />
+      <LeaderboardHints
+        usedHints={selectedUsedHints}
+        setUsedHints={setSelectedUsedHints}
+      />
+      <LeaderboardTable difficulty={selectedDifficulty}>
         <LeaderboardTableBody>
           {leaderboard
-            .filter((entry) => entry.difficulty === selectedDifficulty)
+            .filter(
+              (entry) =>
+                entry.difficulty === selectedDifficulty &&
+                entry.usedHints === selectedUsedHints,
+            )
             .map((entry, index) => (
               <LeaderboardTableRow
                 key={index}
@@ -43,7 +55,7 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ allowDeletion }) => {
             ))}
         </LeaderboardTableBody>
       </LeaderboardTable>
-    </LeaderboardSelector>
+    </>
   );
 };
 

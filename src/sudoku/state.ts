@@ -33,6 +33,7 @@ export type SudokuState = {
   usedAssistHighlight: boolean;
   usedAssistRemaining: boolean;
   usedAssistAutoRemove: boolean;
+  usedHints: boolean;
   leaderboard: LeaderboardEntry[];
   setState: (
     newState:
@@ -69,6 +70,7 @@ export const useSudokuStore = create<SudokuState>()(
       usedAssistHighlight: false,
       usedAssistRemaining: false,
       usedAssistAutoRemove: false,
+      usedHints: false,
       leaderboard: [] as LeaderboardEntry[],
       setState: (state) => set(state),
       tick: () => {
@@ -111,6 +113,7 @@ export const useSudokuStore = create<SudokuState>()(
             usedAssistHighlight: false,
             usedAssistRemaining: false,
             usedAssistAutoRemove: false,
+            usedHints: false,
           } as SudokuState;
 
           return state
@@ -209,11 +212,12 @@ export const useSudokuStore = create<SudokuState>()(
             newLeaderboard.push({
               seed: prev.seed,
               difficulty: prev.difficulty,
-              hints: [
+              usedAssists: [
                 prev.usedAssistHighlight || prev.optAssistHighlight,
                 prev.usedAssistRemaining || prev.optAssistRemaining,
                 prev.usedAssistAutoRemove || prev.optAssistAutoRemove,
               ],
+              usedHints: prev.usedHints,
               date: new Date().toISOString(),
               time: prev.time,
             });
