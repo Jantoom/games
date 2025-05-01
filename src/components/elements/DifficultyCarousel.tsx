@@ -11,15 +11,15 @@ import {
 
 interface DifficultyCarouselProps<T extends string> {
   className?: string;
-  difficulty: T;
   difficulties: T[];
+  difficulty: T;
   setDifficulty: React.Dispatch<React.SetStateAction<T>>;
 }
 
 const DifficultyCarousel = <T extends string>({
   className,
-  difficulty,
   difficulties,
+  difficulty,
   setDifficulty,
 }: DifficultyCarouselProps<T>) => {
   const [api, setApi] = useState<CarouselApi>();
@@ -32,6 +32,8 @@ const DifficultyCarousel = <T extends string>({
         setHide('prev');
       } else if (index === difficulties.length - 1) {
         setHide('next');
+      } else {
+        setHide(undefined);
       }
     },
     [difficulties],
@@ -51,7 +53,7 @@ const DifficultyCarousel = <T extends string>({
       });
       setIsInitialised(true);
     }
-  }, [api, isInitialised, difficulty, difficulties, setDifficulty]);
+  }, [api, isInitialised, difficulty, difficulties, setDifficulty, checkHiddenButtons]);
 
   return (
     <Carousel

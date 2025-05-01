@@ -5,7 +5,7 @@ import Body from '@/components/containers/Body';
 import Footer from '@/components/containers/Footer';
 import Header from '@/components/containers/Header';
 import { ResetPrompt, ResetBody } from '@/components/generics/Reset';
-import TimerText from '@/components/generics/TimerText';
+import TimerText from '../components/elements/TimerText';
 import FlagButton from './components/footer/FlagButton';
 import HintButton from './components/footer/HintButton';
 import Grid from './components/body/Grid';
@@ -72,7 +72,7 @@ const MinesweeperPlay: React.FC = () => {
         </Footer>
         {status === 'finished' && isSolved(grid, bombs, flags) && (
           <LeaderboardDialog delay>
-            <Leaderboard />
+            <Leaderboard allowDeletion={false} />
           </LeaderboardDialog>
         )}
       </Page>

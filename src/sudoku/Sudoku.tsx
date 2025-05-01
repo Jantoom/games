@@ -5,7 +5,7 @@ import Body from '@/components/containers/Body';
 import Footer from '@/components/containers/Footer';
 import Header from '@/components/containers/Header';
 import { ResetPrompt, ResetBody } from '@/components/generics/Reset';
-import TimerText from '@/components/generics/TimerText';
+import TimerText from '../components/elements/TimerText';
 import HintsButton from './components/footer/HintsButton';
 import PencilButton from './components/footer/PencilButton';
 import UndoButton from './components/footer/UndoButton';

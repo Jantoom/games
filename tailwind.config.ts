@@ -2,11 +2,6 @@ import { Config } from 'tailwindcss';
 import tailwindcssAnimate from 'tailwindcss-animate';
 
 const config: Config = {
-  safelist: [
-    {
-      pattern: /blue-900/,
-    },
-  ],
   future: {
     hoverOnlyWhenSupported: true,
   },

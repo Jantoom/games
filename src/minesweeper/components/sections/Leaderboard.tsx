@@ -1,48 +1,49 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useMinesweeperStore } from '@/minesweeper/state';
 import { difficulties } from '@/minesweeper/types';
 import {
-  LeaderboardCarousel,
-  LeaderboardCarouselItem,
+  LeaderboardSelector,
   LeaderboardTable,
   LeaderboardTableBody,
   LeaderboardTableRow,
 } from '@/components/generics/Leaderboard';
 import { formatDate, formatTime } from '@/lib/utils';
 
-const Leaderboard: React.FC = () => {
+interface LeaderboardProps {
+  allowDeletion?: boolean;
+}
+
+const Leaderboard: React.FC<LeaderboardProps> = ({ allowDeletion }) => {
   const { seed, difficulty, leaderboard, setState } = useMinesweeperStore();
+  const [selectedDifficulty, setSelectedDifficulty] = useState(difficulty);
 
   return (
-    <LeaderboardCarousel
-      difficulty={difficulty}
+    <LeaderboardSelector
       difficulties={[...difficulties]}
+      difficulty={selectedDifficulty}
+      setDifficulty={setSelectedDifficulty}
     >
-      {difficulties.map((diff, index) => (
-        <LeaderboardCarouselItem key={index} difficulty={diff}>
-          <LeaderboardTable>
-            {/* <LeaderboardTableHeader headers={['Date', 'Time']} /> */}
-            <LeaderboardTableBody>
-              {leaderboard
-                .filter((entry) => entry.difficulty === diff)
-                .map((entry, index) => (
-                  <LeaderboardTableRow
-                    key={index}
-                    index={index}
-                    game="minesweeper"
-                    setState={setState}
-                    data={[
-                      `${index + 1}. ${formatDate(entry.date)}`,
-                      formatTime(entry.time),
-                    ]}
-                    isCurrent={seed === entry.seed}
-                  />
-                ))}
-            </LeaderboardTableBody>
-          </LeaderboardTable>
-        </LeaderboardCarouselItem>
-      ))}
-    </LeaderboardCarousel>
+      <LeaderboardTable>
+        <LeaderboardTableBody>
+          {leaderboard
+            .filter((entry) => entry.difficulty === selectedDifficulty)
+            .map((entry, index) => (
+              <LeaderboardTableRow
+                key={index}
+                index={index}
+                game="minesweeper"
+                setState={setState}
+                data={[
+                  `${index + 1}. ${formatDate(entry.date)}`,
+                  formatTime(entry.time),
+                ]}
+                isCurrent={seed === entry.seed}
+                allowDeletion={allowDeletion}
+              />
+            ))}
+        </LeaderboardTableBody>
+      </LeaderboardTable>
+    </LeaderboardSelector>
   );
 };
 

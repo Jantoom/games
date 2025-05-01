@@ -1,12 +1,6 @@
-import { ChevronLeft, ChevronRight, Trash, Trophy } from 'lucide-react';
+import { Trash, Trophy } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import {
-  Carousel,
-  CarouselApi,
-  CarouselContent,
-  CarouselItem,
-} from '@/components/ui/carousel';
 import {
   Dialog,
   DialogClose,
@@ -26,6 +20,8 @@ import { cn } from '@/lib/utils';
 import { GamesData } from '@/lib/types';
 import DialogButton from './DialogButton';
 import ControlButton from './ControlButton';
+import DifficultyCarousel from '../elements/DifficultyCarousel';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface LeaderboardButtonProps {
   leaderboard: React.ReactNode;
@@ -78,93 +74,63 @@ const LeaderboardDialog = ({ delay, children }: LeaderboardDialogProps) => {
   );
 };
 
-interface LeaderboardCarouselProps<T extends string> {
-  difficulty: T;
+interface LeaderboardSelectorProps<T extends string> {
   difficulties: T[];
-  children: React.ReactNode;
-}
-const LeaderboardCarousel = <T extends string>({
-  difficulty,
-  difficulties,
-  children,
-}: LeaderboardCarouselProps<T>) => {
-  const [api, setApi] = useState<CarouselApi>();
-  const [isInitialised, setIsInitialised] = useState(false);
-
-  useEffect(() => {
-    if (api && !isInitialised) {
-      api.scrollTo(difficulties.indexOf(difficulty), true);
-      setIsInitialised(true);
-    }
-  }, [api, isInitialised, difficulty, difficulties]);
-
-  return (
-    <Carousel
-      setApi={setApi}
-      opts={{
-        align: 'start',
-        loop: true,
-      }}
-      className="relative h-full w-full min-w-32"
-    >
-      <Button
-        variant="ghost"
-        className="absolute left-0 top-0 z-10 aspect-square h-12 rounded-full p-0"
-        onClick={() => api.scrollPrev()}
-      >
-        <ChevronLeft />
-      </Button>
-      <CarouselContent className="h-full">{children}</CarouselContent>
-      <Button
-        variant="ghost"
-        className="absolute right-0 top-0 z-10 aspect-square h-12 rounded-full p-0"
-        onClick={() => api.scrollNext()}
-      >
-        <ChevronRight />
-      </Button>
-    </Carousel>
-  );
-};
-
-interface LeaderboardCarouselItemProps<T extends string> {
   difficulty: T;
+  setDifficulty: React.Dispatch<React.SetStateAction<T>>;
+  className?: string;
   children: React.ReactNode;
 }
-const LeaderboardCarouselItem = <T extends string>({
+const LeaderboardSelector = <T extends string>({
+  difficulties,
   difficulty,
+  setDifficulty,
+  className,
   children,
-}: LeaderboardCarouselItemProps<T>) => {
+}: LeaderboardSelectorProps<T>) => {
   return (
-    <CarouselItem>
-      <div className="flex flex-col space-y-1">
-        <span className="flex h-12 w-full items-center justify-center font-medium capitalize leading-none">
-          {difficulty}
-        </span>
-        <div
-          className="scrollbar-none relative max-h-96 min-h-48 touch-pan-y overflow-auto"
-          style={{
-            msOverflowStyle: 'none',
-            scrollbarWidth: 'none',
-          }}
+    <>
+      <DifficultyCarousel
+        difficulties={[...difficulties]}
+        difficulty={difficulty}
+        setDifficulty={setDifficulty}
+      />
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={`${difficulty}`}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.1, ease: 'easeInOut' }}
+          className={cn('h-96 max-h-[80svh] w-full', className)}
         >
           {children}
-        </div>
-      </div>
-    </CarouselItem>
+        </motion.div>
+      </AnimatePresence>
+    </>
   );
 };
 
 interface LeaderboardTableProps {
+  className?: string;
   children: React.ReactNode;
 }
-const LeaderboardTable = ({ children }: LeaderboardTableProps) => {
-  return <Table className="border-separate border-spacing-0">{children}</Table>;
+const LeaderboardTable = ({ className, children }: LeaderboardTableProps) => {
+  return (
+    <Table className={cn('border-separate border-spacing-0', className)}>
+      {children}
+    </Table>
+  );
 };
 
 interface LeaderboardTableHeaderProps {
   headers: string[];
+  allowDeletion?: boolean;
 }
-const LeaderboardTableHeader = ({ headers }: LeaderboardTableHeaderProps) => {
+const LeaderboardTableHeader = ({
+  headers,
+  allowDeletion = true,
+}: LeaderboardTableHeaderProps) => {
   return (
     <TableHeader className="sticky top-0 w-full bg-background">
       <TableRow>
@@ -176,7 +142,9 @@ const LeaderboardTableHeader = ({ headers }: LeaderboardTableHeaderProps) => {
             {header}
           </TableHead>
         ))}
-        <TableHead className="border-b border-border px-0"></TableHead>
+        {allowDeletion && (
+          <TableHead className="border-b border-border px-0"></TableHead>
+        )}
       </TableRow>
     </TableHeader>
   );
@@ -195,12 +163,14 @@ interface LeaderboardTableRowProps<T extends { leaderboard: any[] }> {
   setState: (state: (prev: T) => { leaderboard: any[] }) => void;
   data: any[];
   isCurrent: boolean;
+  allowDeletion?: boolean;
 }
 const LeaderboardTableRow = <T extends { leaderboard: any[] }>({
   index,
   setState,
   data,
   isCurrent,
+  allowDeletion = true,
 }: LeaderboardTableRowProps<T>) => {
   const deleteEntry = (index: number): void => {
     setState((prev) => {
@@ -213,7 +183,7 @@ const LeaderboardTableRow = <T extends { leaderboard: any[] }>({
 
   return (
     <TableRow
-      className={`text-sm font-medium ${isCurrent ? 'text-primary' : ''}`}
+      className={`h-10 text-sm font-medium ${isCurrent ? 'text-primary' : ''}`}
     >
       {data.map((item, index) => (
         <LeaderboardTableCell
@@ -229,14 +199,16 @@ const LeaderboardTableRow = <T extends { leaderboard: any[] }>({
           {item}
         </LeaderboardTableCell>
       ))}
-      <LeaderboardTableCell className="text-end">
-        <ControlButton
-          Icon={Trash}
-          onClick={() => deleteEntry(index)}
-          isSelected={false}
-          className="aspect-auto h-8 p-0"
-        />
-      </LeaderboardTableCell>
+      {allowDeletion && (
+        <LeaderboardTableCell className="text-end">
+          <ControlButton
+            Icon={Trash}
+            onClick={() => deleteEntry(index)}
+            isSelected={false}
+            className="aspect-auto h-8 p-0"
+          />
+        </LeaderboardTableCell>
+      )}
     </TableRow>
   );
 };
@@ -257,8 +229,7 @@ const LeaderboardTableCell = ({
 export {
   LeaderboardButton,
   LeaderboardDialog,
-  LeaderboardCarousel,
-  LeaderboardCarouselItem,
+  LeaderboardSelector,
   LeaderboardTable,
   LeaderboardTableHeader,
   LeaderboardTableBody,

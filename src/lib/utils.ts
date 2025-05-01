@@ -25,7 +25,7 @@ export const formatDate = (date: string) => {
   return new Date(date)
     .toLocaleDateString('en-US', {
       month: 'short',
-      day: '2-digit',
+      day: 'numeric',
       year: 'numeric',
     })
     .replace(',', '');
