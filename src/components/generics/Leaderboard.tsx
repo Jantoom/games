@@ -87,9 +87,10 @@ const LeaderboardAssists = ({
       <Label className="text-xs">Assists</Label>
       <div className="flex w-full items-center justify-center gap-2">
         {usedAssists.map((usedAssist, index) => (
-          <div
+          <Button
             key={index}
-            className={`h-4 w-4 rounded-full transition-colors duration-300 ease-in-out ${usedAssist ? 'bg-primary' : 'border border-primary'}`}
+            variant={usedAssist ? 'default' : 'outline'}
+            className="h-4 w-4 rounded-full p-0 transition-colors duration-300 ease-in-out"
             onClick={() => {
               setUsedAssists(
                 usedAssists.map((usedAssist, oldIndex) =>
@@ -115,8 +116,9 @@ const LeaderboardHints = ({
   return (
     <div className="flex w-full flex-col items-center gap-y-2">
       <Label className="text-xs">Hints used</Label>
-      <div
-        className={`h-4 w-4 rounded-full transition-colors duration-300 ease-in-out ${usedHints ? 'bg-primary' : 'border border-primary'}`}
+      <Button
+        variant={usedHints ? 'default' : 'outline'}
+        className="h-4 w-4 rounded-full p-0 transition-colors duration-300 ease-in-out"
         onClick={() => setUsedHints(!usedHints)}
       />
     </div>
