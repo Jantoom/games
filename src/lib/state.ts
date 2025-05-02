@@ -4,9 +4,10 @@ import { Themes } from '@/lib/styles';
 import { createDefaultJSONStorage } from './utils';
 
 export type GlobalState = {
+  mode: 'dark' | 'light' | undefined;
   theme: string | undefined;
   navDirection: 'left' | 'right' | undefined;
-  setTheme: (theme: string) => void;
+  changeTheme: (mode: 'dark' | 'light', theme: string) => void;
   setState: (
     newState:
       | Partial<GlobalState>
@@ -18,26 +19,22 @@ export const useGlobalStore = create<GlobalState>()(
   persist(
     (set) => ({
       navDirection: undefined as 'left' | 'right' | undefined,
-      theme: Object.keys(Themes)[0],
-      setTheme: (theme: string) => {
-        if (theme in Themes) {
-          for (const [alias, color] of Object.entries(Themes[theme])) {
+      mode: 'dark',
+      theme: Object.keys(Themes.dark)[0],
+      changeTheme: (mode: 'dark' | 'light' = 'dark', theme: string = 'blue') => {
+        if (theme in Themes[mode]) {
+          for (const [alias, color] of Object.entries(Themes[mode][theme])) {
             document.documentElement.style.setProperty(`--${alias}`, color);
           }
         }
-        set({ theme: theme });
+        set({ mode: mode, theme: theme });
       },
       setState: (newState) => set(newState),
     }),
     {
       name: 'jantoom-games-global',
       storage: createDefaultJSONStorage(),
-      partialize: (state) =>
-        Object.fromEntries(
-          Object.entries(state).filter(
-            ([key]) => !['setState', 'setTheme'].includes(key),
-          ),
-        ),
+      version: 0.01,
     },
   ),
 );

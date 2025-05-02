@@ -1,14 +1,25 @@
 import { Palette } from 'lucide-react';
-import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { DialogClose } from '@/components/ui/dialog';
+import React, { useEffect, useState } from 'react';
 import { Themes } from '@/lib/styles';
 import { useGlobalStore } from '../../lib/state';
 import DialogButton from '../generics/DialogButton';
+import { SettingsSwitch } from '../generics/Settings';
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../ui/select';
 
 const ThemeButton: React.FC = () => {
   const [isThemeOpen, setIsThemeOpen] = useState(false);
-  const { theme, setTheme } = useGlobalStore();
+  const { mode, theme, changeTheme, setState } = useGlobalStore();
+
+  useEffect(() => {
+    changeTheme(mode, theme);
+  }, [mode, theme]);
 
   return (
     <DialogButton
@@ -17,20 +28,43 @@ const ThemeButton: React.FC = () => {
       isOpen={isThemeOpen}
       setIsOpen={setIsThemeOpen}
     >
-      {Object.keys(Themes).map((t) => (
-        <DialogClose asChild key={t}>
-          <Button
-            onClick={() => setTheme(t)}
-            variant={theme === t ? 'default' : 'outline'}
-            className="rounded-full"
+      <div className="flex w-full flex-col items-center justify-center gap-y-4 pt-4">
+        <div className="flex w-[45%] items-center justify-between">
+          <SettingsSwitch
+            name="Dark mode"
+            active={mode === 'dark'}
+            change={() =>
+              setState((prev) => ({
+                mode: prev.mode === 'dark' ? 'light' : 'dark',
+              }))
+            }
+          />
+        </div>
+        <Select
+          defaultValue={theme}
+          onValueChange={(t) => setState({ theme: t })}
+        >
+          <SelectTrigger className="w-[50%] rounded-full border-accent px-4 capitalize">
+            <SelectValue placeholder="Theme" />
+          </SelectTrigger>
+          <SelectContent
+            className="m-0 rounded-3xl border-accent bg-background p-0"
+            onCloseAutoFocus={(event) => event.preventDefault()}
           >
-            {t
-              .split('-')
-              .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-              .join(' ')}
-          </Button>
-        </DialogClose>
-      ))}
+            <SelectGroup>
+              {Object.keys(Themes.dark).map((t, index) => (
+                <SelectItem
+                  key={index}
+                  value={t}
+                  className="rounded-full bg-background capitalize"
+                >
+                  {t}
+                </SelectItem>
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+      </div>
     </DialogButton>
   );
 };
