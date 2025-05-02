@@ -46,7 +46,7 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ allowDeletion }) => {
               game="minesweeper"
               setState={setState}
               data={[
-                `${index + 1}. ${formatDate(entry.date)}`,
+                formatDate(entry.date),
                 formatTime(entry.time),
               ]}
               isCurrent={seed === entry.seed}
