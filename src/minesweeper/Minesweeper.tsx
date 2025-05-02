@@ -1,5 +1,3 @@
-import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import Page from '../components/containers/Page';
 import Body from '@/components/containers/Body';
 import Footer from '@/components/containers/Footer';
@@ -17,6 +15,8 @@ import BombCounter from './components/header/BombCounter';
 import Leaderboard from './components/sections/Leaderboard';
 import { LeaderboardDialog } from '@/components/generics/Leaderboard';
 import BasicPage from '@/components/containers/BasicPage';
+import { useStatusCheck } from '@/hooks/use-status-check';
+import { useTimer } from '@/hooks/use-timer';
 
 const MinesweeperPlay: React.FC = () => {
   const {
@@ -33,15 +33,15 @@ const MinesweeperPlay: React.FC = () => {
     stop,
     tick,
   } = useMinesweeperStore();
-  const navigate = useNavigate();
 
-  useEffect(() => {
-    if (status === 'create') {
-      navigate('/games/minesweeper/create');
-    } else if (status === 'play' && isSolved(grid, bombs, flags)) {
-      stop(true);
-    }
-  }, [status, grid, bombs, flags, stop, navigate]);
+  useStatusCheck(
+    'minesweeper',
+    status,
+    () => isSolved(grid, bombs, flags),
+    () => stop(true),
+  );
+
+  useTimer(status, () => tick());
 
   return (
     status !== 'create' && (
@@ -49,9 +49,7 @@ const MinesweeperPlay: React.FC = () => {
         <Header>
           <div className="flex w-full flex-col items-center gap-y-1">
             {optShowRemainingBombs && <BombCounter />}
-            {optShowTime && (
-              <TimerText init={time} status={status} tick={tick} />
-            )}
+            {optShowTime && <TimerText time={time} />}
           </div>
         </Header>
         <Body>

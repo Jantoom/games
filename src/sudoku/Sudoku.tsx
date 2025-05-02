@@ -1,5 +1,3 @@
-import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import Page from '../components/containers/Page';
 import Body from '@/components/containers/Body';
 import Footer from '@/components/containers/Footer';
@@ -19,6 +17,8 @@ import ResetButton from './components/footer/ResetButton';
 import { LeaderboardDialog } from '@/components/generics/Leaderboard';
 import Leaderboard from './components/sections/Leaderboard';
 import BasicPage from '@/components/containers/BasicPage';
+import { useStatusCheck } from '@/hooks/use-status-check';
+import { useTimer } from '@/hooks/use-timer';
 
 const SudokuPlay: React.FC = () => {
   const {
@@ -32,22 +32,20 @@ const SudokuPlay: React.FC = () => {
     stop,
     tick,
   } = useSudokuStore();
-  const navigate = useNavigate();
 
-  useEffect(() => {
-    if (status === 'create') {
-      navigate('/games/sudoku/create');
-    } else if (status === 'play' && isSolved(grid)) {
-      stop(true);
-    }
-  }, [status, grid, stop, navigate]);
+  useStatusCheck(
+    'sudoku',
+    status,
+    () => isSolved(grid),
+    () => stop(true),
+  );
+
+  useTimer(status, () => tick());
 
   return (
     status !== 'create' && (
       <Page seed={seed}>
-        <Header>
-          {optShowTime && <TimerText init={time} status={status} tick={tick} />}
-        </Header>
+        <Header>{optShowTime && <TimerText time={time} />}</Header>
         <Body>
           <Grid />
           {status === 'play' && <NumberButtons />}
