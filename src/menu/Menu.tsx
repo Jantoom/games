@@ -19,7 +19,7 @@ const Menu: React.FC = () => {
     <BasicPage>
       <div className="flex w-full flex-col gap-y-4">
         {games.map((game) => (
-          <Link to={`/games/${game}/create`}>
+          <Link key={game} to={`/games/${game}/create`}>
             <Button
               variant="outline"
               className="h-full text-xl capitalize"

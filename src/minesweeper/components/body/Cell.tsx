@@ -12,7 +12,7 @@ interface CellProps {
 }
 
 const Cell: React.FC<CellProps> = ({ id, num, flagged, exploded }) => {
-  const { theme } = useGlobalStore();
+  const { mode, theme } = useGlobalStore();
   const randomDelay = Math.random() * 0.1;
 
   return (
@@ -46,7 +46,7 @@ const Cell: React.FC<CellProps> = ({ id, num, flagged, exploded }) => {
               ) : (
                 <Flag
                   className="stroke-primary"
-                  fill={Themes[theme].secondary}
+                  fill={`rgb(${Themes[mode][theme].secondary})`}
                 />
               )}
             </motion.div>
