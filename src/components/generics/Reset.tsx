@@ -53,7 +53,7 @@ const ResetBody = <T extends string, U extends { status: string }>({
       </Link>
       <Link
         to={swapLastUrlSubpath(useLocation().pathname, '/play')}
-        className={`w-full ${disableResume ? 'pointer-events-none opacity-0' : ''}`}
+        className={`w-full transition-opacity duration-300 ease-in-out ${disableResume ? 'pointer-events-none opacity-0' : ''}`}
       >
         <Button
           onClick={() => {
