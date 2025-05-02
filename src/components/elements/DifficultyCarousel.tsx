@@ -53,7 +53,14 @@ const DifficultyCarousel = <T extends string>({
       });
       setIsInitialised(true);
     }
-  }, [api, isInitialised, difficulty, difficulties, setDifficulty, checkHiddenButtons]);
+  }, [
+    api,
+    isInitialised,
+    difficulty,
+    difficulties,
+    setDifficulty,
+    checkHiddenButtons,
+  ]);
 
   return (
     <Carousel
@@ -65,7 +72,7 @@ const DifficultyCarousel = <T extends string>({
     >
       <Button
         variant="ghost"
-        className={`h-12 w-8 rounded-full p-0 ${hide === 'prev' ? 'opacity-0' : ''}`}
+        className={`h-12 w-8 p-0 ${hide === 'prev' ? 'opacity-0' : ''}`}
         onClick={() => api.scrollPrev()}
       >
         <ChevronLeft />
@@ -75,7 +82,7 @@ const DifficultyCarousel = <T extends string>({
           <CarouselItem key={index}>
             <Button
               variant="ghost"
-              className="w-full rounded-full pb-2 text-center text-base"
+              className="pb-2 text-center text-base"
               onClick={() => setDifficulty(diff)}
             >
               {diff[0].toUpperCase() + diff.slice(1)}
@@ -85,7 +92,7 @@ const DifficultyCarousel = <T extends string>({
       </CarouselContent>
       <Button
         variant="ghost"
-        className={`h-12 w-8 rounded-full p-0 ${hide === 'next' ? 'opacity-0' : ''}`}
+        className={`h-12 w-8 p-0 ${hide === 'next' ? 'opacity-0' : ''}`}
         onClick={() => api.scrollNext()}
       >
         <ChevronRight />

@@ -65,9 +65,7 @@ const LeaderboardDialog = ({ delay, children }: LeaderboardDialogProps) => {
         <DialogDescription className="hidden" />
         {children}
         <DialogClose asChild>
-          <Button variant="outline" className="rounded-full">
-            Got it!
-          </Button>
+          <Button variant="outline">Got it!</Button>
         </DialogClose>
       </DialogContent>
     </Dialog>
@@ -90,7 +88,7 @@ const LeaderboardAssists = ({
           <Button
             key={index}
             variant={usedAssist ? 'default' : 'outline'}
-            className="h-4 w-4 rounded-full p-0 transition-colors duration-300 ease-in-out"
+            className="h-4 w-4 p-0 transition-colors duration-300 ease-in-out"
             onClick={() => {
               setUsedAssists(
                 usedAssists.map((usedAssist, oldIndex) =>
@@ -118,7 +116,7 @@ const LeaderboardHints = ({
       <Label className="text-xs">Hints used</Label>
       <Button
         variant={usedHints ? 'default' : 'outline'}
-        className="h-4 w-4 rounded-full p-0 transition-colors duration-300 ease-in-out"
+        className="h-4 w-4 p-0 transition-colors duration-300 ease-in-out"
         onClick={() => setUsedHints(!usedHints)}
       />
     </div>

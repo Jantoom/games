@@ -43,7 +43,7 @@ const DialogButton: React.FC<DialogButtonProps> = ({
       <DialogContent>
         <DialogHeader>
           <DialogTitle className="text-center">{title}</DialogTitle>
-          <DialogDescription className="hidden" />
+          <DialogDescription />
         </DialogHeader>
         {children}
       </DialogContent>

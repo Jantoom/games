@@ -47,7 +47,6 @@ const ResetBody = <T extends string, U extends { status: string }>({
             reset(selectedDifficulty);
           }}
           variant="outline"
-          className="w-full rounded-full"
         >
           New game
         </Button>
@@ -61,7 +60,6 @@ const ResetBody = <T extends string, U extends { status: string }>({
             setState({ navDirection: 'right' });
           }}
           variant="outline"
-          className="w-full rounded-full"
           disabled={disableResume}
         >
           Resume game
@@ -85,21 +83,13 @@ const ResetDialog: React.FC<ResetDialogProps> = ({
     <div className={cn('flex flex-row gap-2', className)}>
       {restart && (
         <DialogClose asChild>
-          <Button
-            onClick={() => restart()}
-            variant="outline"
-            className="w-full rounded-full"
-          >
+          <Button onClick={() => restart()} variant="outline">
             Clear game
           </Button>
         </DialogClose>
       )}
       <DialogClose asChild>
-        <Button
-          onClick={() => reset()}
-          variant="outline"
-          className="w-full rounded-full"
-        >
+        <Button onClick={() => reset()} variant="outline">
           New game
         </Button>
       </DialogClose>
@@ -124,7 +114,7 @@ const ResetPrompt = <T extends string>({
       <Button
         onClick={() => reset(selectedDifficulty)}
         variant="outline"
-        className="w-[45%] rounded-full"
+        className="w-[45%]"
       >
         New game
       </Button>

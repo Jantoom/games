@@ -16,7 +16,7 @@ const ControlButton = React.forwardRef<HTMLButtonElement, ControlButtonProps>(
         variant={isSelected ? 'default' : 'ghost'}
         onClick={onClick}
         className={cn(
-          `h-full rounded-full`,
+          `h-full w-fit`,
           className,
         )}
         {...props}

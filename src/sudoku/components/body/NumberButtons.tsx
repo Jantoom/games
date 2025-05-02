@@ -32,7 +32,7 @@ const NumberButtons: React.FC = () => {
                     : undefined,
               }))
             }
-            className="relative aspect-square h-[6svh] max-h-full w-[6svh] max-w-full rounded-full py-0"
+            className="relative aspect-square h-[6svh] max-h-full w-[6svh] max-w-full py-0"
           >
             {num ? (
               <>

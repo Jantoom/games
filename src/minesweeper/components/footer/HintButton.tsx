@@ -31,21 +31,12 @@ const HintButton: React.FC = () => {
       disabled={status !== 'play'}
     >
       <DialogClose asChild>
-        <Button
-          onClick={getHint}
-          variant="outline"
-          className="w-full"
-        >
+        <Button onClick={getHint} variant="outline">
           Yes
         </Button>
       </DialogClose>
       <DialogClose asChild>
-        <Button
-          variant="outline"
-          className="w-full"
-        >
-          No
-        </Button>
+        <Button variant="outline">No</Button>
       </DialogClose>
     </DialogButton>
   );

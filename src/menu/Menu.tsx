@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
 import { useGlobalStore } from '@/lib/state';
 import BasicPage from '@/components/containers/BasicPage';
 
@@ -9,36 +8,28 @@ const Menu: React.FC = () => {
   const { setState } = useGlobalStore();
   return (
     <BasicPage>
-      <Button
-        asChild
-        variant="ghost"
-        className="w-full text-xl"
-      >
-        <Link
-          to="/games/sudoku/create"
-          onClick={() => setState({ navDirection: 'right' })}
-        >
-          Sudoku
-        </Link>
-      </Button>
-      <Separator className="my-1" />
-      <Button
-        asChild
-        variant="ghost"
-        className="w-full text-xl"
-      >
-        <Link
-          to="/games/minesweeper/create"
-          onClick={() => setState({ navDirection: 'right' })}
-        >
-          Minesweeper
-        </Link>
-      </Button>
-      {/* <Separator className="my-1" />
+      <div className="flex w-full flex-col gap-y-4">
+        <Button asChild variant="outline" className="text-xl">
+          <Link
+            to="/games/sudoku/create"
+            onClick={() => setState({ navDirection: 'right' })}
+          >
+            Sudoku
+          </Link>
+        </Button>
+        <Button asChild variant="outline" className="text-xl">
+          <Link
+            to="/games/minesweeper/create"
+            onClick={() => setState({ navDirection: 'right' })}
+          >
+            Minesweeper
+          </Link>
+        </Button>
+        {/* <Separator className="my-1" />
         <Button
           asChild
-          variant="ghost"
-          className="w-full text-xl"
+          variant="outline"
+          className="text-xl"
         >
           <Link
             to="/games/solitaire/create"
@@ -50,8 +41,8 @@ const Menu: React.FC = () => {
         <Separator className="my-1" />
         <Button
           asChild
-          variant="ghost"
-          className="w-full text-xl"
+          variant="outline"
+          className="text-xl"
         >
           <Link
             to="/games/snake/create"
@@ -63,8 +54,8 @@ const Menu: React.FC = () => {
         <Separator className="my-1" />
         <Button
           asChild
-          variant="ghost"
-          className="w-full text-xl"
+          variant="outline"
+          className="text-xl"
         >
           <Link
             to="/games/pong/create"
@@ -76,8 +67,8 @@ const Menu: React.FC = () => {
         <Separator className="my-1" />
         <Button
           asChild
-          variant="ghost"
-          className="w-full text-xl"
+          variant="outline"
+          className="text-xl"
         >
           <Link
             to="/games/2048/create"
@@ -86,6 +77,7 @@ const Menu: React.FC = () => {
             2048
           </Link>
         </Button> */}
+      </div>
     </BasicPage>
   );
 };

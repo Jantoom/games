@@ -75,38 +75,22 @@ const HintsButton: React.FC = () => {
       disabled={status !== 'play'}
     >
       <DialogClose asChild>
-        <Button
-          onClick={getHint}
-          variant="outline"
-          className="w-full rounded-full"
-        >
+        <Button onClick={getHint} variant="outline">
           Get Hint
         </Button>
       </DialogClose>
       <DialogClose asChild>
-        <Button
-          onClick={showMismatches}
-          variant="outline"
-          className="w-full rounded-full"
-        >
+        <Button onClick={showMismatches} variant="outline">
           Show Mismatches
         </Button>
       </DialogClose>
       <DialogClose asChild>
-        <Button
-          onClick={validateGrid}
-          variant="outline"
-          className="w-full rounded-full"
-        >
+        <Button onClick={validateGrid} variant="outline">
           Validate Grid
         </Button>
       </DialogClose>
       <DialogClose asChild>
-        <Button
-          onClick={addAutoNotes}
-          variant="outline"
-          className="w-full rounded-full"
-        >
+        <Button onClick={addAutoNotes} variant="outline">
           Add Auto Notes
         </Button>
       </DialogClose>

@@ -28,8 +28,8 @@ const ThemeButton: React.FC = () => {
       isOpen={isThemeOpen}
       setIsOpen={setIsThemeOpen}
     >
-      <div className="flex w-full flex-col items-center justify-center gap-y-4 pt-4">
-        <div className="flex w-[45%] items-center justify-between">
+      <div className="flex w-full flex-col items-center justify-center gap-y-4">
+        <div className="flex w-[65%] items-center justify-between">
           <SettingsSwitch
             name="Dark mode"
             active={mode === 'dark'}
@@ -44,7 +44,7 @@ const ThemeButton: React.FC = () => {
           defaultValue={theme}
           onValueChange={(t) => setState({ theme: t })}
         >
-          <SelectTrigger className="w-[50%] rounded-full border-accent px-4 capitalize">
+          <SelectTrigger className="w-[70%] rounded-full border-accent px-4 capitalize">
             <SelectValue placeholder="Theme" />
           </SelectTrigger>
           <SelectContent

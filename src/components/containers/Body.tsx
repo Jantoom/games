@@ -6,14 +6,14 @@ import { useGlobalStore } from '@/lib/state';
 import { useLocation } from 'react-router-dom';
 import { PagePath, pagePaths } from '@/lib/types';
 
-const bodyVariants = cva('flex flex-grow flex-col items-center', {
+const bodyVariants = cva('flex flex-grow w-full flex-col items-center', {
   variants: {
     variant: {
-      menu: 'justify-center',
-      create: 'w-full max-w-72 justify-center gap-y-8',
-      settings: 'w-full max-w-72 justify-center gap-y-8',
-      leaderboard: 'w-full max-w-72 justify-center gap-y-8',
-      play: 'w-full justify-evenly',
+      menu: 'max-w-72 justify-center gap-y-8',
+      create: 'max-w-72 justify-center gap-y-8',
+      settings: 'max-w-72 justify-center gap-y-8',
+      leaderboard: 'max-w-72 justify-center gap-y-8',
+      play: 'justify-evenly',
     },
   },
   defaultVariants: {
