@@ -21,7 +21,6 @@ const Cell: React.FC<CellProps> = ({
   onClick,
 }) => {
   const randomDelay = Math.random() * 0.2;
-  // if (!original) console.log(highlighted)
   return (
     <div
       className={`aspect-square h-full w-full p-[10%] ${original ? '' : 'cursor-pointer'}`}

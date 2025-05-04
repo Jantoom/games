@@ -17,7 +17,7 @@ const Header: React.FC<HeaderProps> = ({ settings, children }) => {
   const hasVisibleChildren = React.Children.toArray(children).some(Boolean);
 
   const [title, _setTitle] = useState(
-    useLocation().pathname.split('/')[2] ?? 'Games by Jaleel',
+    useLocation().pathname.split('/').filter(chunk => chunk !== '')[1] ?? 'Games by Jaleel',
   );
 
   return (
@@ -30,7 +30,7 @@ const Header: React.FC<HeaderProps> = ({ settings, children }) => {
         duration: 0.5,
         ease: 'easeInOut',
       }}
-      className={`relative flex h-[8svh] w-screen items-center justify-center p-1`}
+      className={`relative flex h-[8svh] min-h-16 w-screen items-center justify-center p-1`}
     >
       <div className="absolute inset-0 -z-10 bg-background opacity-95" />
       <div className="absolute inset-0 flex flex-row-reverse items-center justify-between p-1">

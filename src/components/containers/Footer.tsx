@@ -26,7 +26,7 @@ const Footer: React.FC<FooterProps> = ({ status, reset, children }) => {
         duration: 0.5,
         ease: 'easeInOut',
       }}
-      className="relative flex h-[8svh] w-screen items-center justify-evenly p-1"
+      className="relative flex h-[8svh] min-h-16 w-screen items-center justify-evenly p-1"
     >
       <div className="absolute inset-0 -z-10 bg-background opacity-95" />
       {variant === 'create' ? (

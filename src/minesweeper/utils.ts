@@ -4,7 +4,7 @@ const difficultyConfig: Record<
   Difficulty,
   { numRows: number; numCols: number; numBombs: number }
 > = {
-  beginner: { numRows: 9, numCols: 9, numBombs: 10},
+  beginner: { numRows: 10, numCols: 10, numBombs: 12 },
   easy: { numRows: 12, numCols: 10, numBombs: 20 },
   medium: { numRows: 16, numCols: 16, numBombs: 40 },
   hard: { numRows: 22, numCols: 16, numBombs: 70 },
@@ -57,7 +57,11 @@ export const isSolved = (
 ): boolean =>
   bombs.size === flags.size &&
   ([...bombs] as string[]).every((bomb) => flags.has(bomb)) &&
-  grid.flatMap((array, row) => array.map((num, col) => num != null ? true : `${row}-${col}`)).every((key) => key === true || flags.has(key));
+  grid
+    .flatMap((array, row) =>
+      array.map((num, col) => (num != null ? true : `${row}-${col}`)),
+    )
+    .every((key) => key === true || flags.has(key));
 
 export const getAdjacentCells = (
   row: number,
