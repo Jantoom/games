@@ -1,13 +1,13 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
 import {
   Carousel,
   CarouselApi,
   CarouselContent,
   CarouselItem,
-} from '../ui/carousel';
+} from '@/components/ui/carousel';
+import { cn } from '@/lib/utils';
 
 interface DifficultyCarouselProps<T extends string> {
   className?: string;
@@ -24,7 +24,7 @@ const DifficultyCarousel = <T extends string>({
 }: DifficultyCarouselProps<T>) => {
   const [api, setApi] = useState<CarouselApi>();
   const [isInitialised, setIsInitialised] = useState(false);
-  const [hide, setHide] = useState(undefined);
+  const [hide, setHide] = useState();
 
   const checkHiddenButtons = useCallback(
     (index: number) => {

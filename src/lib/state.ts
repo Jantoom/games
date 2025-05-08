@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { Themes } from '@/lib/styles';
-import { createDefaultJSONStorage } from './utils';
+import { createDefaultJSONStorage } from '@/lib/utils';
 
 export type GlobalState = {
   mode: 'dark' | 'light' | undefined;

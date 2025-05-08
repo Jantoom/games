@@ -1,8 +1,8 @@
 import React from 'react';
-import Page from './Page';
-import Header from './Header';
 import Body from './Body';
 import Footer from './Footer';
+import Header from './Header';
+import Page from './Page';
 
 interface BasicPageProps {
   children: React.ReactNode;

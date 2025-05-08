@@ -1,6 +1,7 @@
 import { LucideProps } from 'lucide-react';
 import React from 'react';
 import ControlButton from '@/components/generics/ControlButton';
+import { ButtonProps } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -9,7 +10,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { ButtonProps } from '../ui/button';
 
 interface DialogButtonProps extends ButtonProps {
   Icon: React.FC<LucideProps>;

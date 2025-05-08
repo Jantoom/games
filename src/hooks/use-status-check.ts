@@ -1,6 +1,6 @@
-import { GameStatus } from '@/lib/types';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { GameStatus } from '@/lib/types';
 
 export const useStatusCheck = (
   game: string,

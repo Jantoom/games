@@ -1,12 +1,23 @@
 import React from 'react';
-import Menu from '@/menu/Menu';
+import Menu from '@/components/Menu';
 import {
   MinesweeperCreate,
   MinesweeperLeaderboard,
   MinesweeperPlay,
   MinesweeperSettings,
-} from '@/minesweeper/Minesweeper';
-import { SudokuCreate, SudokuLeaderboard, SudokuPlay, SudokuSettings } from './sudoku/Sudoku';
+} from '@/games/minesweeper/Minesweeper';
+import {
+  SudokuCreate,
+  SudokuLeaderboard,
+  SudokuPlay,
+  SudokuSettings,
+} from '@/games/sudoku/Sudoku';
+import {
+  _2048Create,
+  _2048Leaderboard,
+  _2048Play,
+  _2048Settings,
+} from './games/2048/2048';
 
 const Page = {
   Menu: {
@@ -53,6 +64,26 @@ const Page = {
     name: 'Minesweeper',
     path: '/games/minesweeper/leaderboard',
     element: React.createElement(MinesweeperLeaderboard),
+  },
+  '2048Create': {
+    name: '2048Create',
+    path: '/games/2048/create',
+    element: React.createElement(_2048Create),
+  },
+  '2048Play': {
+    name: '2048Play',
+    path: '/games/2048/play',
+    element: React.createElement(_2048Play),
+  },
+  '2048Settings': {
+    name: '2048Settings',
+    path: '/games/2048/settings',
+    element: React.createElement(_2048Settings),
+  },
+  '2048Leaderboard': {
+    name: '2048Leaderboard',
+    path: '/games/2048/leaderboard',
+    element: React.createElement(_2048Leaderboard),
   },
 } as const;
 

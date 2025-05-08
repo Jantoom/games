@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import DifficultyCarousel from '@/components/elements/DifficultyCarousel';
 import { Button } from '@/components/ui/button';
 import { DialogClose } from '@/components/ui/dialog';
 import { useGlobalStore } from '@/lib/state';
 import { cn, swapLastUrlSubpath } from '@/lib/utils';
-import DifficultyCarousel from '../elements/DifficultyCarousel';
 
 interface ResetBodyProps<T extends string, U extends { status: string }> {
   status: string;

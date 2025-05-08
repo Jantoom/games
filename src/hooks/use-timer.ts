@@ -1,5 +1,5 @@
-import { GameStatus } from '@/lib/types';
 import { useEffect, useRef } from 'react';
+import { GameStatus } from '@/lib/types';
 
 export const useTimer = (status: GameStatus, tick: () => void) => {
   const timerRef = useRef<NodeJS.Timeout | undefined>(undefined);

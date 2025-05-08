@@ -1,9 +1,9 @@
 import { ArrowLeft } from 'lucide-react';
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import ControlButton from '@/components/generics/ControlButton';
 import { useGlobalStore } from '@/lib/state';
 import { goToUrlSubpath, swapLastUrlSubpath } from '@/lib/utils';
-import ControlButton from '../generics/ControlButton';
 
 const BackButton: React.FC = () => {
   const [backUrl, _setBackUrl] = useState(

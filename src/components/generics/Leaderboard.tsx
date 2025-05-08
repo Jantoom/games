@@ -1,5 +1,8 @@
+import { motion, AnimatePresence } from 'framer-motion';
 import { Trash, Trophy } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
+import ControlButton from '@/components/generics//ControlButton';
+import DialogButton from '@/components/generics/DialogButton';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -7,7 +10,8 @@ import {
   DialogContent,
   DialogDescription,
   DialogTitle,
-} from '../ui/dialog';
+} from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
 import {
   Table,
   TableBody,
@@ -15,13 +19,9 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '../ui/table';
-import { cn } from '@/lib/utils';
+} from '@/components/ui/table';
 import { GamesData } from '@/lib/types';
-import DialogButton from './DialogButton';
-import ControlButton from './ControlButton';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Label } from '../ui/label';
+import { cn } from '@/lib/utils';
 
 interface LeaderboardButtonProps {
   leaderboard: React.ReactNode;

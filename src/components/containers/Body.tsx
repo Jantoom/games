@@ -1,10 +1,10 @@
 import { cva } from 'class-variance-authority';
 import { motion, useIsPresent } from 'framer-motion';
 import React, { useEffect, useState } from 'react';
-import { cn } from '@/lib/utils';
-import { useGlobalStore } from '@/lib/state';
 import { useLocation } from 'react-router-dom';
+import { useGlobalStore } from '@/lib/state';
 import { PagePath, pagePaths } from '@/lib/types';
+import { cn } from '@/lib/utils';
 
 const bodyVariants = cva('flex flex-grow w-full flex-col items-center', {
   variants: {

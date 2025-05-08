@@ -1,11 +1,11 @@
 import { motion } from 'framer-motion';
 import { Settings } from 'lucide-react';
 import React, { useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import BackButton from '../elements/BackButton';
+import ThemeButton from '../elements/ThemeButton';
 import DialogButton from '../generics/DialogButton';
 import { Label } from '../ui/label';
-import ThemeButton from '../elements/ThemeButton';
-import { useLocation } from 'react-router-dom';
 
 interface HeaderProps {
   settings?: React.ReactNode;

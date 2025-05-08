@@ -1,9 +1,9 @@
-import { GameStatus, PagePath } from '@/lib/types';
 import { motion } from 'framer-motion';
 import React, { useState } from 'react';
-import SettingsButton from '../elements/SettingsButton';
-import LeaderboardButton from '../elements/LeaderboardButton';
 import { useLocation } from 'react-router-dom';
+import { GameStatus, PagePath } from '@/lib/types';
+import LeaderboardButton from '../elements/LeaderboardButton';
+import SettingsButton from '../elements/SettingsButton';
 
 interface FooterProps {
   status?: GameStatus;
@@ -35,10 +35,10 @@ const Footer: React.FC<FooterProps> = ({ status, reset, children }) => {
           <LeaderboardButton />
         </>
       ) : variant === 'play' ? (
-        status !== 'finished' ? (
-          children
-        ) : (
+        status === 'finished' ? (
           reset
+        ) : (
+          children
         )
       ) : (
         children

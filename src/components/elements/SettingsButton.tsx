@@ -1,9 +1,9 @@
 import { Settings } from 'lucide-react';
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import ControlButton from '@/components/generics/ControlButton';
 import { useGlobalStore } from '@/lib/state';
 import { swapLastUrlSubpath } from '@/lib/utils';
-import ControlButton from '../generics/ControlButton';
 
 interface SettingsButtonProps {
   className?: string;

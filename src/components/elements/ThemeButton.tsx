@@ -1,9 +1,7 @@
 import { Palette } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
-import { Themes } from '@/lib/styles';
-import { useGlobalStore } from '../../lib/state';
-import DialogButton from '../generics/DialogButton';
-import { SettingsSwitch } from '../generics/Settings';
+import DialogButton from '@/components/generics/DialogButton';
+import { SettingsSwitch } from '@/components/generics/Settings';
 import {
   Select,
   SelectContent,
@@ -11,7 +9,9 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '../ui/select';
+} from '@/components/ui/select';
+import { useGlobalStore } from '@/lib/state';
+import { Themes } from '@/lib/styles';
 
 const ThemeButton: React.FC = () => {
   const [isThemeOpen, setIsThemeOpen] = useState(false);

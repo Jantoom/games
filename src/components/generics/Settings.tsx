@@ -1,6 +1,6 @@
 import React from 'react';
-import { Label } from '../ui/label';
-import { Switch } from '../ui/switch';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
 
 const SettingsContainer: React.FC<{ children: React.ReactNode }> = ({
   children,

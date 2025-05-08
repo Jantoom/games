@@ -1,6 +1,6 @@
 import React from 'react';
+import { Label } from '@/components/ui/label';
 import { cn, formatTime } from '@/lib/utils';
-import { Label } from '../ui/label';
 
 interface TimerTextProps {
   time: number;
