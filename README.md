@@ -2,7 +2,7 @@
 
 ## Project info
 
-Visit [my website](jantoom.github.io/games) to interact with the project deployment.
+Visit [my website](https://jantoom.github.io/games) to interact with the project deployment.
 
 ## What technologies are used for this project?
 
