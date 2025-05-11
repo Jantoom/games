@@ -1,39 +1,22 @@
 import React, { useState } from 'react';
 import DifficultyCarousel from '@/components/elements/DifficultyCarousel';
 import {
-  LeaderboardAssists,
-  LeaderboardHints,
   LeaderboardTable,
   LeaderboardTableRow,
 } from '@/components/generics/Leaderboard';
 import { use2048Store } from '@/games/2048/state';
 import { difficulties } from '@/games/2048/types';
-import { formatDate, formatTime } from '@/lib/utils';
+import { formatDate } from '@/lib/utils';
 
 interface LeaderboardProps {
   allowDeletion?: boolean;
 }
 
 const Leaderboard: React.FC<LeaderboardProps> = ({ allowDeletion }) => {
-  const {
-    seed,
-    difficulty,
-    optAssistHighlight,
-    optAssistRemaining,
-    optAssistAutoRemove,
-    usedHints,
-    leaderboard,
-    setState,
-  } = use2048Store();
+  const { seed, difficulty, leaderboard, setState } = use2048Store();
   const [selectedDifficulty, setSelectedDifficulty] = useState(difficulty);
-  const [selectedUsedAssists, setSelectedUsedAssists] = useState([
-    optAssistHighlight,
-    optAssistRemaining,
-    optAssistAutoRemove,
-  ]);
-  const [selectedUsedHints, setSelectedUsedHints] = useState(usedHints);
 
-  const tableKey = `${selectedDifficulty}${selectedUsedAssists}${selectedUsedHints}`;
+  const tableKey = `${selectedDifficulty}`;
 
   return (
     <>
@@ -42,26 +25,9 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ allowDeletion }) => {
         difficulty={difficulty}
         setDifficulty={setSelectedDifficulty}
       />
-      <div className="flex w-full">
-        <LeaderboardAssists
-          usedAssists={selectedUsedAssists}
-          setUsedAssists={setSelectedUsedAssists}
-        />
-        <LeaderboardHints
-          usedHints={selectedUsedHints}
-          setUsedHints={setSelectedUsedHints}
-        />
-      </div>
       <LeaderboardTable tableKey={tableKey} allowDeletion={allowDeletion}>
         {leaderboard
-          .filter(
-            (entry) =>
-              entry.difficulty === selectedDifficulty &&
-              entry.usedAssists.every(
-                (usedAssist, index) => usedAssist == selectedUsedAssists[index],
-              ) &&
-              entry.usedHints === selectedUsedHints,
-          )
+          .filter((entry) => entry.difficulty === selectedDifficulty)
           .map((entry, index) => {
             const isCurrent = seed === entry.seed;
             return (
@@ -70,7 +36,7 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ allowDeletion }) => {
                 index={index}
                 game="2048"
                 setState={setState}
-                data={[formatDate(entry.date), formatTime(entry.time)]}
+                data={[formatDate(entry.date), entry.score]}
                 isCurrent={isCurrent}
                 allowDeletion={allowDeletion}
               />

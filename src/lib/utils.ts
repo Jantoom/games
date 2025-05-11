@@ -65,6 +65,53 @@ export const createDefaultJSONStorage = () => {
   });
 };
 
+export const rgbToHsl = (rgbStr: string): [number, number, number] => {
+  let [r, g, b] = rgbStr.split(' ').map(Number) as [number, number, number];
+  r /= 255;
+  g /= 255;
+  b /= 255;
+
+  const max = Math.max(r, g, b),
+    min = Math.min(r, g, b);
+  let h = 0,
+    s = 0,
+    l = (max + min) / 2;
+
+  if (max !== min) {
+    const d = max - min;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+
+    switch (max) {
+      case r:
+        h = (g - b) / d + (g < b ? 6 : 0);
+        break;
+      case g:
+        h = (b - r) / d + 2;
+        break;
+      case b:
+        h = (r - g) / d + 4;
+        break;
+    }
+
+    h *= 60;
+  }
+
+  return [Math.round(h), Math.round(s * 100), Math.round(l * 100)];
+};
+
+export const adjustHsl = (
+  hsl: [number, number, number],
+  dh: number = 0,
+  ds: number = 0,
+  dl: number = 0,
+): string => {
+  const [h, s, l] = hsl;
+  const newH = Math.max(0, Math.min(360, h + dh));
+  const newS = Math.max(0, Math.min(100, s + ds));
+  const newL = Math.max(0, Math.min(100, l + dl));
+  return `hsl(${newH}, ${newS}%, ${newL}%)`;
+};
+
 declare global {
   /* eslint-disable unused-imports/no-unused-vars */
   interface Array<T> {

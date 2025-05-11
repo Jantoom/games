@@ -1,3 +1,4 @@
+import { _2048State } from '@/games/2048/state';
 import { MinesweeperState } from '@/games/minesweeper/state';
 import { SudokuState } from '@/games/sudoku/state';
 import { GlobalState } from '@/lib/state';
@@ -18,6 +19,7 @@ export type GamesData = {
   global: GlobalState;
   sudoku: SudokuState;
   minesweeper: MinesweeperState;
+  '2048': _2048State;
 };
 export interface BaseState {
   status: GameStatus;

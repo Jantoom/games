@@ -1,17 +1,16 @@
-export const difficulties = ['beginner', 'easy', 'medium', 'hard', 'extreme'] as const;
+export const difficulties = ['4x4', '5x5'] as const;
 export type Difficulty = (typeof difficulties)[number];
-export type Grid = number[][];
-export type CellNotes = Set<number>;
-export type Notes = { [cell: string]: CellNotes };
-export type HistoryEntry = {
-  grid: Grid;
-  notes: Notes;
+export const directions = ['up', 'down', 'left', 'right'] as const;
+export type Direction = (typeof directions)[number];
+export type Cell = {
+  id: number;
+  row: number;
+  col: number;
+  value: number;
 };
 export type LeaderboardEntry = {
   seed: string;
   difficulty: Difficulty;
-  usedAssists: boolean[];
-  usedHints: boolean;
   date: string;
-  time: number;
+  score: number;
 };

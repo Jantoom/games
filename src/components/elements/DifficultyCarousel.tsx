@@ -24,7 +24,7 @@ const DifficultyCarousel = <T extends string>({
 }: DifficultyCarouselProps<T>) => {
   const [api, setApi] = useState<CarouselApi>();
   const [isInitialised, setIsInitialised] = useState(false);
-  const [hide, setHide] = useState();
+  const [hide, setHide] = useState<string>();
 
   const checkHiddenButtons = useCallback(
     (index: number) => {

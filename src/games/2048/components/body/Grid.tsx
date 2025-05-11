@@ -1,186 +1,130 @@
 import ScaledContainer from '@/components/containers/ScaledContainer';
 import Cell from '@/games/2048/components/body/Cell';
 import { use2048Store } from '@/games/2048/state';
+import { createUseGesture, dragAction } from '@use-gesture/react';
+import { animated } from '@react-spring/web';
+import { Direction } from '../../types';
+import { useRef } from 'react';
 
 const Grid: React.FC = () => {
-  const {
-    seed,
-    status,
-    originalGrid,
-    grid,
-    notes,
-    errors,
-    selectedNumber,
-    pencilMode,
-    optAssistHighlight,
-    update,
-  } = use2048Store();
-  const factor = 60;
+  const { seed, dimensions, cells, update } = use2048Store();
+  const hasSwiped = useRef(false);
+  const factor = 36;
+
+  // Gestures
+  const useGesture = createUseGesture([dragAction]);
+  const binds = useGesture(
+    {
+      onDragEnd: ({ down, movement: [mx, my], last }) => {
+        if (hasSwiped.current) return;
+
+        if (!down && !last) return; // ignore until drag starts
+
+        // Check if threshold exceeded and swipe hasn't been triggered yet
+        if (!hasSwiped.current) {
+          if (Math.abs(mx) > 100 || Math.abs(my) > 100) {
+            let direction = null;
+
+            if (Math.abs(mx) > Math.abs(my)) {
+              direction = mx > 0 ? 'right' : 'left';
+            } else {
+              direction = my > 0 ? 'down' : 'up';
+            }
+
+            hasSwiped.current = true;
+            update(direction as Direction);
+          }
+        }
+
+        if (last) {
+          hasSwiped.current = false; // reset for the next drag
+        }
+      },
+    },
+    { eventOptions: { passive: false } },
+  );
 
   return (
-    <ScaledContainer
-      className={`relative flex aspect-square w-full ${status === 'play' ? 'max-w-[60svh]' : 'max-w-[75svh]'} items-center justify-center`}
-      style={{ height: factor * 9, width: factor * 9 }}
-    >
+    dimensions[0] > 0 && (
       <div
+        {...binds()}
         key={seed}
-        className="absolute grid h-full w-full grid-cols-9 grid-rows-9"
+        className="flex h-full w-full items-center"
+        style={{
+          touchAction: 'none',
+          userSelect: 'none',
+          msUserSelect: 'none',
+          msTouchAction: 'none',
+        }}
       >
-        <svg
-          className="pointer-events-none absolute"
-          viewBox={`0 0 ${factor * 9} ${factor * 9}`}
+        <ScaledContainer
+          className="relative flex h-full w-full flex-col items-center justify-center overflow-hidden"
+          style={{
+            height: dimensions[0] * factor,
+            width: dimensions[1] * factor,
+          }}
         >
-          <defs>
-            <svg id="small">
-              <line
-                x1={`${factor / 6}`}
-                y1={`${factor}`}
-                x2={`${(factor / 6) * 5}`}
-                y2={`${factor}`}
-              />
-              <line
-                x1={`${(factor / 6) * 7}`}
-                y1={`${factor}`}
-                x2={`${(factor / 6) * 11}`}
-                y2={`${factor}`}
-              />
-              <line
-                x1={`${(factor / 6) * 13}`}
-                y1={`${factor}`}
-                x2={`${(factor / 6) * 17}`}
-                y2={`${factor}`}
-              />
-              <line
-                x1={`${factor / 6}`}
-                y1={`${factor * 2}`}
-                x2={`${(factor / 6) * 5}`}
-                y2={`${factor * 2}`}
-              />
-              <line
-                x1={`${(factor / 6) * 7}`}
-                y1={`${factor * 2}`}
-                x2={`${(factor / 6) * 11}`}
-                y2={`${factor * 2}`}
-              />
-              <line
-                x1={`${(factor / 6) * 13}`}
-                y1={`${factor * 2}`}
-                x2={`${(factor / 6) * 17}`}
-                y2={`${factor * 2}`}
-              />
-              <line
-                x1={`${factor}`}
-                y1={`${factor / 6}`}
-                x2={`${factor}`}
-                y2={`${(factor / 6) * 5}`}
-              />
-              <line
-                x1={`${factor}`}
-                y1={`${(factor / 6) * 7}`}
-                x2={`${factor}`}
-                y2={`${(factor / 6) * 11}`}
-              />
-              <line
-                x1={`${factor}`}
-                y1={`${(factor / 6) * 13}`}
-                x2={`${factor}`}
-                y2={`${(factor / 6) * 17}`}
-              />
-              <line
-                x1={`${factor * 2}`}
-                y1={`${factor / 6}`}
-                x2={`${factor * 2}`}
-                y2={`${(factor / 6) * 5}`}
-              />
-              <line
-                x1={`${factor * 2}`}
-                y1={`${(factor / 6) * 7}`}
-                x2={`${factor * 2}`}
-                y2={`${(factor / 6) * 11}`}
-              />
-              <line
-                x1={`${factor * 2}`}
-                y1={`${(factor / 6) * 13}`}
-                x2={`${factor * 2}`}
-                y2={`${(factor / 6) * 17}`}
-              />
-            </svg>
-          </defs>
-          <g className={`stroke-primary stroke-[2]`}>
-            <line
-              x1={`${factor * 3}`}
-              y1="0"
-              x2={`${factor * 3}`}
-              y2={`${factor * 9}`}
-            />
-            <line
-              x1={`${factor * 6}`}
-              y1="0"
-              x2={`${factor * 6}`}
-              y2={`${factor * 9}`}
-            />
-            <line
-              x1="0"
-              y1={`${factor * 3}`}
-              x2={`${factor * 9}`}
-              y2={`${factor * 3}`}
-            />
-            <line
-              x1="0"
-              y1={`${factor * 6}`}
-              x2={`${factor * 9}`}
-              y2={`${factor * 6}`}
-            />
-          </g>
-          <g className={`stroke-secondary stroke-[1]`}>
-            <use href="#small" transform={`translate(0 0)`} />
-            <use href="#small" transform={`translate(${factor * 3} 0)`} />
-            <use href="#small" transform={`translate(${factor * 6} 0)`} />
-            <use href="#small" transform={`translate(0 ${factor * 3})`} />
-            <use
-              href="#small"
-              transform={`translate(${factor * 3} ${factor * 3})`}
-            />
-            <use
-              href="#small"
-              transform={`translate(${factor * 6} ${factor * 3})`}
-            />
-            <use href="#small" transform={`translate(0 ${factor * 6})`} />
-            <use
-              href="#small"
-              transform={`translate(${factor * 3} ${factor * 6})`}
-            />
-            <use
-              href="#small"
-              transform={`translate(${factor * 6} ${factor * 6})`}
-            />
-          </g>
-        </svg>
-        {grid.map((array, row) =>
-          array.map((num, col) => (
+          <animated.div
+            className={`absolute grid h-full w-full`}
+            style={{
+              gridTemplateColumns: `repeat(${dimensions[1]},minmax(0,1fr))`,
+            }}
+          >
+            <animated.svg
+              className="pointer-events-none absolute inset-0"
+              viewBox={`0 0 ${dimensions[1] * factor} ${dimensions[0] * factor}`}
+            >
+              <defs>
+                <line
+                  id="hline"
+                  x1={`${factor / 6}`}
+                  y1={`${factor}`}
+                  x2={`${(factor / 6) * 5}`}
+                  y2={`${factor}`}
+                />
+                <line
+                  id="vline"
+                  x1={`${factor}`}
+                  y1={`${factor / 6}`}
+                  x2={`${factor}`}
+                  y2={`${(factor / 6) * 5}`}
+                />
+              </defs>
+              <g className="stroke-primary stroke-[0.5]">
+                {Array.from({ length: dimensions[0] - 1 }).map((_, row) =>
+                  Array.from({ length: dimensions[1] }).map((_, col) => (
+                    <use
+                      key={`hline ${row}-${col}`}
+                      href="#hline"
+                      transform={`translate(${col * factor} ${row * factor})`}
+                    />
+                  )),
+                )}
+                {Array.from({ length: dimensions[0] }).map((_, row) =>
+                  Array.from({ length: dimensions[1] - 1 }).map((_, col) => (
+                    <use
+                      key={`vline ${row}-${col}`}
+                      href="#vline"
+                      transform={`translate(${col * factor} ${row * factor})`}
+                    />
+                  )),
+                )}
+              </g>
+            </animated.svg>
+          </animated.div>
+          {cells.map((cell) => (
             <Cell
-              key={`${row}-${col}`}
-              num={num}
-              original={originalGrid[row][col] !== 0}
-              highlighted={
-                optAssistHighlight &&
-                selectedNumber !== 0 &&
-                (num === selectedNumber ||
-                  notes[`${row}-${col}`].has(selectedNumber))
-              }
-              flagged={errors.includes(`${row}-${col}`)}
-              notes={notes[`${row}-${col}`]}
-              onClick={() =>
-                status === 'play' &&
-                selectedNumber !== undefined &&
-                !originalGrid[row][col] &&
-                update(row, col, selectedNumber, pencilMode)
-              }
+              key={cell.id}
+              id={cell.id}
+              row={cell.row}
+              col={cell.col}
+              num={cell.value}
+              factor={factor}
             />
-          )),
-        )}
+          ))}
+        </ScaledContainer>
       </div>
-    </ScaledContainer>
+    )
   );
 };
 

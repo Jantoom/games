@@ -1,150 +1,163 @@
-import { Difficulty, Grid, Notes } from '@/games/2048/types';
-import { shuffle } from '@/lib/utils';
+import { Difficulty, directions, Cell, Direction } from '@/games/2048/types';
 
-const difficultyConfig: Record<Difficulty, { numRemovals: number }> = {
-  beginner: { numRemovals: 30 },
-  easy: { numRemovals: 35 },
-  medium: { numRemovals: 40 },
-  hard: { numRemovals: 45 },
-  extreme: { numRemovals: 50 },
+const difficultyConfig: Record<
+  Difficulty,
+  { numRows: number; numCols: number }
+> = {
+  '4x4': { numRows: 4, numCols: 4 },
+  '5x5': { numRows: 5, numCols: 5 },
 };
 
-let config: { numRemovals: number } = difficultyConfig.easy;
-const cellCoords: { row: number; col: number }[] = Array.from({
-  length: 9,
+let config: { numRows: number; numCols: number } = difficultyConfig['4x4'];
+let cellCoords: { row: number; col: number }[] = Array.from({
+  length: config.numRows,
 }).flatMap((_, row) =>
-  Array.from({ length: 9 }).map((_, col) => ({ row, col })),
+  Array.from({ length: config.numCols }).map((_, col) => ({ row, col })),
 );
-
-const isValidCell = (
-  grid: Grid,
-  row: number,
-  col: number,
-  num: number,
-): boolean =>
-  [{ row, col }, ...getRelatedCells(row, col)].every(
-    ({ row, col }) => grid[row][col] !== num,
-  );
-
-const toUniqueCells = (
-  cells: { row: number; col: number }[],
-): { row: number; col: number }[] =>
-  toCellCoords([...new Set(toCellKeys(cells))] as string[]);
 
 export const generate2048 = (
   difficulty: Difficulty,
-): { puzzle: Grid; solution: Grid } => {
-  // First, generate a solved grid
-  const solution = Array.from({ length: 9 }).map(() =>
-    Array.from({ length: 9 }).fill(0),
-  ) as Grid;
-  
-  const fillGrid = (grid: Grid): boolean => {
-    const emptyCell =
-      cellCoords.find(({ row, col }) => grid[row][col] === 0) || undefined;
-    if (!emptyCell) return true;
-
-    const { row, col } = emptyCell;
-    const nums = shuffle([1, 2, 3, 4, 5, 6, 7, 8, 9]);
-
-    for (const num of nums) {
-      if (isValidCell(grid, row, col, num)) {
-        grid[row][col] = num;
-        if (fillGrid(grid)) return true;
-        grid[row][col] = 0;
-      }
-    }
-
-    return false;
-  };
-  fillGrid(solution);
-
-  // Then remove numbers based on difficulty
+): { dimensions: [number, number]; cells: Cell[] } => {
   config = difficultyConfig[difficulty];
+  cellCoords = Array.from({ length: config.numRows }).flatMap((_, row) =>
+    Array.from({ length: config.numCols }).map((_, col) => ({ row, col })),
+  );
 
-  const puzzle = solution.map((row) => [...row]);
-  let count = 0;
-  while (count < config.numRemovals) {
-    const row = Math.floor(Math.random() * 9);
-    const col = Math.floor(Math.random() * 9);
-    if (puzzle[row][col] !== 0) {
-      puzzle[row][col] = 0;
-      count++;
+  const cell = getNewCell([]);
+
+  return { dimensions: [config.numRows, config.numCols], cells: [cell] };
+};
+
+export const isFinished = (grid: Cell[]): boolean => {
+  return directions.every((direction) => {
+    const [moved, _] = getTranslatedCells(grid, direction);
+    return cellsEqual(grid, moved);
+  });
+};
+
+export const cellsEqual = (gridA: Cell[], gridB: Cell[]): boolean => {
+  if (gridA.length !== gridB.length) return false;
+
+  const sortCells = (grid: Cell[]) =>
+    [...grid].sort((a, b) => a.row - b.row || a.col - b.col);
+
+  const aSorted = sortCells(gridA);
+  const bSorted = sortCells(gridB);
+
+  for (let i = 0; i < aSorted.length; i++) {
+    const a = aSorted[i];
+    const b = bSorted[i];
+    if (a.row !== b.row || a.col !== b.col || a.value !== b.value) {
+      return false;
     }
   }
 
-  return { puzzle, solution };
+  return true;
 };
 
-export const isSolved = (grid: Grid): boolean =>
-  getMatchingCells(grid, 0).length === 0 && getConflictCells(grid).length === 0;
-
-export const getMatchingCells = (
-  grid: Grid,
-  num: number,
-): { row: number; col: number }[] =>
-  cellCoords.filter(({ row, col }) => grid[row][col] === num);
-
-export const getRelatedCells = (
-  row: number,
-  col: number,
-): { row: number; col: number }[] =>
-  cellCoords.filter(
-    ({ row: y, col: x }) =>
-      (y !== row || x !== col) &&
-      (y === row ||
-        x === col ||
-        (Math.floor(y / 3) === Math.floor(row / 3) &&
-          Math.floor(x / 3) === Math.floor(col / 3))),
-  );
-
-export const getHintCells = (
-  grid: Grid,
-  notes: Notes,
-  solvedGrid: Grid,
-): { row: number; col: number }[] =>
-  cellCoords
-    .filter(
-      ({ row, col }) =>
-        notes[`${row}-${col}`].size === 0 && grid[row][col] === 0,
-    )
-    .falsyIfEmpty() ||
-  cellCoords
-    .filter(({ row, col }) => notes[`${row}-${col}`].size > 0)
-    .falsyIfEmpty() ||
-  getMismatchCells(grid, solvedGrid);
-
-export const getConflictCells = (grid: Grid): { row: number; col: number }[] =>
-  toUniqueCells(
-    cellCoords.flatMap(({ row, col }) =>
-      getRelatedCells(row, col).filter(
-        ({ row: y, col: x }) =>
-          grid[row][col] !== 0 && grid[row][col] === grid[y][x],
-      ),
-    ),
-  );
-
-export const getMismatchCells = (
-  grid: Grid,
-  solvedGrid: Grid,
-): { row: number; col: number }[] =>
-  cellCoords.filter(
+export const getNewCell = (cells: Cell[]): Cell => {
+  const emptyCells = cellCoords.filter(
     ({ row, col }) =>
-      grid[row][col] !== 0 && grid[row][col] !== solvedGrid[row][col],
+      cells.values().find(({ row: r, col: c }) => r === row && c === col) ==
+      undefined,
+  );
+  const { row, col } =
+    emptyCells[Math.floor(Math.random() * emptyCells.length)];
+  return {
+    id: Math.random(),
+    row,
+    col,
+    value: Math.random() < 0.9 ? 2 : 4,
+  };
+};
+
+export const getTranslatedCells = (
+  cells: Cell[],
+  direction: Direction,
+): [Cell[], number] => {
+  let mergeScore = 0;
+  // Clone cells to avoid mutating original
+  const newCells = [
+    ...cells
+      .filter((cell) => cell.value !== 0) // Could contain cell marked for removal
+      .map((cell) => ({ ...cell })),
+  ];
+
+  // Helper to get and set cell at specific coords
+  const cellMap: (Cell | null)[][] = Array.from(
+    { length: config.numRows },
+    () => Array(config.numCols).fill(null),
   );
 
-export const getAutoNotes = (grid: Grid): Notes =>
-  cellCoords
-    .filter(({ row, col }) => grid[row][col] === 0)
-    .map(({ row, col }): [string, Set<number>] => [
-      `${row}-${col}`,
-      new Set(
-        [1, 2, 3, 4, 5, 6, 7, 8, 9].filter((num) =>
-          isValidCell(grid, row, col, num),
-        ),
-      ),
-    ])
-    .toObject();
+  for (const cell of newCells) {
+    cellMap[cell.row][cell.col] = cell;
+  }
+
+  const vector = {
+    up: { dr: -1, dc: 0 },
+    down: { dr: 1, dc: 0 },
+    left: { dr: 0, dc: -1 },
+    right: { dr: 0, dc: 1 },
+  }[direction];
+
+  const orderedCoords = [];
+  for (let r = 0; r < config.numRows; r++) {
+    for (let c = 0; c < config.numCols; c++) {
+      orderedCoords.push({ row: r, col: c });
+    }
+  }
+
+  // Order traversal based on move direction
+  orderedCoords.sort((a, b) => {
+    if (direction === 'up') return a.row - b.row;
+    if (direction === 'down') return b.row - a.row;
+    if (direction === 'left') return a.col - b.col;
+    if (direction === 'right') return b.col - a.col;
+    return 0;
+  });
+
+  for (const { row, col } of orderedCoords) {
+    const cell = cellMap[row][col];
+    if (!cell || cell.value === 0) continue;
+
+    let r = row;
+    let c = col;
+
+    while (true) {
+      const nr = r + vector.dr;
+      const nc = c + vector.dc;
+
+      if (nr < 0 || nr >= config.numRows || nc < 0 || nc >= config.numCols)
+        break;
+
+      const nextCell = cellMap[nr][nc];
+      if (
+        nextCell &&
+        (nextCell.value !== cell.value ||
+          cells.find((cell) => cell.id === nextCell.id).value < nextCell.value)
+      ) {
+        // Cannot move if bumping into cell with different value,
+        // or same value but the bumped cell has already merged
+        break;
+      }
+
+      cellMap[r][c] = null;
+      r = nr;
+      c = nc;
+      if (nextCell) {
+        nextCell.value *= 2;
+        cell.value = 0;
+        mergeScore += nextCell.value;
+      } else {
+        cellMap[r][c] = cell;
+      }
+      cell.row = r;
+      cell.col = c;
+    }
+  }
+
+  return [newCells, mergeScore];
+};
 
 export const toCellKeys = (cells: { row: number; col: number }[]): string[] =>
   cells.map(({ row, col }) => `${row}-${col}`);

@@ -18,7 +18,7 @@ export type ThemeColors = {
 
 export const Themes: { dark: ThemeColors; light: ThemeColors } = {
   dark: {
-    'blue': {
+    blue: {
       background: '1 21 56',
       foreground: '185 201 255',
       primary: '127 147 255',
@@ -27,13 +27,13 @@ export const Themes: { dark: ThemeColors; light: ThemeColors } = {
       'secondary-foreground': '160 160 220',
       accent: '70 81 140',
       'accent-foreground': '4 20 45',
-      muted: '57 69 109',
+      muted: '65 80 120',  // Changed to avoid duplication with secondary
       'muted-foreground': '185 201 255',
       destructive: '255 0 0',
       'destructive-foreground': '4 20 45',
       border: '116 146 198',
     },
-    'green': {
+    green: {
       background: '10 25 20',
       foreground: '200 255 210',
       primary: '0 160 80',
@@ -42,13 +42,13 @@ export const Themes: { dark: ThemeColors; light: ThemeColors } = {
       'secondary-foreground': '180 230 190',
       accent: '50 110 80',
       'accent-foreground': '0 30 20',
-      muted: '40 80 60',
+      muted: '45 95 70',  // Changed to avoid duplication with secondary
       'muted-foreground': '200 255 210',
       destructive: '255 80 80',
       'destructive-foreground': '0 30 20',
       border: '120 180 140',
     },
-    'orange': {
+    orange: {
       background: '30 20 10',
       foreground: '255 235 215',
       primary: '255 140 0',
@@ -57,13 +57,13 @@ export const Themes: { dark: ThemeColors; light: ThemeColors } = {
       'secondary-foreground': '240 220 200',
       accent: '200 100 40',
       'accent-foreground': '40 25 10',
-      muted: '100 60 20',
+      muted: '105 75 30',  // Changed to avoid duplication with secondary
       'muted-foreground': '255 235 215',
       destructive: '255 80 80',
       'destructive-foreground': '40 25 10',
       border: '210 150 100',
     },
-    'purple': {
+    purple: {
       background: '20 10 30',
       foreground: '225 200 255',
       primary: '180 100 255',
@@ -72,13 +72,13 @@ export const Themes: { dark: ThemeColors; light: ThemeColors } = {
       'secondary-foreground': '220 200 240',
       accent: '140 70 200',
       'accent-foreground': '35 20 60',
-      muted: '90 50 140',
+      muted: '95 60 160',  // Changed to avoid duplication with secondary
       'muted-foreground': '225 200 255',
       destructive: '255 80 80',
       'destructive-foreground': '35 20 60',
       border: '180 130 220',
     },
-    'red': {
+    red: {
       background: '30 10 10',
       foreground: '255 210 210',
       primary: '220 40 40',
@@ -87,7 +87,7 @@ export const Themes: { dark: ThemeColors; light: ThemeColors } = {
       'secondary-foreground': '230 180 180',
       accent: '140 40 40',
       'accent-foreground': '40 10 10',
-      muted: '90 30 30',
+      muted: '95 40 40',  // Changed to avoid duplication with secondary
       'muted-foreground': '255 210 210',
       destructive: '255 0 0',
       'destructive-foreground': '40 10 10',
