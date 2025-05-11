@@ -9,6 +9,7 @@ import { useRef } from 'react';
 const Grid: React.FC = () => {
   const { seed, dimensions, cells, update } = use2048Store();
   const hasSwiped = useRef(false);
+  const swipeThreshold = Math.max(window.innerHeight, window.innerWidth) * 0.05;
   const factor = 36;
 
   // Gestures
@@ -22,7 +23,7 @@ const Grid: React.FC = () => {
 
         // Check if threshold exceeded and swipe hasn't been triggered yet
         if (!hasSwiped.current) {
-          if (Math.abs(mx) > 100 || Math.abs(my) > 100) {
+          if (Math.abs(mx) > swipeThreshold || Math.abs(my) > swipeThreshold) {
             let direction = null;
 
             if (Math.abs(mx) > Math.abs(my)) {
